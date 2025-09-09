@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="3.0" xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence
+                 https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
+                 
+    <persistence-unit name="kudos-pu" transaction-type="JTA">
+        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+        <jta-data-source>jdbc/kudosdb</jta-data-source>
+        
+        <properties>
+            <!-- EclipseLink specific properties -->
+            <property name="eclipselink.target-database" value="org.eclipse.persistence.platform.database.PostgreSQLPlatform"/>
+            <property name="eclipselink.logging.level" value="INFO"/>
+            <property name="eclipselink.logging.level.sql" value="FINE"/>
+            <property name="eclipselink.logging.parameters" value="true"/>
+            
+            <!-- JPA 2.1 schema generation -->
+            <property name="jakarta.persistence.schema-generation.database.action" value="none"/>
+            <property name="jakarta.persistence.schema-generation.scripts.action" value="none"/>
+            
+            <!-- Connection pool settings -->
+            <property name="eclipselink.connection-pool.default.initial" value="5"/>
+            <property name="eclipselink.connection-pool.default.min" value="5"/>
+            <property name="eclipselink.connection-pool.default.max" value="20"/>
+            
+            <!-- Performance optimizations -->
+            <property name="eclipselink.cache.shared.default" value="false"/>
+            <property name="eclipselink.flush-clear.cache" value="DropInvalidate"/>
+            
+            <!-- UUID support -->
+            <property name="eclipselink.jpa.uppercase-column-names" value="false"/>
+        </properties>
+    </persistence-unit>
+</persistence>
