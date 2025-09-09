@@ -29,6 +29,14 @@
             <type>pom</type>
             <scope>provided</scope>
         </dependency>
+        
+        <!-- PostgreSQL JDBC Driver -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.7.4</version>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
 
     <build>
