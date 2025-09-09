@@ -44,11 +44,11 @@
     <dataSource id="DefaultDataSource" jndiName="jdbc/kudosdb">
         <jdbcDriver libraryRef="postgresqlLib"/>
         <properties.postgresql 
-            serverName="localhost"
-            portNumber="5432"
-            databaseName="kudosdb"
-            user="kudosuser"
-            password="kudospass"
+            serverName="${env.DB_HOST}"
+            portNumber="${env.DB_PORT}"
+            databaseName="${env.DB_NAME}"
+            user="${env.DB_USER}"
+            password="${env.DB_PASSWORD}"
             ssl="false"
             applicationName="KudosCardSystem"/>
         <connectionManager maxPoolSize="20" minPoolSize="5" connectionTimeout="30s"/>
