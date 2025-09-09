@@ -1,0 +1,92 @@
+.main-content {
+  width: 95%;
+  height: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 2.5%;
+}
+
+.received-kudos, .sent-kudos {
+  overflow-y: auto;
+  flex: 1;
+  gap: 20px;
+  border: 2px solid #555;
+  padding: 20px 40px;
+  border-radius: 8px;
+  background-color: #aaa;
+}
+
+.wireframe-box {
+  border: 2px dashed #aaa;
+  background-color: #f9f9f9;
+  padding: 20px;
+  margin: 10px 0;
+  text-align: center;
+  font-family: sans-serif;
+  color: #555;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  background-color: white;
+  border: #0077aa;
+  color: white;
+}
+
+.kudos-list-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+}
+
+.kudos-list-header span {
+  flex: 1;
+  padding: 0 10px;
+  text-align: left;
+}
+
+.kudos-list-header span:nth-child(1) {
+  width: 30%;
+}
+
+.kudos-list-header span:nth-child(2) {
+  width: 50%;
+}
+
+.logo {
+  height: 100px;
+  width: auto;
+}
+
+.nav-buttons button {
+  margin-left: 15px;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  background-color: #0077aa;
+  color: white;
+  border: none;
+  border-radius: 4px;
+}
+
+.nav-buttons button:hover {
+  background-color: #005577;
+}
+
+.footer {
+  background-color: #004466;
+  color: white;
+  text-align: center;
+  padding: 15px;
+  margin-top: auto;
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    flex-direction: column;
+  }
+}
