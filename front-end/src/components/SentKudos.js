@@ -1,19 +1,27 @@
 import React from "react";
 
 function SentKudos() {
-    return(
-        <section className="sent-kudos">
-            <h3>Sent Kudos</h3>
-            <div className="kudos-list-header">
-                <span>Kudos Title</span>
-                <span>Kudos Text</span>
-                <span>Kudos Status</span>
-            </div>
-            <div className="kudos-box">
-                {/* Sent Kudos content goes here */}
-            </div>
+    return (
+        <section>
+            <h2>Sent Kudos</h2>
+            <table>
+                <thead>
+                <tr>
+                    <th>Recipient</th>
+                    <th>Title</th>
+                    <th>Kudos Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Abraham Lincoln</td>
+                    <td>Fantastic Effort!</td>
+                    <td>Received</td>
+                </tr>
+                </tbody>
+            </table>
         </section>
-    )
+    );
 }
 
 export default SentKudos;
