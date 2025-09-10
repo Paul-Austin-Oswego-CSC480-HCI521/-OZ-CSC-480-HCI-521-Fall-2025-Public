@@ -12,9 +12,10 @@ Setup backend:
 cd back-end
 mvn dependency:copy-dependencies -DincludeArtifactIds=postgresql -DoutputDirectory=src/main/liberty/config/lib
 mvn liberty:dev
+
 ```
 
-Application: `http://localhost:9080/kudo-application`
+Application: `http://localhost:9080/kudo-app`
 
 ## Schema
 

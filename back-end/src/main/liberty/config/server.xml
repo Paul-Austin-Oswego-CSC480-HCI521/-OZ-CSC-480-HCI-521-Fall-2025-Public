@@ -30,7 +30,7 @@
     <applicationManager autoExpand="true"/>
 
     <!-- Configures the application on a specified context root -->
-    <webApplication contextRoot="/kudo-application" location="kudo-application.war" />
+    <webApplication contextRoot="/kudo-app" location="kudo-application.war" />
 
     <!-- Default SSL configuration enables trust for default certificates from the Java runtime -->
     <ssl id="defaultSSLConfig" trustDefaultCerts="true" />
