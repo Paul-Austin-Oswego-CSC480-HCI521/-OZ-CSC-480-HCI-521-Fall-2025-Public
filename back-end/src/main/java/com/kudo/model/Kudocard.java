@@ -1,15 +1,34 @@
 package com.kudo.model;
+import jakarta.json.bind.annotation.JsonbProperty;
+
 import java.util.UUID;
 
 public class Kudocard {
+    @JsonbProperty("card_id")
     private UUID cardId;
+
+    @JsonbProperty("sender_id")
     private UUID senderId;
+
+    @JsonbProperty("recipient_id")
     private UUID recipientId;
+
+    @JsonbProperty("class_id")
     private UUID classId;
+
+    @JsonbProperty("title")
     private String title;
+
+    @JsonbProperty("content")
     private String content;
+
+    @JsonbProperty("isAnonymous")
     private boolean isAnonymous = true; //default true
+
+    @JsonbProperty("status")
     private Status status = Status.PENDING; //default pending
+
+    @JsonbProperty("approvedBy")
     private UUID approvedBy;
 
     public enum Status {
