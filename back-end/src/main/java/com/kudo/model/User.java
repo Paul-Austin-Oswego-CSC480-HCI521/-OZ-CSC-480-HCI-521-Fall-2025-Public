@@ -1,20 +1,38 @@
 package com.kudo.model;
 
 import java.util.UUID;
+import jakarta.json.bind.annotation.JsonbProperty;
+import jakarta.json.bind.annotation.JsonbTransient;
+import jakarta.json.bind.annotation.JsonbTypeAdapter;
+import com.kudo.adapter.UserRoleAdapter;
 
+// User entity model
 public class User {
+    @JsonbProperty("userId")
     private UUID userId;
+    
+    @JsonbProperty("username")
     private String username;
+    
+    @JsonbProperty("name")
     private String name;
+    
+    @JsonbTransient
     private String passwordHash;
+    
+    @JsonbProperty("role")
+    @JsonbTypeAdapter(UserRoleAdapter.class)
     private Role role;
 
+    // User role enum
     public enum Role {
         STUDENT, INSTRUCTOR
     }
 
+    // Default constructor
     public User() {}
 
+    // Constructor for new users
     public User(String username, String name, String passwordHash, Role role) {
         this.username = username;
         this.name = name;
@@ -22,6 +40,7 @@ public class User {
         this.role = role;
     }
 
+    // Constructor with UUID
     public User(UUID userId, String username, String name, String passwordHash, Role role) {
         this.userId = userId;
         this.username = username;
