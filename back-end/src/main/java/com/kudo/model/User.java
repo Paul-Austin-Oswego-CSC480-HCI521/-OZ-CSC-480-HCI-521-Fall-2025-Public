@@ -11,8 +11,8 @@ public class User {
     @JsonbProperty("userId")
     private UUID userId;
     
-    @JsonbProperty("username")
-    private String username;
+    @JsonbProperty("email")
+    private String email;
     
     @JsonbProperty("name")
     private String name;
@@ -33,17 +33,17 @@ public class User {
     public User() {}
 
     // Constructor for new users
-    public User(String username, String name, String passwordHash, Role role) {
-        this.username = username;
+    public User(String email, String name, String passwordHash, Role role) {
+        this.email = email;
         this.name = name;
         this.passwordHash = passwordHash;
         this.role = role;
     }
 
     // Constructor with UUID
-    public User(UUID userId, String username, String name, String passwordHash, Role role) {
+    public User(UUID userId, String email, String name, String passwordHash, Role role) {
         this.userId = userId;
-        this.username = username;
+        this.email = email;
         this.name = name;
         this.passwordHash = passwordHash;
         this.role = role;
@@ -57,12 +57,12 @@ public class User {
         this.userId = userId;
     }
 
-    public String getUsername() {
-        return username;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getName() {
@@ -93,7 +93,7 @@ public class User {
     public String toString() {
         return "User{" +
                 "userId=" + userId +
-                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
                 ", name='" + name + '\'' +
                 ", role=" + role +
                 '}';

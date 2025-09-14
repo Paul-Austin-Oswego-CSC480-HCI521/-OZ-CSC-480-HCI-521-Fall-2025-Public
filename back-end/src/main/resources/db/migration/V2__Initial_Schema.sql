@@ -3,7 +3,7 @@
 -- Create USERS table
 CREATE TABLE USERS (
     user_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    username VARCHAR(100) UNIQUE NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
     name VARCHAR(100) NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     role VARCHAR(20) CHECK (role IN ('STUDENT', 'INSTRUCTOR')) NOT NULL
@@ -46,7 +46,7 @@ CREATE TABLE KUDOS_CARDS (
 -- Performance Indexes
 
 -- User authentication and lookup
-CREATE INDEX idx_users_username ON USERS(username);
+CREATE INDEX idx_users_email ON USERS(email);
 
 -- Home page inbox queries (cards received by user)
 CREATE INDEX idx_cards_recipient_status ON KUDOS_CARDS(recipient_id, status);

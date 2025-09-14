@@ -1,5 +1,6 @@
 package com.kudo.dto;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -10,9 +11,9 @@ public class UserDTO {
 
     // Request DTO for creating new users
     public static class CreateRequest {
-        @NotBlank(message = "Username is required")
-        @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
-        private String username;
+        @NotBlank(message = "Email is required")
+        @Email(message = "Email must be valid")
+        private String email;
 
         @NotBlank(message = "Name is required")
         @Size(min = 2, max = 100, message = "Name must be between 2 and 100 characters")
@@ -30,19 +31,19 @@ public class UserDTO {
         public CreateRequest() {}
 
         // Full constructor
-        public CreateRequest(String username, String name, String password, String role) {
-            this.username = sanitize(username);
+        public CreateRequest(String email, String name, String password, String role) {
+            this.email = sanitize(email);
             this.name = sanitize(name);
             this.password = sanitize(password);
             this.role = sanitize(role);
         }
 
-        public String getUsername() {
-            return username;
+        public String getEmail() {
+            return email;
         }
 
-        public void setUsername(String username) {
-            this.username = sanitize(username);
+        public void setEmail(String email) {
+            this.email = sanitize(email);
         }
 
         public String getName() {
@@ -74,7 +75,7 @@ public class UserDTO {
     //  DTO for both update requests and responses
     public static class UserData {
         private UUID userId;
-        private String username;
+        private String email;
 
         @NotBlank(message = "Name is required")
         @Size(min = 2, max = 100, message = "Name must be between 2 and 100 characters")
@@ -94,9 +95,9 @@ public class UserDTO {
         }
 
         // Full data constructor
-        public UserData(UUID userId, String username, String name, String role) {
+        public UserData(UUID userId, String email, String name, String role) {
             this.userId = userId;
-            this.username = sanitize(username);
+            this.email = sanitize(email);
             this.name = sanitize(name);
             this.role = sanitize(role);
         }
@@ -110,12 +111,12 @@ public class UserDTO {
             this.userId = userId;
         }
 
-        public String getUsername() {
-            return username;
+        public String getEmail() {
+            return email;
         }
 
-        public void setUsername(String username) {
-            this.username = sanitize(username);
+        public void setEmail(String email) {
+            this.email = sanitize(email);
         }
 
         public String getName() {

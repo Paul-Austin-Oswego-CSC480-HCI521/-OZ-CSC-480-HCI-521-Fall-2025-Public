@@ -25,12 +25,12 @@ public class UserService {
             throw new IllegalArgumentException("User cannot be null");
         }
         
-        String sql = "INSERT INTO USERS (username, name, password_hash, role) VALUES (?, ?, ?, ?) RETURNING user_id";
+        String sql = "INSERT INTO USERS (email, name, password_hash, role) VALUES (?, ?, ?, ?) RETURNING user_id";
         
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
-            stmt.setString(1, user.getUsername());
+            stmt.setString(1, user.getEmail());
             stmt.setString(2, user.getName());
             stmt.setString(3, user.getPasswordHash());
             stmt.setString(4, user.getRole().name());
@@ -51,7 +51,7 @@ public class UserService {
             return Optional.empty();
         }
         
-        String sql = "SELECT user_id, username, name, password_hash, role FROM USERS WHERE user_id = ?";
+        String sql = "SELECT user_id, email, name, password_hash, role FROM USERS WHERE user_id = ?";
         
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -67,31 +67,10 @@ public class UserService {
         }
     }
 
-    // Get user by username
-    public Optional<User> getUserByUsername(String username) throws SQLException {
-        if (username == null || username.isEmpty()) {
-            return Optional.empty();
-        }
-
-        String sql = "SELECT user_id, username, name, password_hash, role FROM USERS WHERE username = ?";
-
-        try (Connection conn = dataSource.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setString(1, username);
-            ResultSet rs = stmt.executeQuery();
-            
-            if (rs.next()) {
-                return Optional.of(mapResultSetToUser(rs));
-            }
-            
-            return Optional.empty();
-        }
-    }
 
     // Get all users
     public List<User> getAllUsers() throws SQLException {
-        String sql = "SELECT user_id, username, name, password_hash, role FROM USERS ORDER BY name";
+        String sql = "SELECT user_id, email, name, password_hash, role FROM USERS ORDER BY name";
         
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -109,7 +88,7 @@ public class UserService {
 
     // Get users by role
     public List<User> getUsersByRole(User.Role role) throws SQLException {
-        String sql = "SELECT user_id, username, name, password_hash, role FROM USERS WHERE role = ? ORDER BY name";
+        String sql = "SELECT user_id, email, name, password_hash, role FROM USERS WHERE role = ? ORDER BY name";
         
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -169,20 +148,20 @@ public class UserService {
         }
     }
 
-    // Check if username exists
-    public boolean existsByUsername(String username) throws SQLException {
-        if (username == null || username.isEmpty()) {
+    // Check if email exists
+    public boolean existsByEmail(String email) throws SQLException {
+        if (email == null || email.isEmpty()) {
             return false;
         }
 
-        String sql = "SELECT 1 FROM USERS WHERE username = ?";
+        String sql = "SELECT 1 FROM USERS WHERE email = ?";
 
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, username);
+            stmt.setString(1, email);
             ResultSet rs = stmt.executeQuery();
-            
+
             return rs.next();
         }
     }
@@ -196,7 +175,7 @@ public class UserService {
         User.Role role = parseRole(request.getRole());
 
         return new User(
-            request.getUsername(),
+            request.getEmail(),
             request.getName(),
             hashedPassword,
             role
@@ -235,7 +214,7 @@ public class UserService {
     private User mapResultSetToUser(ResultSet rs) throws SQLException {
         return new User(
             (UUID) rs.getObject("user_id"),
-            rs.getString("username"),
+            rs.getString("email"),
             rs.getString("name"),
             rs.getString("password_hash"),
             User.Role.valueOf(rs.getString("role"))
