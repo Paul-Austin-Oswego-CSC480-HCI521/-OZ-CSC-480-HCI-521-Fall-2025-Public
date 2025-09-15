@@ -1,92 +1,177 @@
 .main-content {
-  width: 95%;
-  height: 600px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  padding: 2.5%;
+    width: 95%;
+    height: 600px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 2.5%;
 }
 
 .received-kudos, .sent-kudos {
-  overflow-y: auto;
-  flex: 1;
-  gap: 20px;
-  border: 2px solid #555;
-  padding: 20px 40px;
-  border-radius: 8px;
-  background-color: #aaa;
+    overflow-y: auto;
+    flex: 1;
+    gap: 20px;
+    border: 2px solid #555;
+    padding: 20px 40px;
+    border-radius: 8px;
+    background-color: #aaa;
 }
 
 .wireframe-box {
-  border: 2px dashed #aaa;
-  background-color: #f9f9f9;
-  padding: 20px;
-  margin: 10px 0;
-  text-align: center;
-  font-family: sans-serif;
-  color: #555;
+    border: 2px dashed #aaa;
+    background-color: #f9f9f9;
+    padding: 20px;
+    margin: 10px 0;
+    text-align: center;
+    font-family: sans-serif;
+    color: #555;
 }
 
 .header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 40px;
-  background-color: white;
-  border: #0077aa;
-  color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    background-color: white;
+    border: #0077aa;
+    color: white;
 }
 
 .kudos-list-header {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
 }
 
 .kudos-list-header span {
-  flex: 1;
-  padding: 0 10px;
-  text-align: left;
+    flex: 1;
+    padding: 0 10px;
+    text-align: left;
 }
 
 .kudos-list-header span:nth-child(1) {
-  width: 30%;
+    width: 30%;
 }
 
 .kudos-list-header span:nth-child(2) {
-  width: 50%;
+    width: 50%;
 }
 
 .logo {
-  height: 100px;
-  width: auto;
+    height: 100px;
+    width: auto;
 }
 
 .nav-buttons button {
-  margin-left: 15px;
-  padding: 8px 16px;
-  font-size: 14px;
-  cursor: pointer;
-  background-color: #0077aa;
-  color: white;
-  border: none;
-  border-radius: 4px;
+    margin-left: 15px;
+    padding: 8px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    background-color: #0077aa;
+    color: white;
+    border: none;
+    border-radius: 4px;
 }
 
 .nav-buttons button:hover {
-  background-color: #005577;
+    background-color: #005577;
 }
 
 .footer {
-  background-color: #004466;
-  color: white;
-  text-align: center;
-  padding: 15px;
-  margin-top: auto;
+    background-color: #004466;
+    color: white;
+    text-align: center;
+    padding: 15px;
+    margin-top: auto;
 }
 
 @media (max-width: 768px) {
-  .main-content {
+    .main-content {
+        flex-direction: column;
+    }
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    background: #fff;
+    border: 1px solid #ddd;
+}
+
+th, td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+}
+
+th {
+    background: #f2f2f2;
+    font-weight: bold;
+}
+
+tr:hover {
+    background-color: #fafafa;
+}
+
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+}
+
+.modal-content {
+    position: relative;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 80%;
+    max-height: 80%;
+    display: flex;
     flex-direction: column;
-  }
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    animation: fadeIn 0.2s ease-in-out;
+}
+
+.modal-content img {
+    max-width: 100%;
+    max-height: 70vh;
+    border-radius: 6px;
+}
+
+
+.close-btn {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    background: transparent;
+    border: none;
+    font-size: 22px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #333;
+}
+
+.close-btn:hover {
+    color: #0077aa;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
