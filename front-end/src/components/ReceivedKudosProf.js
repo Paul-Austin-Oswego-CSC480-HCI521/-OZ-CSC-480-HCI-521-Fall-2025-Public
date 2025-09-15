@@ -1,35 +1,36 @@
 import React, { useState } from "react";
 import ImageModal from "./ImageModal";
 
-const received = [
+const submitted = [
     {
-        sender: "Bill Gates",
-        title: "Totally Awesome!",
+        sender: "John Doe",
+        recipient: "Jane Smith",
+        title: "Excellent Work!",
         message:
-            "You are the smartest person I know. Would you mind tutoring me in Co...",
+            "I thought you did a great job with the log-in page. It looks sleek and me...",
         imageUrl: "/img/logo192.png",
     },
 ];
 
-function ReceivedKudos() {
+function ReceivedKudosProf() {
     const [selectedImage, setSelectedImage] = useState(null);
-
     const open = (url) => setSelectedImage(url);
     const close = () => setSelectedImage(null);
 
     return (
         <section>
-            <h2>Received Kudos</h2>
+            <h2>Submitted Kudos</h2>
             <table className="k-table">
                 <thead>
                 <tr>
                     <th>Sender</th>
+                    <th>Recipient</th>
                     <th>Title</th>
                     <th>Message</th>
                 </tr>
                 </thead>
                 <tbody>
-                {received.map((k, i) => (
+                {submitted.map((k, i) => (
                     <tr
                         key={i}
                         className="row-click"
@@ -41,8 +42,9 @@ function ReceivedKudos() {
                         }}
                     >
                         <td><strong>{k.sender}</strong></td>
-                        <td>{k.title}</td>
-                        <td className="truncate">{k.message}</td>
+                        <td><strong>{k.recipient}</strong></td>
+                        <td><strong>{k.title}</strong></td>
+                        <td><strong>{k.message}</strong></td>
                     </tr>
                 ))}
                 </tbody>
@@ -53,4 +55,4 @@ function ReceivedKudos() {
     );
 }
 
-export default ReceivedKudos;
+export default ReceivedKudosProf;
