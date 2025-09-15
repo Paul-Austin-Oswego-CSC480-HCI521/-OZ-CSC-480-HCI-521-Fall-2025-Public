@@ -1,21 +1,23 @@
 import React from "react";
-import './styles/Wireframe.css';
-import Header from "./components/Header";
-import ReceivedKudos from "./components/ReceivedKudos";
-import SentKudos from "./components/SentKudos";
-import Footer from "./components/Footer";
+import {BrowserRouter, Routes, Route, Link} from "react-router-dom";
+import StudentView from "./pages/StudentView";
+import ProfessorView from "./pages/ProfessorView";
 
-function App() {
-  return (
-    <div className="app-container">
-      <Header />
-      <div className="main-content">
-        <ReceivedKudos />
-        <SentKudos />
-      </div>
-      <Footer />
-    </div>
-  );
+
+function App(){
+    return (
+        <BrowserRouter>
+            <nav style = {{padding:"1rem", background:"f4f4f4"}}>
+                <Link to = "/studentView" style = {{marginRight: "1rem"}}>Student View</Link>
+                <Link to = "/professorView">Professor View</Link>
+            </nav>
+
+            <Routes>
+                <Route path = "/studentView" element={<StudentView/>} />
+                <Route path = "/professorView" element={<ProfessorView />} />
+            </Routes>
+        </BrowserRouter>
+    );
 }
 
 export default App;

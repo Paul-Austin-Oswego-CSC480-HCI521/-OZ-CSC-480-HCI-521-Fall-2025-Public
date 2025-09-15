@@ -1,10 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
+import ImageModal from "./ImageModal";
+
+const sent = [
+    {
+        recipient: "Abraham Lincoln",
+        title: "Fantastic Effort!",
+        status: "Received",
+        imageUrl: "/img/logo192.png",
+    },
+];
 
 function SentKudos() {
+    const [selectedImage, setSelectedImage] = useState(null);
+
+    const open = (url) => setSelectedImage(url);
+    const close = () => setSelectedImage(null);
+
     return (
         <section>
             <h2>Sent Kudos</h2>
-            <table>
+            <table className="k-table">
                 <thead>
                 <tr>
                     <th>Recipient</th>
@@ -13,13 +28,26 @@ function SentKudos() {
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <td>Abraham Lincoln</td>
-                    <td>Fantastic Effort!</td>
-                    <td>Received</td>
-                </tr>
+                {sent.map((k, i) => (
+                    <tr
+                        key={i}
+                        className="row-click"
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => open(k.imageUrl)}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") open(k.imageUrl);
+                        }}
+                    >
+                        <td>{k.recipient}</td>
+                        <td>{k.title}</td>
+                        <td>{k.status}</td>
+                    </tr>
+                ))}
                 </tbody>
             </table>
+
+            <ImageModal src={selectedImage} onClose={close} />
         </section>
     );
 }
