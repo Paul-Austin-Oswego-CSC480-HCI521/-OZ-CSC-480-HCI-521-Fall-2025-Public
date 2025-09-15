@@ -35,7 +35,7 @@ public class KudocardDTO {
 
         //full constructor
         public CreateKudoRequest(@NotNull UUID senderId, @NotNull UUID recipientId, @NotNull UUID classId,
-                @NotBlank(message = "title field cannot be empty") @Size(max = 100) String title,
+                @NotBlank(message = "title field cannot be empty") @Size(max = 200) String title,
                 @NotBlank(message = "Content field cannot be empty") @Size(max = 1000) String content,
                 @NotNull Boolean isAnonymous) {
             this.senderId = senderId;
