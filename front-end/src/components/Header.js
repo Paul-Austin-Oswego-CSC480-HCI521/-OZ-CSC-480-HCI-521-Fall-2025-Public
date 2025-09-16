@@ -1,12 +1,12 @@
 import React from 'react';
 
-function Header() {
+function Header({ onCreateNew }) {
   return (
     <header className="header">
       <img src="/logo.gif" alt="Animated Logo" className="logo" />
       <nav className="nav-buttons">
         <button>HOME</button>
-        <button>GENERATE NEW</button>
+        <button onClick = {onCreateNew}>CREATE NEW</button>
         <button>LOG OUT</button>
       </nav>
     </header>

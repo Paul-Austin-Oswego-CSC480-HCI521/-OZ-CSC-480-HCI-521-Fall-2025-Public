@@ -5,7 +5,7 @@
 }
 
 .header {
-  background-color: #762a2a;
+  background-color: #05888A;
   display: flex;
   justify-content: space-between;
   padding: 20px;
@@ -62,7 +62,7 @@
 }
 
 .footer {
-  background-color: #ccc;
+  background-color: #05888A;
   text-align: center;
   padding: 10px;
   margin-top: 40px;

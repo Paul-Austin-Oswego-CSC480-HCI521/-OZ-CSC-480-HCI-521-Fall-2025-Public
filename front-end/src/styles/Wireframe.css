@@ -5,16 +5,22 @@
     flex-direction: column;
     gap: 20px;
     padding: 2.5%;
+    background-color: #E6F3F3;
+    font-family: 'Poppins', sans-serif;
 }
 
 .received-kudos, .sent-kudos {
     overflow-y: auto;
     flex: 1;
     gap: 20px;
-    border: 2px solid #555;
+    border: 2px solid #E6F3F3;
     padding: 20px 40px;
     border-radius: 8px;
-    background-color: #aaa;
+    background-color: #E6F3F3;
+}
+
+.received-kudos h2, .sent-kudos h2{
+    font-family:'Merriweather', serif;
 }
 
 .wireframe-box {
@@ -27,14 +33,15 @@
     color: #555;
 }
 
-.header {
+.app-container .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 20px 40px;
-    background-color: white;
+    background-color: #05888A;
     border: #0077aa;
     color: white;
+    font-family: 'Merriweather', serif;
 }
 
 .kudos-list-header {
@@ -65,24 +72,26 @@
 .nav-buttons button {
     margin-left: 15px;
     padding: 8px 16px;
+    font-family: 'Merriweather', serif;
     font-size: 14px;
     cursor: pointer;
-    background-color: #0077aa;
-    color: white;
+    background-color: #EBEBEB;
+    color: #061826;
     border: none;
     border-radius: 4px;
 }
 
 .nav-buttons button:hover {
-    background-color: #005577;
+    background-color: white;
 }
 
 .footer {
-    background-color: #004466;
-    color: white;
+    background-color: #B1D2D3;
+    color: #EBEBEB;
     text-align: center;
     padding: 15px;
     margin-top: auto;
+    font-family: 'Merriweather', serif;
 }
 
 @media (max-width: 768px) {
@@ -95,24 +104,87 @@ table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 20px;
-    background: #fff;
-    border: 1px solid #ddd;
+    background: #EBEBEB;
+    border: 1px solid #EBEBEB;
 }
 
 th, td {
     padding: 12px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 8px solid #EBEBEB;
     text-align: left;
+    font-family: 'Poppins', sans-serif;
 }
 
 th {
-    background: #f2f2f2;
+    background: #EBEBEB;
     font-weight: bold;
 }
 
-tr:hover {
-    background-color: #fafafa;
+tr {
+    background:#05888A;
+    border-bottom: 8px solid #EBEBEB;
+    font-weight:bold;
+
 }
+
+tr:hover {
+    background-color: #EBEBEB;
+}
+
+tr.selected-row {
+    background-color: #E6F3F3;
+    color: white;
+}
+
+/* Submitted Table */
+td.submitted-kudos-table-data {
+    position: relative;      /* for pseudo-element */
+    padding: 8px 16px;
+    vertical-align: middle;
+    color: black;            /* text color for contrast */
+    font-weight: bold;
+}
+
+/* Partial left border for all except first column */
+td.submitted-kudos-table-data:not(:first-child)::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 25%;        /* starts 25% down */
+    height: 50%;     /* partial height */
+    width: 1px;
+    background-color: #EBEBEB;
+}
+
+/* Remove border on first column */
+td.submitted-kudos-table-data:first-child::before {
+    display: none;
+}
+
+/* Received Table */
+td.received-kudos-table-data {
+    position: relative;
+    padding: 8px 16px;
+    vertical-align: middle;
+    font-weight: bold;
+}
+
+/* Partial left border for all except first column */
+td.received-kudos-table-data:not(:first-child)::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 25%;
+    height: 50%;
+    width: 1px;
+    background-color: #555;
+}
+
+/* Remove border on first column */
+td.received-kudos-table-data:first-child::before {
+    display: none;
+}
+
 
 
 .modal-overlay {
