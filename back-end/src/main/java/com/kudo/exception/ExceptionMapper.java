@@ -1,5 +1,6 @@
 package com.kudo.exception;
 
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.Provider;
 import java.sql.SQLException;
@@ -10,15 +11,21 @@ public class ExceptionMapper implements jakarta.ws.rs.ext.ExceptionMapper<Except
     public Response toResponse(Exception e) {
         if (e instanceof SQLException) {
             return e.getMessage().contains("User not found")
-                ? Response.status(404).entity("User not found").build()
-                : Response.status(500).entity("Database error").build();
+                //old code
+                //? Response.status(404).entity("User not found").build()
+                //: Response.status(500).entity("Database error").build();
+                ? new WebApplicationException(e.getMessage(), 404).getResponse()
+                : new ServerErrorException(e.getMessage(), 500).getResponse();
         }
         if (e instanceof IllegalArgumentException) {
-            return Response.status(400).entity(e.getMessage()).build();
+            return new WebApplicationException(e.getMessage(), 400).getResponse();
         }
         if (e instanceof IllegalStateException) {
-            return Response.status(409).entity(e.getMessage()).build();
+            return new WebApplicationException(e.getMessage(), 409).getResponse();
         }
-        return Response.status(500).entity("Internal error").build();
+        if(e instanceof NotFoundException) {
+            return ((NotFoundException) e).getResponse();
+        }
+        return new ServerErrorException(e.getMessage(), 500).getResponse();
     }
 }

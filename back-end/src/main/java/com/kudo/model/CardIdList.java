@@ -16,4 +16,13 @@ public class CardIdList {
     public List<String> getCardIds() {
         return cardIds;
     }
+
+    @Override
+    public String toString() {
+        String res =  "CardIdList{" +
+                "cardIds=";
+        for(String str : cardIds)
+            res+=str;
+        return res + '}';
+    }
 }

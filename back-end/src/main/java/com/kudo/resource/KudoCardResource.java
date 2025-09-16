@@ -29,9 +29,6 @@ public class KudoCardResource {
     @Resource(lookup = "jdbc/kudosdb")
     private DataSource dataSource;
 
-    @Context
-    private HttpServletResponse response;
-
     //Endpoints go here...
 
     //Test Resource
@@ -54,47 +51,72 @@ public class KudoCardResource {
         try (Connection conn = dataSource.getConnection(); //establish database connection
              PreparedStatement stmt = conn.prepareStatement("SELECT card_id FROM KUDOS_CARDS WHERE recipient_id = ?;");){//Static elements of query
             stmt.setObject(1,user_id); //form the query
-
             ResultSet rs = stmt.executeQuery(); //execute query to obtain list of IDs
-
             List<String> cardIds = new ArrayList<>(); //List which will be filled with card_ids from the result set
             while (rs.next()) {
                 cardIds.add(rs.getString("card_id")); //add ids to list
             }
-
             //Wrap list as CardIdList
-            //CardIdList should automatically be converted to JSON due to the MIME type?
-            return new CardIdList(cardIds);
+            //CardIdList is automatically converted to JSON due to the MIME type
+            CardIdList cardIdList = new CardIdList(cardIds);
+            return cardIdList;
 
         } catch (SQLException e) {
-            throw new NotFoundException();
+            throw new InternalServerErrorException("Database error");
         }
     }
 
-    //Returns the kudos card of the given ID if the given user is the recipient of that Kudos
+    //Returns the kudos card of the given ID which the given user has access to
     //UUID should be in the format X-X-X-X-X where each X is a string of alphanumerics
     @GET
     @Path("{card_id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Kudocard getCard(@PathParam("card_id") UUID card_id, @QueryParam("user_id") UUID user_id) {
-        try (Connection conn = dataSource.getConnection(); //establish database connection
-             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM KUDOS_CARDS WHERE card_id = ? AND recipient_id = ?;");){//Static elements of query
-            stmt.setObject(1,card_id); //form the query
-            stmt.setObject(2,user_id); //form the query
-
-            ResultSet rs = stmt.executeQuery(); //execute query to obtain the kudo if it exists
-
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmtCard = conn.prepareStatement("SELECT * FROM KUDOS_CARDS WHERE card_id = ?;");){ //establish database connection
+            stmtCard.setObject(1,card_id); //form the query
+            ResultSet rs = stmtCard.executeQuery(); //execute query to obtain the kudo if it exists
             if (rs.next()) {
-                //TODO: If the user is not a professor and the card is set to be anonymous,
-                //      The sender_id should be expunged
+                Kudocard kudocard = ResultSetToKudocard(rs);
 
-                return ResultSetToKudocard(rs);
+                //Check if the user is the recipient
+                //(assume that the user is not their professor if they are the recipient)
+                //Putting the most likely case first
+                if(user_id.equals(kudocard.getRecipientId())) {
+                    if(kudocard.isAnonymous()) { //hide the sender if the card is anonymous
+                        kudocard.setSenderId(null);
+                    }
+                    return kudocard;
+                } else {
+                    //Check if the user is a professor
+                    boolean isProfessor;
+                    try(PreparedStatement stmtProfCheck = conn.prepareStatement("SELECT * FROM USERS WHERE user_id = ? AND role = 'INSTRUCTOR';");)
+                    {
+                        stmtProfCheck.setObject(1,user_id); //form the query
+                        rs = stmtProfCheck.executeQuery();
+                        isProfessor = rs.next();
+
+                        //The professor is allowed to view a kudos card
+                        //TODO: possibly check if the recipient of the kudos card is in the same class as the professor
+                        //      And only allow the professor of the recipient to view the card
+                        if (isProfessor) {
+                            //No need to anonymize the kudos card as the professor should always have access
+                            return kudocard;
+                        }
+                        //If the user is not the recipient and is not a professor, the user does not have access to this card
+                        //The user should not know that this card exists; return 404
+                        else {
+                            throw new NotFoundException();
+                        }
+                    }
+                }
+
             } else { //Card not found; 404
                 throw new NotFoundException();
             }
 
         } catch (SQLException e) {
-            throw new NotFoundException();
+            throw new InternalServerErrorException("Database error");
         }
     }
 
@@ -120,7 +142,6 @@ public class KudoCardResource {
         if (req.getSenderId().equals(req.getRecipientId())) {
             throw new BadRequestException("sender and recip. UUID must be different");
         }
-
         final String sql = """
         INSERT INTO KUDOS_CARDS
             (sender_id, recipient_id, class_id, title, content, is_anonymous)
@@ -130,7 +151,6 @@ public class KudoCardResource {
 
         try (Connection conn = dataSource.getConnection();
         PreparedStatement stmt = conn.prepareStatement(sql)) {
-
             stmt.setObject(1, req.getSenderId());
             stmt.setObject(2, req.getRecipientId());
             stmt.setObject(3, req.getClassId());
@@ -142,12 +162,30 @@ public class KudoCardResource {
                 if (rs.next()) {
                     Kudocard created = ResultSetToKudocard(rs);
                     return Response.status(Response.Status.CREATED).entity(created).build();
+
                 }
             }
             throw new InternalServerErrorException("Failed to create Kudocard");
         } catch  (SQLException e) {
             throw new InternalServerErrorException("Database error");
         }
+    }
+
+    @DELETE
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("{card_id}")
+    public Response deleteKudo(@PathParam("card_id") UUID card_id, @QueryParam("user_id") UUID user_id) {
+        //Get
+        try (Connection conn = dataSource.getConnection();) {
+            PreparedStatement stmt = conn.prepareStatement("DELETE FROM KUDOS_CARDS WHERE card_id = ? AND recipient_id = ?;");
+            stmt.setObject(1, card_id);
+            stmt.setObject(2, user_id);
+
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new InternalServerErrorException("Database error");
+        }
+        return Response.status(Response.Status.NO_CONTENT).build();
     }
 
     //Takes a ResultSet from a query and returns a Kudocard object created from the current result in the set.
@@ -166,8 +204,5 @@ public class KudoCardResource {
                         UUID.fromString(rs.getString("approved_by")) : null
         );
     }
-
-
-
 
 }
