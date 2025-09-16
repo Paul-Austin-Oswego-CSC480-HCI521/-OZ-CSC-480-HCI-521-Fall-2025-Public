@@ -1,14 +1,29 @@
-import React from "react";
+import React, { useState } from "react";
 import '../styles/Wireframe.css';
 import Header from "../components/Header";
-import ReceivedKudosProf from "../components/ReceivedKudosProf";
-import SentKudosProf from "../components/SentKudosProf";
+import NewKudosForm from "../components/NewKudosForm";
+import ReceivedKudosProf from "../components/SubmittedKudosProf";
+import SentKudosProf from "../components/ReviewedKudosProf";
 import Footer from "../components/Footer";
 
 function ProfessorView() {
+
+    const [showForm, setShowForm] = useState(false);
+    const handleNewKudos = (newKudos) => {
+        console.log("New kudos submitted:", newKudos);
+        setShowForm(false);
+    }
+
     return (
         <div className="app-container">
-            <Header />
+            <Header onCreateNew = {() => setShowForm(true)} />
+            
+            {showForm && (
+                <NewKudosForm 
+                onClose = {() =>setShowForm(false)} 
+                onSubmit = {handleNewKudos} 
+            />
+        )}
             <div className="main-content">
                 <ReceivedKudosProf />
                 <SentKudosProf />

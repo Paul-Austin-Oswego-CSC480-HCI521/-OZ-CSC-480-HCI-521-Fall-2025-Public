@@ -1,56 +1,58 @@
-import React, { useState } from "react";
-import ImageModal from "./ImageModal";
+// Possibly unused code
 
-const received = [
-    {
-        sender: "Bill Gates",
-        title: "Totally Awesome!",
-        message:
-            "You are the smartest person I know. Would you mind tutoring me in Co...",
-        imageUrl: "/img/logo192.png",
-    },
-];
+// import React, { useState, useEffect } from "react";
+// import ImageModal from "./ImageModal";
 
-function ReceivedKudos() {
-    const [selectedImage, setSelectedImage] = useState(null);
+// function ReceivedKudos() {
+//     const [received, setReceived] = useState([]);
+//     const [selectedImage, setSelectedImage] = useState(null);
 
-    const open = (url) => setSelectedImage(url);
-    const close = () => setSelectedImage(null);
+//     useEffect(() => {
+//         fetch("http://localhost:3001/cards")
+//         .then((res) => res.json())
+//         .then((data) => setReceived(data))
+//         .catch((err) => console.error("Error fetching kudos:", err));
+//     }, []);
 
-    return (
-        <section>
-            <h2>Received Kudos</h2>
-            <table className="k-table">
-                <thead>
-                <tr>
-                    <th>Sender</th>
-                    <th>Title</th>
-                    <th>Message</th>
-                </tr>
-                </thead>
-                <tbody>
-                {received.map((k, i) => (
-                    <tr
-                        key={i}
-                        className="row-click"
-                        role="button"
-                        tabIndex={0}
-                        onClick={() => open(k.imageUrl)}
-                        onKeyDown={(e) => {
-                            if (e.key === "Enter" || e.key === " ") open(k.imageUrl);
-                        }}
-                    >
-                        <td><strong>{k.sender}</strong></td>
-                        <td>{k.title}</td>
-                        <td className="truncate">{k.message}</td>
-                    </tr>
-                ))}
-                </tbody>
-            </table>
+//     const open = (url) => setSelectedImage(url);
+//     const close = () => setSelectedImage(null);
 
-            <ImageModal src={selectedImage} onClose={close} />
-        </section>
-    );
-}
+//     return (
+//         <section>
+//             <h2>Received Kudos</h2>
+//             <table className="k-table">
+//                 <thead>
+//                     <tr>
+//                         <th>Sender</th>
+//                         <th>Title</th>
+//                         <th>Message</th>
+//                         <th>Date</th>
+//                     </tr>
+//                 </thead>
+//                 <tbody>
+//                 {received.map((kudo, i) => (
+//                     <tr
+//                         key={kudo.id || i}
+//                         className="row-click"
+//                         role="button"
+//                         tabIndex={0}
+//                         onClick={() => open(kudo.imageUrl)}
+//                         onKeyDown={(e) => {
+//                             if (e.key === "Enter" || e.key === " ") open(kudo.imageUrl);
+//                         }}
+//                     >
+//                         <td><strong>{kudo.sender}</strong></td>
+//                         <td>{kudo.subject}</td>
+//                         <td className="truncate">{kudo.content || kudo.message}</td>
+//                         <td>{kudo.date || "-"}</td>
+//                     </tr>
+//                 ))}
+//                 </tbody>
+//             </table>
 
-export default ReceivedKudos;
+//             <ImageModal src={selectedImage} onClose={close} />
+//         </section>
+//     );
+// }
+
+// export default ReceivedKudos;
