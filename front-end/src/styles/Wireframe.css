@@ -259,7 +259,7 @@ td.received-kudos-table-data:first-child::before {
     position: relative;
     background: white;
     font-family: 'Poppins', sans-serif;
-    padding: 20px;
+    padding: 55px 20px;
     max-width: 500px;
     max-height: 500px;
     width:90%;
@@ -290,7 +290,7 @@ td.received-kudos-table-data:first-child::before {
 }
 
 .to-from-title {
-    padding:6px 12px;
+    padding:6px 6px;
     border: 1px solid white;
     border-radius:6px;
     background-color:white;
@@ -354,6 +354,24 @@ td.received-kudos-table-data:first-child::before {
 
 .submit-btn:hover{
     background-color: #EBEBEB;
+}
+
+.approve-reject{
+    position:relative;
+    bottom: 6px;
+    background: #EBEBEB;
+    color: black;
+    font-family: 'Poppins', sans-serif;
+    border:none;
+    margin: 10px 5px;
+    border-radius: 6px;
+    padding: 10px 95px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.approve-reject:hover{
+    background-color:white;
 }
 
 @keyframes fadeIn {
