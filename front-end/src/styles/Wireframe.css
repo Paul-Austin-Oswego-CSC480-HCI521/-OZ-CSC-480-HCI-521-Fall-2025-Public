@@ -190,6 +190,54 @@ td.received-kudos-table-data:first-child::before {
     display: none;
 }
 
+
+.home-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  align-items: center;
+  padding: 4rem 2rem;
+  font-family: 'Poppins', sans-serif;
+  background-color: #E6F3F3;
+  height: calc(100vh - 120px);
+  text-align: center;
+}
+
+.home-content h1 {
+  font-family: 'Merriweather', serif;
+  margin-bottom: 3rem;
+  font-size: 3rem;
+  color: #061826;
+}
+
+.home-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  width: 100%;
+  max-width: 300px;
+  justify-content: center;
+}
+
+.home-button {
+  padding: 1.5rem 2rem;
+  font-size: 1.25rem;
+  font-family: 'Merriweather', serif;
+  background-color: #05888A;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 300px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.home-button:hover {
+  background-color: #006e70;
+  transform: scale(1.03);
+}
+
 .modal-overlay {
     position: fixed;
     top: 0;
