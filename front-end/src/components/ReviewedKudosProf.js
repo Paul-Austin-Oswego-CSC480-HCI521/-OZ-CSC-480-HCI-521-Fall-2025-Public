@@ -47,6 +47,7 @@ function ReviewedKudosProf() {
                 <tbody>
                 {reviewed.map((k, i) => (
                     <tr
+                        className={"received-kudos-row"}
                         key={i}
                         role="button"
                         tabIndex={0}

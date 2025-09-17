@@ -112,6 +112,7 @@ table {
     margin-bottom: 20px;
     background: #EBEBEB;
     border: 1px solid #EBEBEB;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
 }
 
 th, td {
@@ -134,7 +135,7 @@ tr {
 }
 
 tr:hover {
-    background-color: #EBEBEB;
+    background: white;
 }
 
 tr.selected-row {
@@ -168,8 +169,14 @@ td.submitted-kudos-table-data:first-child::before {
 }
 
 /* Received Table */
-td.received-kudos-table-data {
+tr.received-kudos-row{
     background-color:#B1D2D3;
+}
+
+Tr.received-kudos-row:hover{
+    background-color: white;
+}
+td.received-kudos-table-data {
     position: relative;
     padding: 8px 16px;
     vertical-align: middle;
@@ -185,17 +192,15 @@ td.received-kudos-table-data:not(:first-child)::before {
     background-color: #555;
 }
 
-
 td.received-kudos-table-data:first-child::before {
     display: none;
 }
 
-
 .home-content {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   padding: 4rem 2rem;
   font-family: 'Poppins', sans-serif;
   background-color: #E6F3F3;
@@ -247,7 +252,7 @@ td.received-kudos-table-data:first-child::before {
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 999;
+    z-index: 1000;
 }
 
 .modal-content {
@@ -255,9 +260,9 @@ td.received-kudos-table-data:first-child::before {
     background: white;
     font-family: 'Poppins', sans-serif;
     padding: 20px;
-    border-radius: 8px;
-    max-width: 80%;
-    max-height: 80%;
+    max-width: 500px;
+    max-height: 500px;
+    width:90%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -267,10 +272,54 @@ td.received-kudos-table-data:first-child::before {
 
 .modal-content img {
     max-width: 100%;
-    max-height: 70vh;
+    max-height: 100%;
     border-radius: 6px;
 }
 
+.form-row{
+    display:flex;
+    gap:1rem;
+    margin-bottom:12px;
+}
+
+.form-group {
+    display:flex;
+    flex-direction:column;
+    flex:1;
+    margin-bottom:1rem;
+}
+
+.to-from-title {
+    padding:6px 12px;
+    border: 1px solid white;
+    border-radius:6px;
+    background-color:white;
+    font-family:'Poppins', sans-serif;
+    font-size:18px;
+    font-weight:bold;
+    outline:none;
+    color: #05888A;
+}
+
+.to-from-title:focus{
+    border-color:#B1D2D3;
+    box-shadow: 0 0 3px rgba(177,210,211,0.5);
+}
+
+.textBox{
+    padding: 6px 12px;
+    border:1px solid white;
+    border-radius:6px;
+    background-color: #E6F3F3;
+    font-family:'Poppins', sans-serif;
+    color:black;
+    outline:none;
+    font-size:14px;
+}
+
+.textBox:focus{
+    border-color:#B1D2D3;
+}
 
 .close-btn {
     position: absolute;
@@ -286,6 +335,25 @@ td.received-kudos-table-data:first-child::before {
 
 .close-btn:hover {
     color: #0077aa;
+}
+
+.submit-btn {
+    position:relative;
+    bottom: 6px;
+    left:50%;
+    transform: translateX(-50%);
+    background: #B1D2D3;
+    color: black;
+    font-family: 'Poppins', sans-serif;
+    border:none;
+    border-radius: 6px;
+    padding: 10px 50px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.submit-btn:hover{
+    background-color: #EBEBEB;
 }
 
 @keyframes fadeIn {

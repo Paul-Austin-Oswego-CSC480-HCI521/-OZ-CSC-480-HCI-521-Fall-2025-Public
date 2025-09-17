@@ -28,6 +28,7 @@ function SentKudosStudent() {
                 <tbody>
                 {sent.map((k, i) => (
                     <tr
+                        className={"received-kudos-row"}
                         key={i}
                         role="button"
                         tabIndex={0}
