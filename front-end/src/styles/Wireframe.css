@@ -1,5 +1,3 @@
-/*this is a test*/
-
 .main-content {
     width: 95%;
     height: 600px;
@@ -196,7 +194,6 @@ td.received-kudos-table-data:first-child::before {
 .home-content {
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
   align-items: center;
   padding: 4rem 2rem;
