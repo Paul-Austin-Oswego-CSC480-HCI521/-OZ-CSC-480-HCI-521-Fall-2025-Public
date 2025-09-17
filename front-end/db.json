@@ -27,7 +27,7 @@
       "read": true
     },
     {
-      "id": "1757982858544",
+      "id": 1757982858544,
       "sender": "me",
       "recipient": "you",
       "subject": "Good Job!",
@@ -40,7 +40,7 @@
       "read": false
     },
     {
-      "id": "1757983010430",
+      "id": 1757983010430,
       "sender": "me",
       "recipient": "you",
       "subject": "Good Job!",

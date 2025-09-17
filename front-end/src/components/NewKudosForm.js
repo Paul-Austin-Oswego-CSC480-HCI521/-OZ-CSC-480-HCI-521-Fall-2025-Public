@@ -38,7 +38,6 @@ function NewKudosForm({ onClose, onSubmit }) {
     return (
         <div className = "modal-overlay">
             <div className = "modal-content" style = {{maxWidth: '500px' }}>
-                <h2>Create New Kudos</h2>
                 <form onSubmit = {handleSubmit} style = {{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                     <input
                     type = "text"
@@ -76,7 +75,7 @@ function NewKudosForm({ onClose, onSubmit }) {
                         <button type = "button" onClick = {onClose} style = {{ backgroundColor: '#ccc'}}>
                             Cancel
                         </button>
-                        <button type = "submit" style = {{backgroundColor: '#05888A', color: 'white'}}>
+                        <button type = "submit" style = {{backgroundColor: '#B1D2D3',fontFamily:'Poppins', color: 'black'}}>
                             Submit
                         </button>
                     </div>

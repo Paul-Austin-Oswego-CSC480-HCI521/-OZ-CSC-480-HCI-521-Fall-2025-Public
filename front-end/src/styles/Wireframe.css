@@ -11,6 +11,7 @@
     font-family: 'Poppins', sans-serif;
 }
 
+/*received/sent kudos forms*/
 .received-kudos, .sent-kudos {
     overflow-y: auto;
     flex: 1;
@@ -46,6 +47,7 @@
     font-family: 'Merriweather', serif;
 }
 
+/*header formatted*/
 .kudos-list-header {
     display: flex;
     justify-content: space-between;
@@ -66,11 +68,13 @@
     width: 50%;
 }
 
+/*kudos logo*/
 .logo {
     height: 100px;
     width: auto;
 }
 
+/*header navigation buttons*/
 .nav-buttons button {
     margin-left: 15px;
     padding: 8px 16px;
@@ -87,13 +91,14 @@
     background-color: white;
 }
 
+/*footer layout*/
 .footer {
-    background-color: #B1D2D3;
-    color: #EBEBEB;
+    background-color: #05888A;
+    color: black;
     text-align: center;
     padding: 15px;
     margin-top: auto;
-    font-family: 'Merriweather', serif;
+    font-family: 'Poppins', sans-serif;
 }
 
 @media (max-width: 768px) {
@@ -102,6 +107,7 @@
     }
 }
 
+/*general table formatting*/
 table {
     width: 100%;
     border-collapse: collapse;
@@ -125,8 +131,8 @@ th {
 tr {
     background:#05888A;
     border-bottom: 8px solid #EBEBEB;
-    font-weight:bold;
-
+    border-left:8px solid #EBEBEB;
+    border-right:8px solid #EBEBEB;
 }
 
 tr:hover {
@@ -134,16 +140,16 @@ tr:hover {
 }
 
 tr.selected-row {
-    background-color: #E6F3F3;
+    background-color: #EBEBEB;
     color: white;
 }
 
 /* Submitted Table */
 td.submitted-kudos-table-data {
-    position: relative;      /* for pseudo-element */
+    position: relative;
     padding: 8px 16px;
     vertical-align: middle;
-    color: black;            /* text color for contrast */
+    color: black;
     font-weight: bold;
 }
 
@@ -152,8 +158,8 @@ td.submitted-kudos-table-data:not(:first-child)::before {
     content: "";
     position: absolute;
     left: 0;
-    top: 25%;        /* starts 25% down */
-    height: 50%;     /* partial height */
+    top: 25%;
+    height: 50%;
     width: 1px;
     background-color: #EBEBEB;
 }
@@ -165,13 +171,12 @@ td.submitted-kudos-table-data:first-child::before {
 
 /* Received Table */
 td.received-kudos-table-data {
+    background-color:#B1D2D3;
     position: relative;
     padding: 8px 16px;
     vertical-align: middle;
-    font-weight: bold;
 }
 
-/* Partial left border for all except first column */
 td.received-kudos-table-data:not(:first-child)::before {
     content: "";
     position: absolute;
@@ -182,12 +187,58 @@ td.received-kudos-table-data:not(:first-child)::before {
     background-color: #555;
 }
 
-/* Remove border on first column */
+
 td.received-kudos-table-data:first-child::before {
     display: none;
 }
 
 
+.home-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  align-items: center;
+  padding: 4rem 2rem;
+  font-family: 'Poppins', sans-serif;
+  background-color: #E6F3F3;
+  height: calc(100vh - 120px);
+  text-align: center;
+}
+
+.home-content h1 {
+  font-family: 'Merriweather', serif;
+  margin-bottom: 3rem;
+  font-size: 3rem;
+  color: #061826;
+}
+
+.home-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  width: 100%;
+  max-width: 300px;
+  justify-content: center;
+}
+
+.home-button {
+  padding: 1.5rem 2rem;
+  font-size: 1.25rem;
+  font-family: 'Merriweather', serif;
+  background-color: #05888A;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 300px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.home-button:hover {
+  background-color: #006e70;
+  transform: scale(1.03);
+}
 
 .modal-overlay {
     position: fixed;
@@ -204,7 +255,8 @@ td.received-kudos-table-data:first-child::before {
 
 .modal-content {
     position: relative;
-    background: #fff;
+    background: white;
+    font-family: 'Poppins', sans-serif;
     padding: 20px;
     border-radius: 8px;
     max-width: 80%;
