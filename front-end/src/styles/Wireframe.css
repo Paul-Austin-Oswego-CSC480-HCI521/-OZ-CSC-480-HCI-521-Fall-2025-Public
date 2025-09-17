@@ -9,6 +9,7 @@
     font-family: 'Poppins', sans-serif;
 }
 
+/*received/sent kudos forms*/
 .received-kudos, .sent-kudos {
     overflow-y: auto;
     flex: 1;
@@ -44,6 +45,7 @@
     font-family: 'Merriweather', serif;
 }
 
+/*header formatted*/
 .kudos-list-header {
     display: flex;
     justify-content: space-between;
@@ -64,11 +66,13 @@
     width: 50%;
 }
 
+/*kudos logo*/
 .logo {
     height: 100px;
     width: auto;
 }
 
+/*header navigation buttons*/
 .nav-buttons button {
     margin-left: 15px;
     padding: 8px 16px;
@@ -85,13 +89,14 @@
     background-color: white;
 }
 
+/*footer layout*/
 .footer {
-    background-color: #B1D2D3;
-    color: #EBEBEB;
+    background-color: #05888A;
+    color: black;
     text-align: center;
     padding: 15px;
     margin-top: auto;
-    font-family: 'Merriweather', serif;
+    font-family: 'Poppins', sans-serif;
 }
 
 @media (max-width: 768px) {
@@ -100,12 +105,14 @@
     }
 }
 
+/*general table formatting*/
 table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 20px;
     background: #EBEBEB;
     border: 1px solid #EBEBEB;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
 }
 
 th, td {
@@ -123,25 +130,25 @@ th {
 tr {
     background:#05888A;
     border-bottom: 8px solid #EBEBEB;
-    font-weight:bold;
-
+    border-left:8px solid #EBEBEB;
+    border-right:8px solid #EBEBEB;
 }
 
 tr:hover {
-    background-color: #EBEBEB;
+    background: white;
 }
 
 tr.selected-row {
-    background-color: #E6F3F3;
+    background-color: #EBEBEB;
     color: white;
 }
 
 /* Submitted Table */
 td.submitted-kudos-table-data {
-    position: relative;      /* for pseudo-element */
+    position: relative;
     padding: 8px 16px;
     vertical-align: middle;
-    color: black;            /* text color for contrast */
+    color: black;
     font-weight: bold;
 }
 
@@ -150,8 +157,8 @@ td.submitted-kudos-table-data:not(:first-child)::before {
     content: "";
     position: absolute;
     left: 0;
-    top: 25%;        /* starts 25% down */
-    height: 50%;     /* partial height */
+    top: 25%;
+    height: 50%;
     width: 1px;
     background-color: #EBEBEB;
 }
@@ -162,14 +169,19 @@ td.submitted-kudos-table-data:first-child::before {
 }
 
 /* Received Table */
+tr.received-kudos-row{
+    background-color:#B1D2D3;
+}
+
+Tr.received-kudos-row:hover{
+    background-color: white;
+}
 td.received-kudos-table-data {
     position: relative;
     padding: 8px 16px;
     vertical-align: middle;
-    font-weight: bold;
 }
 
-/* Partial left border for all except first column */
 td.received-kudos-table-data:not(:first-child)::before {
     content: "";
     position: absolute;
@@ -180,12 +192,55 @@ td.received-kudos-table-data:not(:first-child)::before {
     background-color: #555;
 }
 
-/* Remove border on first column */
 td.received-kudos-table-data:first-child::before {
     display: none;
 }
 
+.home-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  font-family: 'Poppins', sans-serif;
+  background-color: #E6F3F3;
+  height: calc(100vh - 120px);
+  text-align: center;
+}
 
+.home-content h1 {
+  font-family: 'Merriweather', serif;
+  margin-bottom: 3rem;
+  font-size: 3rem;
+  color: #061826;
+}
+
+.home-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  width: 100%;
+  max-width: 300px;
+  justify-content: center;
+}
+
+.home-button {
+  padding: 1.5rem 2rem;
+  font-size: 1.25rem;
+  font-family: 'Merriweather', serif;
+  background-color: #05888A;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 300px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.home-button:hover {
+  background-color: #006e70;
+  transform: scale(1.03);
+}
 
 .modal-overlay {
     position: fixed;
@@ -197,16 +252,17 @@ td.received-kudos-table-data:first-child::before {
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 999;
+    z-index: 1000;
 }
 
 .modal-content {
     position: relative;
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    max-width: 80%;
-    max-height: 80%;
+    background: white;
+    font-family: 'Poppins', sans-serif;
+    padding: 55px 20px;
+    max-width: 500px;
+    max-height: 500px;
+    width:90%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -216,10 +272,54 @@ td.received-kudos-table-data:first-child::before {
 
 .modal-content img {
     max-width: 100%;
-    max-height: 70vh;
+    max-height: 100%;
     border-radius: 6px;
 }
 
+.form-row{
+    display:flex;
+    gap:1rem;
+    margin-bottom:12px;
+}
+
+.form-group {
+    display:flex;
+    flex-direction:column;
+    flex:1;
+    margin-bottom:1rem;
+}
+
+.to-from-title {
+    padding:6px 6px;
+    border: 1px solid white;
+    border-radius:6px;
+    background-color:white;
+    font-family:'Poppins', sans-serif;
+    font-size:18px;
+    font-weight:bold;
+    outline:none;
+    color: #05888A;
+}
+
+.to-from-title:focus{
+    border-color:#B1D2D3;
+    box-shadow: 0 0 3px rgba(177,210,211,0.5);
+}
+
+.textBox{
+    padding: 6px 12px;
+    border:1px solid white;
+    border-radius:6px;
+    background-color: #E6F3F3;
+    font-family:'Poppins', sans-serif;
+    color:black;
+    outline:none;
+    font-size:14px;
+}
+
+.textBox:focus{
+    border-color:#B1D2D3;
+}
 
 .close-btn {
     position: absolute;
@@ -235,6 +335,43 @@ td.received-kudos-table-data:first-child::before {
 
 .close-btn:hover {
     color: #0077aa;
+}
+
+.submit-btn {
+    position:relative;
+    bottom: 6px;
+    left:50%;
+    transform: translateX(-50%);
+    background: #B1D2D3;
+    color: black;
+    font-family: 'Poppins', sans-serif;
+    border:none;
+    border-radius: 6px;
+    padding: 10px 50px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.submit-btn:hover{
+    background-color: #EBEBEB;
+}
+
+.approve-reject{
+    position:relative;
+    bottom: 6px;
+    background: #EBEBEB;
+    color: black;
+    font-family: 'Poppins', sans-serif;
+    border:none;
+    margin: 10px 5px;
+    border-radius: 6px;
+    padding: 10px 95px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.approve-reject:hover{
+    background-color:white;
 }
 
 @keyframes fadeIn {

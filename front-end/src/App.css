@@ -1,70 +1,70 @@
-.app-container {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-}
+/*.app-container {*/
+/*  font-family: Arial, sans-serif;*/
+/*  margin: 0;*/
+/*  padding: 0;*/
+/*}*/
 
-.header {
-  background-color: #05888A;
-  display: flex;
-  justify-content: space-between;
-  padding: 20px;
-  color: black;
-  align-items: center;
-}
+/*.header {*/
+/*  background-color: #05888A;*/
+/*  display: flex;*/
+/*  justify-content: space-between;*/
+/*  padding: 20px;*/
+/*  color: black;*/
+/*  align-items: center;*/
+/*}*/
 
-.logo {
-  font-weight: bold;
-}
+/*.logo {*/
+/*  font-weight: bold;*/
+/*}*/
 
-.nav-buttons button {
-  margin-left: 10px;
-  background-color: #888888;
-  border: none;
-  color: black;
-  padding: 8px 12px;
-  cursor: pointer;
-  border-radius: 8px;
-  font-weight: bold;
-}
+/*.nav-buttons button {*/
+/*  margin-left: 10px;*/
+/*  background-color: #888888;*/
+/*  border: none;*/
+/*  color: black;*/
+/*  padding: 8px 12px;*/
+/*  cursor: pointer;*/
+/*  border-radius: 8px;*/
+/*  font-weight: bold;*/
+/*}*/
 
-.nav-buttons button:hover {
-  background-color: #666666;
-  color: white;
-}
+/*.nav-buttons button:hover {*/
+/*  background-color: #666666;*/
+/*  color: white;*/
+/*}*/
 
-.received-kudos,
-.sent-kudos {
-  margin: 20px;
-}
+/*.received-kudos,*/
+/*.sent-kudos {*/
+/*  margin: 20px;*/
+/*}*/
 
-.kudos-box {
-  background-color: #ccc;
-  height: 150px;
-  padding: 10px;
-  margin-top: 10px;
-  border-radius: 4px;
-}
+/*.kudos-box {*/
+/*  background-color: #ccc;*/
+/*  height: 150px;*/
+/*  padding: 10px;*/
+/*  margin-top: 10px;*/
+/*  border-radius: 4px;*/
+/*}*/
 
-.kudos-list-header {
-  display: flex;
-  justify-content: space-between;
-  font-size: 18px;
-  font-weight: 1200;
-  padding: 0 10px;
-  margin-top: 10px;
-  color: black;
-}
+/*.kudos-list-header {*/
+/*  display: flex;*/
+/*  justify-content: space-between;*/
+/*  font-size: 18px;*/
+/*  font-weight: 1200;*/
+/*  padding: 0 10px;*/
+/*  margin-top: 10px;*/
+/*  color: black;*/
+/*}*/
 
-.kudos-list-header span {
-  flex: 1;
-  text-align: center;
-}
+/*.kudos-list-header span {*/
+/*  flex: 1;*/
+/*  text-align: center;*/
+/*}*/
 
-.footer {
-  background-color: #05888A;
-  text-align: center;
-  padding: 10px;
-  margin-top: 40px;
-  font-weight: 500;
-}
+/*.footer {*/
+/*  background-color: #05888A;*/
+/*  text-align: center;*/
+/*  padding: 10px;*/
+/*  margin-top: 40px;*/
+/*  font-weight: 500;*/
+/*}*/
