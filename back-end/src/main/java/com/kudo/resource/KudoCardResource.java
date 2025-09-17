@@ -42,12 +42,36 @@ public class KudoCardResource {
     //Takes a JSON which represents a Kudocard object and Creates a new entry in the KUDOS_CARD table of the database
     //Using the supplied information
 
-    //Returns list of all IDs pertaining to Kudos which are owned by this user
+    //Returns list of all IDs pertaining to Kudos which are sent by this user
     //UUID should be in the format X-X-X-X-X where each X is a string of alphanumerics
     @GET
-    @Path("list")
+    @Path("list/sent")
     @Produces(MediaType.APPLICATION_JSON)
-    public CardIdList getKudoList(@QueryParam("user_id") UUID user_id) {
+    public CardIdList getSentKudoList(@QueryParam("user_id") UUID user_id) {
+        try (Connection conn = dataSource.getConnection(); //establish database connection
+             PreparedStatement stmt = conn.prepareStatement("SELECT card_id FROM KUDOS_CARDS WHERE sender_id = ?;");){//Static elements of query
+            stmt.setObject(1,user_id); //form the query
+            ResultSet rs = stmt.executeQuery(); //execute query to obtain list of IDs
+            List<String> cardIds = new ArrayList<>(); //List which will be filled with card_ids from the result set
+            while (rs.next()) {
+                cardIds.add(rs.getString("card_id")); //add ids to list
+            }
+            //Wrap list as CardIdList
+            //CardIdList is automatically converted to JSON due to the MIME type
+            CardIdList cardIdList = new CardIdList(cardIds);
+            return cardIdList;
+
+        } catch (SQLException e) {
+            throw new InternalServerErrorException("Database error");
+        }
+    }
+
+    //Returns list of all IDs pertaining to Kudos which are received by this user
+    //UUID should be in the format X-X-X-X-X where each X is a string of alphanumerics
+    @GET
+    @Path("list/received")
+    @Produces(MediaType.APPLICATION_JSON)
+    public CardIdList getReceivedKudoList(@QueryParam("user_id") UUID user_id) {
         try (Connection conn = dataSource.getConnection(); //establish database connection
              PreparedStatement stmt = conn.prepareStatement("SELECT card_id FROM KUDOS_CARDS WHERE recipient_id = ?;");){//Static elements of query
             stmt.setObject(1,user_id); //form the query
@@ -86,6 +110,10 @@ public class KudoCardResource {
                     if(kudocard.isAnonymous()) { //hide the sender if the card is anonymous
                         kudocard.setSenderId(null);
                     }
+                    return kudocard;
+                }
+                //Check if the user is the sender
+                else if(user_id.equals(kudocard.getSenderId())) {
                     return kudocard;
                 } else {
                     //Check if the user is a professor
