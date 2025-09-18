@@ -57,8 +57,8 @@ function SubmittedKudosProf() {
                     initialData={{
                         sender: selectedRow.sender,
                         recipient: selectedRow.recipient,
-                        subject: selectedRow.title,
-                        message:selectedRow.status,
+                        subject: selectedRow.subject,
+                        message:selectedRow.message,
                         date:selectedRow.date,
                     }}
                     readOnly={true}
