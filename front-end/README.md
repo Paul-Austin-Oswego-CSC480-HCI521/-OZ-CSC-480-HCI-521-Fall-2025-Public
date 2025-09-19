@@ -1,3 +1,17 @@
+To launch the webpage with json:
+
+Install npm on your device
+
+In the terminal navigate to the front-end directory
+
+Run "npm install -g json-server"
+
+Once installed, run "json-server --watch db.json --port 3001"
+
+In a new terminal window, run "npm start"
+
+This will launch the webpage
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
