@@ -421,6 +421,12 @@ td.received-kudos-table-data:first-child::before {
     background-color:white;
 }
 
+.approve-reject.selected {
+    background-color: #333;
+    color: white;
+
+}
+
 @keyframes fadeIn {
     from {
         opacity: 0;

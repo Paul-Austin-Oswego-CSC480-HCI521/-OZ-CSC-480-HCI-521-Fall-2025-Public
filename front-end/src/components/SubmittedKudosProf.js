@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from "react";
 import ProfReview from "./ProfReview";
 
-function SubmittedKudosProf() {
+function SubmittedKudosProf({ onReview }) {
     const [submitted, setSubmitted] = useState([]);
     const [selectedRow, setSelectedRow] = useState(null);
+
+    const handleReviewSubmit = (updatedCard) => {
+        setSubmitted(prev => prev.filter(card => card.id != updatedCard.id));
+        if (onReview) onReview(updatedCard);
+        setSelectedRow(null);
+    };
 
     useEffect(() => {
         fetch("http://localhost:3001/cards?recipientType=teacher")
@@ -54,15 +60,17 @@ function SubmittedKudosProf() {
 
             {selectedRow && (
                 <ProfReview
-                    initialData={{
-                        sender: selectedRow.sender,
-                        recipient: selectedRow.recipient,
-                        subject: selectedRow.subject,
-                        message:selectedRow.message,
-                        date:selectedRow.date,
-                    }}
-                    readOnly={true}
+                    initialData={selectedRow}
+                    // initialData={{
+                    //     sender: selectedRow.sender,
+                    //     recipient: selectedRow.recipient,
+                    //     subject: selectedRow.subject,
+                    //     message:selectedRow.message,
+                    //     date:selectedRow.date,
+                    // }}
+                    readOnly={false}
                     onClose={() => setSelectedRow(null)}
+                    onSubmit={handleReviewSubmit}
                 />
             )}
         </section>

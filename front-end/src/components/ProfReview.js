@@ -9,16 +9,52 @@ function ProfReview({ onClose, onSubmit, initialData, readOnly = false }) {
         note: initialData?.note || '',
     });
 
+    const [selectedStatus, setSelectedStatus] = useState(null);
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleStatusChange = (status) => {
+        if (readOnly) return;
+        // if (status === 'Rejected' && formData.note.trim() === '') {
+        //     alert("Please provide a reason for rejection.");
+        //     return;
+        // }
+
+        setSelectedStatus(status);
+
+        // const updatedCard = {
+        //     ...formData,
+        //     id: initialData?.id || Date.now(),
+        //     date: initialData?.date || new Date().toLocaleDateString(),
+        //     status: status,
+        //     recipient: initialData?.sender || '',
+        //     recipientType: 'student',
+        //     senderType: initialData?.senderType || 'student',
+        //     imageUrl: initialData?.imageUrl || '/img/kudos1.png',
+        //     read: false,
+        // };
+
+
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
         if (readOnly) return; // prevent submission in read-only mode
 
-        const newCard = {
+         if (!selectedStatus) {
+            alert("Please choose to approve or reject before submitting.");
+            return;
+        }
+
+        if (selectedStatus === 'Rejected' && formData.note.trim() === '') {
+            alert("Please provide a reason for rejection.");
+            return;
+        }
+
+        const updatedCard = {
             ...formData,
             id: initialData?.id || Date.now(),
             date: initialData?.date || new Date().toLocaleDateString(),
@@ -28,9 +64,24 @@ function ProfReview({ onClose, onSubmit, initialData, readOnly = false }) {
             imageUrl: initialData?.imageUrl || '/img/kudos1.png',
             read: initialData?.read ?? false,
         };
-
-        onSubmit(newCard);
-    };
+        
+        fetch(`http://localhost:3001/cards/${updatedCard.id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(updatedCard),
+            })
+            .then(res => res.json())
+            .then(data => {
+                onSubmit(data);
+                onClose();
+            })
+            .catch(err => {
+                console.error("Error updating card:", err);
+                alert("There was an error saving the card. Please try again.");
+            });
+        };
 
     return (
         <div className="modal-overlay">
@@ -47,7 +98,7 @@ function ProfReview({ onClose, onSubmit, initialData, readOnly = false }) {
                                 onChange={handleChange}
                                 placeholder="Sender"
                                 required
-                                readOnly={readOnly} // disables editing
+                                readOnly={true} // disables editing
                             />
                         </div>
                         <div className="form-group">
@@ -60,7 +111,7 @@ function ProfReview({ onClose, onSubmit, initialData, readOnly = false }) {
                                 onChange={handleChange}
                                 placeholder="Recipient"
                                 required
-                                readOnly={readOnly}
+                                readOnly={true}
                             />
                         </div>
                     </div>
@@ -75,7 +126,7 @@ function ProfReview({ onClose, onSubmit, initialData, readOnly = false }) {
                             onChange={handleChange}
                             placeholder="Subject"
                             required
-                            readOnly={readOnly}
+                            readOnly={true}
                         />
                     </div>
 
@@ -90,12 +141,28 @@ function ProfReview({ onClose, onSubmit, initialData, readOnly = false }) {
                             placeholder="Message"
                             rows={5}
                             required
-                            readOnly={readOnly}
+                            readOnly={true}
                         />
                     </div>
                     <div className={"button-row"}>
-                        <button className={"approve-reject"} type = "button">Approve</button>
-                        <button className={"approve-reject"} type = "button">Reject</button>
+                        <button 
+                            className={`approve-reject ${selectedStatus === 'Approved' ? 'selected' : ''}`} 
+                            type = "button"
+                            onClick = {() => handleStatusChange('Approved')}
+                            >Approve
+                        </button>
+                        <button 
+                            className={`approve-reject ${selectedStatus === 'Rejected' ? 'selected' : ''}`} 
+                            type = "button"
+                            onClick = {() => { 
+                                if (formData.note.trim() === '') {
+                                    alert("Please provide a note explaining the reason for rejection.");
+                                    return;
+                                }
+                                handleStatusChange('Rejected');
+                            }}
+                            >Reject
+                        </button>
                     </div>
 
                     <div className="form-group">
@@ -106,9 +173,8 @@ function ProfReview({ onClose, onSubmit, initialData, readOnly = false }) {
                             name = "note"
                             value = {formData.note}
                             onChange = {handleChange}
-                            placeholder = "Message"
+                            placeholder = "Message to sender"
                             rows = {3}
-                            required
                         />
                     </div>
 
