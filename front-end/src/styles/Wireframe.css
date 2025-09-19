@@ -127,6 +127,48 @@ th {
     font-weight: bold;
 }
 
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+    z-index: 2000;
+}
+
+
+.notif-modal {
+    position: absolute;
+    color: black;
+    font-size: small;
+    top: 80px;
+    right: 24px;
+    width: 320px;
+    max-height: 70vh;
+    overflow: auto;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.2);
+    padding: 14px;
+}
+
+.notif-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.notif-list { list-style: none; margin: 0; padding: 0; }
+.notif-item { padding: 8px 0; border-top: 1px solid #f0f0f0; }
+.notif-item:first-child { border-top: none; }
+.notif-title { font-weight: 600; }
+.notif-message { font-size: 0.95rem; margin-top: 2px; }
+.notif-time { font-size: 0.85rem; opacity: 0.7; margin-top: 4px; }
+.unread .notif-title { font-weight: 700; }
+
+
 tr {
     background:#05888A;
     border-bottom: 8px solid #EBEBEB;
@@ -197,49 +239,49 @@ td.received-kudos-table-data:first-child::before {
 }
 
 .home-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 4rem 2rem;
-  font-family: 'Poppins', sans-serif;
-  background-color: #E6F3F3;
-  height: calc(100vh - 120px);
-  text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    font-family: 'Poppins', sans-serif;
+    background-color: #E6F3F3;
+    height: calc(100vh - 120px);
+    text-align: center;
 }
 
 .home-content h1 {
-  font-family: 'Merriweather', serif;
-  margin-bottom: 3rem;
-  font-size: 3rem;
-  color: #061826;
+    font-family: 'Merriweather', serif;
+    margin-bottom: 3rem;
+    font-size: 3rem;
+    color: #061826;
 }
 
 .home-buttons {
-  display: flex;
-  flex-direction: row;
-  gap: 2rem;
-  width: 100%;
-  max-width: 300px;
-  justify-content: center;
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+    width: 100%;
+    max-width: 300px;
+    justify-content: center;
 }
 
 .home-button {
-  padding: 1.5rem 2rem;
-  font-size: 1.25rem;
-  font-family: 'Merriweather', serif;
-  background-color: #05888A;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  width: 300px;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+    padding: 1.5rem 2rem;
+    font-size: 1.25rem;
+    font-family: 'Merriweather', serif;
+    background-color: #05888A;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 300px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .home-button:hover {
-  background-color: #006e70;
-  transform: scale(1.03);
+    background-color: #006e70;
+    transform: scale(1.03);
 }
 
 .modal-overlay {
@@ -259,7 +301,7 @@ td.received-kudos-table-data:first-child::before {
     position: relative;
     background: white;
     font-family: 'Poppins', sans-serif;
-    padding: 20px;
+    padding: 55px 20px;
     max-width: 500px;
     max-height: 500px;
     width:90%;
@@ -290,7 +332,7 @@ td.received-kudos-table-data:first-child::before {
 }
 
 .to-from-title {
-    padding:6px 12px;
+    padding:6px 6px;
     border: 1px solid white;
     border-radius:6px;
     background-color:white;
@@ -354,6 +396,29 @@ td.received-kudos-table-data:first-child::before {
 
 .submit-btn:hover{
     background-color: #EBEBEB;
+}
+
+.approve-reject{
+    position:relative;
+    bottom: 6px;
+    background: #EBEBEB;
+    color: black;
+    font-family: 'Poppins', sans-serif;
+    border:none;
+    margin: 10px 5px;
+    border-radius: 6px;
+    padding: 10px 95px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+.notifButton {
+    height: 20px;
+    width: 20px;
+    object-fit: cover;
+}
+
+.approve-reject:hover{
+    background-color:white;
 }
 
 @keyframes fadeIn {

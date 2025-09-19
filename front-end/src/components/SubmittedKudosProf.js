@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import ImageModal from "./ImageModal";
+import ProfReview from "./ProfReview";
 
 function SubmittedKudosProf() {
     const [submitted, setSubmitted] = useState([]);
-    const [selectedImage, setSelectedImage] = useState(null);
+    const [selectedRow, setSelectedRow] = useState(null);
 
     useEffect(() => {
         fetch("http://localhost:3001/cards?recipientType=teacher")
@@ -36,9 +36,9 @@ function SubmittedKudosProf() {
                             className="row-click"
                             role="button"
                             tabIndex={0}
-                            onClick={() => setSelectedImage(k.imageUrl)}
+                            onClick={() => setSelectedRow(k)}
                             onKeyDown={(e) => {
-                                if (e.key === "Enter" || e.key === " ") setSelectedImage(k.imageUrl);
+                                if (e.key === "Enter" || e.key === " ") setSelectedRow(k);
                             }}
                         >
                             <td className="submitted-kudos-table-data">{k.sender}</td>
@@ -52,7 +52,19 @@ function SubmittedKudosProf() {
                 </table>
             )}
 
-            <ImageModal src={selectedImage} onClose={() => setSelectedImage(null)} />
+            {selectedRow && (
+                <ProfReview
+                    initialData={{
+                        sender: selectedRow.sender,
+                        recipient: selectedRow.recipient,
+                        subject: selectedRow.subject,
+                        message:selectedRow.message,
+                        date:selectedRow.date,
+                    }}
+                    readOnly={true}
+                    onClose={() => setSelectedRow(null)}
+                />
+            )}
         </section>
     );
 }
