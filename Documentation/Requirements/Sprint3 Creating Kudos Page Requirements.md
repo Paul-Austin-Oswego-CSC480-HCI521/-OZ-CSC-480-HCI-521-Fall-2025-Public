@@ -4,7 +4,7 @@
 
 #### General Page Requirements:
 * The Kudo creation process must take place within a dedicated page.
-* The system shall provide input fields for: Message, Recipient, Card Design, and an Anonymous checkbox.
+* The system shall only provide input fields for: Message, Recipient, Card Design, and an Anonymous checkbox. No other input fields are needed at this time. 
 * Created Kudo cards should not be stored as image files; the system shall reconstruct each card from the information in the database when needed.
 * The system must store all cards in the database indefinitely.
 * The page must have a button to return to the homepage, which discards the user’s selections when pressed.
@@ -44,7 +44,7 @@
 
 #### 4. Card Preview Requirements: The system shall generate and display a preview of the Kudos card on the card creation page before the submission step.
 * **Acceptance Criteria:**
-* The preview displays a fully readable image of the card as it will be seen by the recipient. It uses the selected font to display the title and full message body which is overlayed onto the selected card design.
+* The preview displays a fully readable image of the card as it will be seen by the recipient. It displays the full message body which is then overlayed onto the selected card design.
 * The preview clearly shows if the card is anonymous (optional).
 * The preview updates dynamically when users change the card's design, or message body.
 * The text will automatically reformat to fit properly on the card, ensuring it is readable and each word fits entirely on one line.
@@ -64,15 +64,15 @@
 * The confirmation menu shall provide users with text that clearly explains the function of each of the provided options (“Confirm”, “Discard”, “Edit” ).
 
 #### 7. Card Usability Requirements:
-##### The templates shall be offered in a variety of visual styles and colors, and will have a standardized image size and font type.
+#### The templates shall be offered in a variety of visual styles and colors, and will have a standardized image size and font type.
 * **Acceptance Criteria:**
 * Each card image and card design template must have a resolution of 1141 pixels wide and 541 pixels tall.
 * Each card image must use the same font style for the message body.
 * The system will not automatically adjust the font sizes to fit more text.
-* Each template must have a unique title that is clearly visible.
+* Each template must have a unique title that is clearly visible and is embedded into the design.
 * The card images and templates will not display any information pertaining to the sender, recipient, or the date/time sent.
 
-##### Each template must have ruled lines on which the message body text is placed on. Ruled lines must be standardized across templates.
+#### Each template must have ruled lines on which the message body text is placed on. Ruled lines must be standardized across templates.
 * **Acceptance criteria:**
 * Ruled lines must have a consistent size and spacing across all templates.
 * Each line must have the same length and width, the lines must all be parallel to the base of the card, and they should be arranged in a rectangular shape.
@@ -80,3 +80,4 @@
 * When placed on the template, the message body text does not overflow off the ruled lines.
 * Templates must be able to fit the maximum message body length (a 500-character limit is subject to change and requires testing) on the ruled lines without leaving unused space.
 * Text should be wrapped across lines so that each word entirely fits onto one line.  
+
