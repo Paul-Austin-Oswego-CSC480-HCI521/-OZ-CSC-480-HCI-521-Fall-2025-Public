@@ -5,16 +5,37 @@ function SubmittedKudosProf({ onReview }) {
     const [submitted, setSubmitted] = useState([]);
     const [selectedRow, setSelectedRow] = useState(null);
 
-    const handleReviewSubmit = (updatedCard) => {
-        setSubmitted(prev => prev.filter(card => card.id != updatedCard.id));
+    const handleReviewSubmit = async (updatedCard) => {
+        try {
+            const updatedData = {
+            ...updatedCard,
+            status: updatedCard.status,
+            recipientType: updatedCard.status === "Approved" ? "student" : "teacher"};
+
+    await fetch (`http://localhost:3001/cards/${updatedCard.id}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type" : "application/json"
+            },
+            body: JSON.stringify(updatedData)
+        });
+
+        setSubmitted(prev => prev.filter(card => Number(card.id) !== Number(updatedCard.id)));
         if (onReview) onReview(updatedCard);
         setSelectedRow(null);
+        } catch (error) {
+            console.error("Error updating kudos:", error);
+        }
     };
 
     useEffect(() => {
         fetch("http://localhost:3001/cards?recipientType=teacher")
             .then((res) => res.json())
-            .then((data) => setSubmitted(data))
+            .then((data) => {
+            const submittedOnly = data.filter(card => card.status === "Submitted")
+            setSubmitted(submittedOnly);
+            })
+
             .catch((err) => console.error("Error fetching submitted kudos:", err));
     }, []);
 
@@ -53,7 +74,7 @@ function SubmittedKudosProf({ onReview }) {
                             <td className="submitted-kudos-table-data">{k.message || k.content}</td>
                             <td className="submitted-kudos-table-data">{k.date || "-"}</td>
                         </tr>
-                    ))}
+                        ))}
                     </tbody>
                 </table>
             )}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const received = [
     {
@@ -11,7 +11,21 @@ const received = [
 ];
 
 function ReceivedKudosStudent() {
-    const [selectedImage, setSelectedImage] = useState(null);
+       const [received, setReceived] = useState([]);
+       const [selectedImage, setSelectedImage] = useState(null);
+
+       useEffect(() => {
+           fetch("http://localhost:3001/cards")
+               .then((res) => res.json())
+               .then((data) => {
+                   const filtered = data.filter(card =>
+                       card.recipientType === "student" &&
+                       card.status === "Approved"
+                   );
+                   setReceived(filtered);
+               })
+               .catch((err) => console.error("Error fetching received kudos:", err));
+       }, []);
 
     return (
         <section className="received-kudos">
@@ -37,7 +51,7 @@ function ReceivedKudosStudent() {
                         }}
                     >
                         <td className={'submitted-kudos-table-data'}>{k.sender}</td>
-                        <td className={'submitted-kudos-table-data'}>{k.title}</td>
+                        <td className={'submitted-kudos-table-data'}>{k.title || k.subject}</td>
                         <td className={'submitted-kudos-table-data'}>{k.message}</td>
                         <td className={'submitted-kudos-table-data'}>{k.date}</td>
                     </tr>

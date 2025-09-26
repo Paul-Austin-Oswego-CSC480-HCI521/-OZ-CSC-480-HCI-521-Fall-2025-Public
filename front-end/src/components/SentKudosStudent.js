@@ -1,50 +1,58 @@
-import React, { useState } from "react";
-
-const sent = [
-    {
-        recipient: "Abraham Lincoln",
-        title: "Fantastic Effort!",
-        status: "Received",
-        date:"9/13/25",
-        imageUrl: "/img/logo192.png",
-    },
-];
+import React, { useState, useEffect } from "react";
 
 function SentKudosStudent() {
+    const [sentKudos, setSentKudos] = useState([]);
     const [selectedImage, setSelectedImage] = useState(null);
 
+    useEffect(() => {
+            fetch("http://localhost:3001/cards")
+                .then((res) => res.json())
+                .then((data) => {
+                    const filtered = data.filter(card =>
+                        card.senderType === "student"
+                    );
+                    setSentKudos(filtered);
+                })
+                .catch((err) => console.error("Error fetching sent kudos:", err));
+        }, []);
+
     return (
-        <section className="sent-kudos">
-            <h2>Sent Kudos</h2>
-            <table>
-                <thead>
-                <tr>
-                    <th>Recipient</th>
-                    <th>Title</th>
-                    <th>Kudos Status</th>
-                    <th>Date</th>
-                </tr>
-                </thead>
-                <tbody>
-                {sent.map((k, i) => (
-                    <tr
-                        className={"received-kudos-row"}
-                        key={i}
-                        role="button"
-                        tabIndex={0}
-                        onClick={() => setSelectedImage(k.imageUrl)}
-                        onKeyDown={(e) => {
-                            if (e.key === "Enter" || e.key === " ") setSelectedImage(k.imageUrl);
-                        }}
-                    >
-                        <td className={'received-kudos-table-data'}>{k.recipient}</td>
-                        <td className={'received-kudos-table-data'}>{k.title}</td>
-                        <td className={'received-kudos-table-data'}>{k.status}</td>
-                        <td className={'received-kudos-table-data'}>{k.date}</td>
-                    </tr>
-                ))}
-                </tbody>
-            </table>
+            <section className="sent-kudos">
+                <h2>Sent Kudos</h2>
+
+                {sentKudos.length === 0 ? (
+                    <p style={{ padding: "1rem", fontStyle: "italic" }}>No approved kudos yet.</p>
+                ) : (
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Recipient</th>
+                            <th>Title</th>
+                            <th>Kudos Status</th>
+                            <th>Date</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {sentKudos.map((k, i) => (
+                            <tr
+                                className={"received-kudos-row"}
+                                key={k.id || i}
+                                role="button"
+                                tabIndex={0}
+                                onClick={() => setSelectedImage(k.imageUrl)}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter" || e.key === " ") setSelectedImage(k.imageUrl);
+                                }}
+                            >
+                                <td className={'received-kudos-table-data'}>{k.recipient}</td>
+                                <td className={'received-kudos-table-data'}>{k.title || k.subject}</td>
+                                <td className={'received-kudos-table-data'}>{k.status}</td>
+                                <td className={'received-kudos-table-data'}>{k.date}</td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
+                )}
 
             {selectedImage && (
                 <div className="modal-overlay" onClick={() => setSelectedImage(null)}>

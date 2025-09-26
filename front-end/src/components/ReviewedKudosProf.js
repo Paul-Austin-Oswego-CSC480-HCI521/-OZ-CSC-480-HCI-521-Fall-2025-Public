@@ -1,33 +1,6 @@
 import React, { useState } from "react";
 import ImageModal from "./ImageModal";
 
-// const reviewed = [
-//     {
-//         sender: "Bruce Wayne",
-//         recipient: "Clark Kent",
-//         title: "Stellar Job!",
-//         status: "Approved",
-//         date: "9/14/25",
-//         imageUrl: "/img/logo192.png",
-//     },
-//     {
-//         sender: "Optimus Prime",
-//         recipient: "Bumblebee",
-//         title: "Great Work!",
-//         status: "Rejected: Kudos cards must be obscenity-free",
-//         date: "9/10/25",
-//         imageUrl: "/img/logo192.png",
-//     },
-//     {
-//         sender: "Leslie Knope",
-//         recipient: "Ron Swanson",
-//         title: "Nice Job!",
-//         status: "Approved",
-//         date: "9/10/25",
-//         imageUrl: "/img/logo192.png",
-//     },
-// ];
-
 function ReviewedKudosProf({ reviewedKudos = [] }) {
     const [selectedImage, setSelectedImage] = useState(null);
 

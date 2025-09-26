@@ -18,31 +18,12 @@ function ProfReview({ onClose, onSubmit, initialData, readOnly = false }) {
 
     const handleStatusChange = (status) => {
         if (readOnly) return;
-        // if (status === 'Rejected' && formData.note.trim() === '') {
-        //     alert("Please provide a reason for rejection.");
-        //     return;
-        // }
-
         setSelectedStatus(status);
-
-        // const updatedCard = {
-        //     ...formData,
-        //     id: initialData?.id || Date.now(),
-        //     date: initialData?.date || new Date().toLocaleDateString(),
-        //     status: status,
-        //     recipient: initialData?.sender || '',
-        //     recipientType: 'student',
-        //     senderType: initialData?.senderType || 'student',
-        //     imageUrl: initialData?.imageUrl || '/img/kudos1.png',
-        //     read: false,
-        // };
-
-
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (readOnly) return; // prevent submission in read-only mode
+        if (readOnly) return;
 
          if (!selectedStatus) {
             alert("Please choose to approve or reject before submitting.");
@@ -56,23 +37,31 @@ function ProfReview({ onClose, onSubmit, initialData, readOnly = false }) {
 
         const updatedCard = {
             ...formData,
-            id: initialData?.id || Date.now(),
+            id: Number(initialData?.id),
             date: initialData?.date || new Date().toLocaleDateString(),
-            status: initialData?.status || 'Submitted',
-            recipientType: initialData?.recipientType || 'teacher',
+            status: selectedStatus,
+            recipientType: selectedStatus === "Approved" ? "student" : "teacher",
+//            recipient: selectedStatus === "Approved" ? initialData.recipient : initialData.recipient,
             senderType: initialData?.senderType || 'student',
             imageUrl: initialData?.imageUrl || '/img/kudos1.png',
             read: initialData?.read ?? false,
         };
-        
+
+//        console.log("Selected status:", selectedStatus);
+//        console.log("Form data:", formData);
+//        console.log("Initial data:", initialData);
+
         fetch(`http://localhost:3001/cards/${updatedCard.id}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(updatedCard),
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(updatedCard),
+        })
+            .then(res => {
+                if (!res.ok) throw new Error("Failed to update card.");
+                return res.json();
             })
-            .then(res => res.json())
             .then(data => {
                 onSubmit(data);
                 onClose();
@@ -154,13 +143,7 @@ function ProfReview({ onClose, onSubmit, initialData, readOnly = false }) {
                         <button 
                             className={`approve-reject ${selectedStatus === 'Rejected' ? 'selected' : ''}`} 
                             type = "button"
-                            onClick = {() => { 
-                                if (formData.note.trim() === '') {
-                                    alert("Please provide a note explaining the reason for rejection.");
-                                    return;
-                                }
-                                handleStatusChange('Rejected');
-                            }}
+                            onClick = {() => handleStatusChange('Rejected')}
                             >Reject
                         </button>
                     </div>
