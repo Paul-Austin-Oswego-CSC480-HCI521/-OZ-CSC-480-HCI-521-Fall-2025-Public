@@ -1,9 +1,24 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../styles/Wireframe.css';
 
-function Notification({ open, onClose, items = [] }) {
+function Notification({ open, onClose }) {
+    const [items, setItems] = useState([]);
+
     useEffect(() => {
         if (!open) return;
+
+        const fetchNotifications = async () => {
+            try {
+                const res = await fetch("http://localhost:5000/api/notifications");
+                const data = await res.json();
+                setItems(data);
+            } catch (err) {
+                console.error("Failed to load notifications:", err);
+            }
+        };
+
+        fetchNotifications();
+
         const onKey = (e) => e.key === 'Escape' && onClose?.();
         document.addEventListener('keydown', onKey);
 
