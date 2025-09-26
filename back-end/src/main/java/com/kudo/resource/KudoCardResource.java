@@ -39,11 +39,21 @@ public class KudoCardResource {
         return "Hello World!";
     }
 
-    //Takes a JSON which represents a Kudocard object and Creates a new entry in the KUDOS_CARD table of the database
-    //Using the supplied information
-
-    //Returns list of all IDs pertaining to Kudos which are sent by this user
-    //UUID should be in the format X-X-X-X-X where each X is a string of alphanumerics
+     /**
+     * GET /kudo-app/kudo-card/list/sent - Retrieve all card_ids which correspond to cards sent by a given user
+     *
+     * Call: GET http://localhost:9080/kudo-app/kudo-card/list/sent?user_id=X-X-X-X-X
+     *
+     * Query Parameters:
+     * - user_id: the UUID of the user who's sent card's card_ids are to be queried
+     *
+     * Returns: 200 OK with JSON array of UUID card_ids
+     * Returns: 200 OK with empty JSON array if no cards sent by the given user are found
+     * Returns: 500 Internal Server Error for database issues
+     *
+     * Example response:
+     * {"card_id":["X-X-X-X-X"]}
+     */
     @GET
     @Path("list/sent")
     @Produces(MediaType.APPLICATION_JSON)
@@ -68,6 +78,22 @@ public class KudoCardResource {
 
     //Returns list of all IDs pertaining to Kudos which are received by this user
     //UUID should be in the format X-X-X-X-X where each X is a string of alphanumerics
+
+    /**
+     * GET /kudo-app/kudo-card/list/received - Retrieve all card_ids which correspond to cards received by a given user
+     *
+     * Call: GET http://localhost:9080/kudo-app/kudo-card/list/received?user_id=X-X-X-X-X
+     *
+     * Query Parameters:
+     * - user_id: the UUID of the user who's received card's card_ids are to be queried
+     *
+     * Returns: JSON array of UUID card_ids
+     * Returns: empty JSON array if no cards received by the given user are found
+     * Returns: 500 Internal Server Error for database issues
+     *
+     * Example response:
+     * {"card_id":["X-X-X-X-X"]}
+     */
     @GET
     @Path("list/received")
     @Produces(MediaType.APPLICATION_JSON)
@@ -90,8 +116,26 @@ public class KudoCardResource {
         }
     }
 
-    //Returns the kudos card of the given ID which the given user has access to
-    //UUID should be in the format X-X-X-X-X where each X is a string of alphanumerics
+    /**
+     * GET /kudo-app/kudo-card/{card_id} - retrieve the card which has the given card_id if it is accessible to the user with the given user_id
+     *
+     * Call: GET http://localhost:9080/kudo-app/kudo-card/{W-W-W-W-W}?user_id=Y-Y-Y-Y-Y
+     *
+     * Path Parameters:
+     * - card_id: the UUID card_id of the card which is requested
+     *
+     * Query Parameters:
+     * - user_id: the UUID of the user who has access to the card with the given card_id
+     *
+     * Returns: Returns JSON representation of a Kudos card. If anonymous is set to true, and the given user_id is not an instructor,
+     *          The sender_id is expunged from the returned JSON
+     * Returns: 404 Not Found if a card with the given card_id does not exist or if the given user_id does not have permission
+     *          to access the card with the given card_id
+     * Returns: 500 Internal Server Error for database issues
+     *
+     * Example response:
+     * {"anonymous":false,"card_id":"W-W-W-W-W","class_id":"X-X-X-X-X","content":"Good work today!","recipient_id":"Y-Y-Y-Y-Y","sender_id":"Z-Z-Z-Z-Z","status":"PENDING","title":"Good work!"}
+     */
     @GET
     @Path("{card_id}")
     @Produces(MediaType.APPLICATION_JSON)
