@@ -6,4 +6,3 @@ function Footer() {
 
 export default Footer;
 
-//test for perms
