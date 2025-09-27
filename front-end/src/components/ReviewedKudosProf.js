@@ -3,6 +3,7 @@ import ImageModal from "./ImageModal";
 
 function ReviewedKudosProf({ reviewedKudos = [] }) {
     const [selectedImage, setSelectedImage] = useState(null);
+    const [selectedRows, setSelectedRows] = useState([]);
 
     return (
         <section className="sent-kudos">
@@ -27,16 +28,25 @@ function ReviewedKudosProf({ reviewedKudos = [] }) {
                         key={i}
                         role="button"
                         tabIndex={0}
-                        onClick={() => setSelectedImage(k.imageUrl)}
-                        onKeyDown={(e) => {
-                            if (e.key === "Enter" || e.key === " ") setSelectedImage(k.imageUrl);
+                        onClick={() => {
+                            setSelectedRows((prev) =>
+                                prev.includes(i) ? prev.filter((idx) => idx !== i): [...prev, i]
+                            );
+                            setSelectedImage(k.imageUrl);
                         }}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                                setSelectedRows(i);
+                                setSelectedImage(k.imageUrl);
+                            }
+                        }}
+                        className={selectedRows.includes(i) ? "selected-row" : ""}
                     >
-                        <td>{k.sender}</td>
-                        <td>{k.recipient}</td>
-                        <td>{k.subject || k.title}</td>
-                        <td>{k.status}</td>
-                        <td>{k.date}</td>
+                        <td className={'default-kudos-table-data'}>{k.sender}</td>
+                        <td className={'default-kudos-table-data'}>{k.recipient}</td>
+                        <td className={'default-kudos-table-data'}>{k.subject || k.title}</td>
+                        <td className={'default-kudos-table-data'}>{k.status}</td>
+                        <td className={'default-kudos-table-data'}>{k.date}</td>
                     </tr>
                 ))}
                 </tbody>

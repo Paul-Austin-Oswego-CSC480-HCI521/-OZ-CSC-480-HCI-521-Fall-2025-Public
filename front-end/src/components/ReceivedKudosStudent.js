@@ -13,6 +13,7 @@ const received = [
 function ReceivedKudosStudent() {
        const [received, setReceived] = useState([]);
        const [selectedImage, setSelectedImage] = useState(null);
+       const [selectedRows, setSelectedRows] = useState([]);
 
        useEffect(() => {
            fetch("http://localhost:3001/cards")
@@ -45,15 +46,24 @@ function ReceivedKudosStudent() {
                         key={i}
                         role="button"
                         tabIndex={0}
-                        onClick={() => setSelectedImage(k.imageUrl)}
-                        onKeyDown={(e) => {
-                            if (e.key === "Enter" || e.key === " ") setSelectedImage(k.imageUrl);
+                        onClick={() => {
+                            setSelectedRows((prev) =>
+                                prev.includes(i) ? prev.filter((idx) => idx !== i): [...prev, i]
+                            );
+                            setSelectedImage(k.imageUrl);
                         }}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                                setSelectedRows(i);
+                                setSelectedImage(k.imageUrl);
+                            }
+                        }}
+                        className={selectedRows.includes(i) ? "selected-row" : ""}
                     >
-                        <td className={'submitted-kudos-table-data'}>{k.sender}</td>
-                        <td className={'submitted-kudos-table-data'}>{k.title || k.subject}</td>
-                        <td className={'submitted-kudos-table-data'}>{k.message}</td>
-                        <td className={'submitted-kudos-table-data'}>{k.date}</td>
+                        <td className={'default-kudos-table-data'}>{k.sender}</td>
+                        <td className={'default-kudos-table-data'}>{k.title || k.subject}</td>
+                        <td className={'default-kudos-table-data'}>{k.message}</td>
+                        <td className={'default-kudos-table-data'}>{k.date}</td>
                     </tr>
                 ))}
                 </tbody>

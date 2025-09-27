@@ -180,13 +180,24 @@ tr:hover {
     background: white;
 }
 
+/* on click formatted */
 tr.selected-row {
-    background-color: #EBEBEB;
-    color: white;
+    background-color:#B1D2D3;;
+    color: black;
 }
 
-/* Submitted Table */
-td.submitted-kudos-table-data {
+tr.selected-row td.default-kudos-table-data:not(:first-child)::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 25%;
+    height: 50%;
+    width: 1px;
+    background-color: black;
+}
+
+/* Table Formatted */
+td.default-kudos-table-data {
     position: relative;
     padding: 8px 16px;
     vertical-align: middle;
@@ -195,7 +206,7 @@ td.submitted-kudos-table-data {
 }
 
 /* Partial left border for all except first column */
-td.submitted-kudos-table-data:not(:first-child)::before {
+td.default-kudos-table-data:not(:first-child)::before {
     content: "";
     position: absolute;
     left: 0;
@@ -206,35 +217,7 @@ td.submitted-kudos-table-data:not(:first-child)::before {
 }
 
 /* Remove border on first column */
-td.submitted-kudos-table-data:first-child::before {
-    display: none;
-}
-
-/* Received Table */
-tr.received-kudos-row{
-    background-color:#B1D2D3;
-}
-
-Tr.received-kudos-row:hover{
-    background-color: white;
-}
-td.received-kudos-table-data {
-    position: relative;
-    padding: 8px 16px;
-    vertical-align: middle;
-}
-
-td.received-kudos-table-data:not(:first-child)::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 25%;
-    height: 50%;
-    width: 1px;
-    background-color: #555;
-}
-
-td.received-kudos-table-data:first-child::before {
+td.default-kudos-table-data:first-child::before {
     display: none;
 }
 

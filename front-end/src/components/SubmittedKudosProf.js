@@ -68,11 +68,11 @@ function SubmittedKudosProf({ onReview }) {
                                 if (e.key === "Enter" || e.key === " ") setSelectedRow(k);
                             }}
                         >
-                            <td className="submitted-kudos-table-data">{k.sender}</td>
-                            <td className="submitted-kudos-table-data">{k.recipient}</td>
-                            <td className="submitted-kudos-table-data">{k.title || k.subject}</td>
-                            <td className="submitted-kudos-table-data">{k.message || k.content}</td>
-                            <td className="submitted-kudos-table-data">{k.date || "-"}</td>
+                            <td className="default-kudos-table-data">{k.sender}</td>
+                            <td className="default-kudos-table-data">{k.recipient}</td>
+                            <td className="default-kudos-table-data">{k.title || k.subject}</td>
+                            <td className="default-kudos-table-data">{k.message || k.content}</td>
+                            <td className="default-kudos-table-data">{k.date || "-"}</td>
                         </tr>
                         ))}
                     </tbody>

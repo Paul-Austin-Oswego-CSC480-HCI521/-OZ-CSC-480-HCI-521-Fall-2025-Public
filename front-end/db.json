@@ -54,6 +54,19 @@
       "imageUrl": "/img/kudos1.png",
       "read": false,
       "note": ""
+    },
+    {
+      "id": 1758987465261,
+      "sender": "John",
+      "recipient": "Joe",
+      "subject": "Good job",
+      "message": "Good job on that thing you did",
+      "date": "9/27/2025",
+      "status": "Submitted",
+      "recipientType": "teacher",
+      "senderType": "student",
+      "imageUrl": "/img/kudos1.png",
+      "read": false
     }
   ]
 }

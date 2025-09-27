@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 function SentKudosStudent() {
     const [sentKudos, setSentKudos] = useState([]);
     const [selectedImage, setSelectedImage] = useState(null);
+    const [selectedRows, setSelectedRows] = useState([]);
 
     useEffect(() => {
             fetch("http://localhost:3001/cards")
@@ -39,15 +40,24 @@ function SentKudosStudent() {
                                 key={k.id || i}
                                 role="button"
                                 tabIndex={0}
-                                onClick={() => setSelectedImage(k.imageUrl)}
-                                onKeyDown={(e) => {
-                                    if (e.key === "Enter" || e.key === " ") setSelectedImage(k.imageUrl);
+                                onClick={() => {
+                                    setSelectedRows((prev) =>
+                                        prev.includes(i) ? prev.filter((idx) => idx !== i): [...prev, i]
+                                    );
+                                    setSelectedImage(k.imageUrl);
                                 }}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter" || e.key === " ") {
+                                        setSelectedRows(i);
+                                        setSelectedImage(k.imageUrl);
+                                    }
+                                }}
+                                className={selectedRows.includes(i) ? "selected-row" : ""}
                             >
-                                <td className={'received-kudos-table-data'}>{k.recipient}</td>
-                                <td className={'received-kudos-table-data'}>{k.title || k.subject}</td>
-                                <td className={'received-kudos-table-data'}>{k.status}</td>
-                                <td className={'received-kudos-table-data'}>{k.date}</td>
+                                <td className={'default-kudos-table-data'}>{k.recipient}</td>
+                                <td className={'default-kudos-table-data'}>{k.title || k.subject}</td>
+                                <td className={'default-kudos-table-data'}>{k.status}</td>
+                                <td className={'default-kudos-table-data'}>{k.date}</td>
                             </tr>
                         ))}
                         </tbody>
