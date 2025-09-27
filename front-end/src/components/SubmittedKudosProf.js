@@ -4,6 +4,7 @@ import ProfReview from "./ProfReview";
 function SubmittedKudosProf({ onReview }) {
     const [submitted, setSubmitted] = useState([]);
     const [selectedRow, setSelectedRow] = useState(null);
+    const [ selectedRows, setSelectedRows] = useState([]);
 
     const handleReviewSubmit = async (updatedCard) => {
         try {
@@ -63,10 +64,19 @@ function SubmittedKudosProf({ onReview }) {
                             className="row-click"
                             role="button"
                             tabIndex={0}
-                            onClick={() => setSelectedRow(k)}
-                            onKeyDown={(e) => {
-                                if (e.key === "Enter" || e.key === " ") setSelectedRow(k);
+                            onClick={() => {
+                                setSelectedRows((prev) =>
+                                    prev.includes(i) ? prev.filter((idx) => idx !== i): [...prev, i]
+                                );
+                                setSelectedRow(k);
                             }}
+                            onKeyDown={(e) => {
+                                if (e.key === "Enter" || e.key === " ") {
+                                    setSelectedRows(i);
+                                    setSelectedRow(k);
+                                }
+                            }}
+                            className={selectedRows.includes(i) ? "selected-row" : ""}
                         >
                             <td className="default-kudos-table-data">{k.sender}</td>
                             <td className="default-kudos-table-data">{k.recipient}</td>
