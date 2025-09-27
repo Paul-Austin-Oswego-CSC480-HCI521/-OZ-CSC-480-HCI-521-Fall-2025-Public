@@ -4,7 +4,14 @@ REM User Endpoints Test Script
 REM Tests all User API endpoints
 
 REM Load environment variables from .env file
-for /f "tokens=1,2 delims==" %%a in ('type "..\..\back-end\.env" ^| findstr "APP_HTTP_PORT" ^| findstr /v "^#"') do set %%a=%%b
+for /f "tokens=1,2 delims==" %%a in ('type "..\..\back-end\.env" 2^>nul ^| findstr "APP_HTTP_PORT" ^| findstr /v "^#"') do set %%a=%%b
+
+REM Fallback if .env file not found or APP_HTTP_PORT not set
+if "%APP_HTTP_PORT%"=="" (
+    echo Warning: Could not read APP_HTTP_PORT from .env file, using default port 9080
+    set APP_HTTP_PORT=9080
+)
+
 set BASE_URL=http://localhost:%APP_HTTP_PORT%/kudo-app/api
 
 echo ========================================
