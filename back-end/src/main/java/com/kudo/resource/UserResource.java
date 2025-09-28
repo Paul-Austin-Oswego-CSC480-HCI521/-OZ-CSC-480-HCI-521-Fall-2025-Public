@@ -1,9 +1,11 @@
 package com.kudo.resource;
 
+import com.kudo.dto.ClassDTO;
 import com.kudo.dto.UserDTO;
 import com.kudo.model.User;
 import com.kudo.service.UserService;
 
+import jakarta.annotation.Resource;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -11,7 +13,12 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -23,6 +30,9 @@ public class UserResource {
 
     @Inject
     private UserService userService;
+
+    @Resource(lookup = "jdbc/kudosdb")
+    private DataSource dataSource;
 
     /**
      * GET /kudo-app/api/users - Retrieve all users with optional filtering and pagination
@@ -178,6 +188,41 @@ public class UserResource {
         }
 
         return Response.noContent().build();
+    }
+
+    /**
+     * GET /kudo-app/api/users/{user_id}/classes - Retrieve a list of all classes which the user is enrolled in
+     *
+     * Call: GET http://localhost:9080/kudo-app/api/users/{user_id}/classes
+     *
+     * Path Parameters:
+     * - user_id: the UUID of the user who's enrolled classes are to be queried
+     *
+     * Returns: JSON array of UUID class_ids
+     * Returns: empty JSON array if no classes received by the given user are found
+     * Returns: 500 Internal Server Error for database issues
+     *
+     * Example response:
+     * {"class_id":["X-X-X-X-X"]}
+     */
+    @GET
+    @Path("{user_id}/classes")
+    @Produces(MediaType.APPLICATION_JSON)
+    public ClassDTO.ClassIdList getUserClasses(@PathParam("user_id") UUID user_id) {
+        try (Connection conn = dataSource.getConnection(); //establish database connection
+             PreparedStatement stmt = conn.prepareStatement("SELECT class_id FROM USER_CLASSES WHERE user_id = ?;");){//Static elements of query
+            stmt.setObject(1,user_id); //form the query
+            ResultSet rs = stmt.executeQuery(); //execute query to obtain list of IDs
+            List<String> classIds = new ArrayList<>(); //List which will be filled with card_ids from the result set
+            while (rs.next()) {
+                classIds.add(rs.getString("class_id")); //add ids to list
+            }
+
+            return new ClassDTO.ClassIdList(classIds);
+
+        } catch (SQLException e) {
+            throw new InternalServerErrorException("Database error");
+        }
     }
 
     // Password hashing placeholder
