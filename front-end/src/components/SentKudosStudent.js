@@ -19,10 +19,10 @@ function SentKudosStudent() {
 
     return (
             <section className="sent-kudos">
-                <h2>Sent Kudos</h2>
+                <h2>Sent Kudos - ({sentKudos.length})</h2>
 
                 {sentKudos.length === 0 ? (
-                    <p style={{ padding: "1rem", fontStyle: "italic" }}>No approved kudos yet.</p>
+                    <p style={{ padding: "1rem", fontStyle: "italic" }}>No sent Kudos yet.</p>
                 ) : (
                     <table>
                         <thead>
