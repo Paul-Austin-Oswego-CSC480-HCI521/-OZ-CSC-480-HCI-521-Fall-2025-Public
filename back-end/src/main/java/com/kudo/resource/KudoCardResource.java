@@ -160,27 +160,12 @@ public class KudoCardResource {
                 else if(user_id.equals(kudocard.getSenderId())) {
                     return kudocard;
                 } else {
-                    //Check if the user is a professor
-                    boolean isProfessor;
-                    try(PreparedStatement stmtProfCheck = conn.prepareStatement("SELECT * FROM USERS WHERE user_id = ? AND role = 'INSTRUCTOR';");)
-                    {
-                        stmtProfCheck.setObject(1,user_id); //form the query
-                        rs = stmtProfCheck.executeQuery();
-                        isProfessor = rs.next();
-
-                        //The professor is allowed to view a kudos card
-                        //TODO: possibly check if the recipient of the kudos card is in the same class as the professor
-                        //      And only allow the professor of the recipient to view the card
-                        if (isProfessor) {
-                            //No need to anonymize the kudos card as the professor should always have access
-                            return kudocard;
-                        }
-                        //If the user is not the recipient and is not a professor, the user does not have access to this card
-                        //The user should not know that this card exists; return 404
-                        else {
-                            throw new NotFoundException();
-                        }
-                    }
+                    //Check if the user is the professor of the sender
+                   if(isInstructorOf(user_id, kudocard.getSenderId())) {
+                       return kudocard;
+                   } else {
+                       throw new NotFoundException();
+                   }
                 }
 
             } else { //Card not found; 404
@@ -243,6 +228,73 @@ public class KudoCardResource {
         }
     }
 
+    /*
+ * PATCH /kudo-app/api/kudo-card - create new kudo card
+ * Content-type: JSON
+ * Request Body:
+ * {
+    "cardId":"X-X-X-X-X",
+    "status":"PENDING|APPROVED|DENIED|RECEIVED",
+    "approvedBy":"Y-Y-Y-Y-Y"
+    }
+ * If successful, returns the request
+ */
+    @PATCH
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateKudoStatus(@Valid KudocardDTO.UpdateStatusRequest req) {
+
+        //get the user_id of the card sender
+       Kudocard kudocard = getCard(req.getCardId(), req.getApprovedBy());
+
+       UUID sender_id = kudocard.getSenderId();
+
+       //Check if the approvedBy is the professor of the user
+        if(!isInstructorOf(req.getApprovedBy(), sender_id)) {
+            throw new NotFoundException();
+        }
+
+        //Update the card status to approved
+        final String sql = """
+        UPDATE KUDOS_CARDS
+        SET status = ?, approved_by = ?
+        WHERE card_id = ?;
+        """;
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setObject(1, req.getStatus());
+            stmt.setObject(2, req.getApprovedBy());
+            stmt.setObject(3, req.getCardId());
+            try  (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return Response.status(Response.Status.CREATED).entity(req).build();
+                }
+            }
+            throw new InternalServerErrorException("Failed to update Kudocard");
+        } catch  (SQLException e) {
+            throw new InternalServerErrorException("Database error");
+        }
+    }
+
+
+    /**
+     * DELETE /kudo-app/kudo-card/{card_id} - delete the card which has the given card_id if it is accessible to the user with the given user_id
+     *
+     * Call: DELETE http://localhost:9080/kudo-app/kudo-card/{W-W-W-W-W}?user_id=Y-Y-Y-Y-Y
+     *
+     * Path Parameters:
+     * - card_id: the UUID card_id of the card which is requested
+     *
+     * Query Parameters:
+     * - user_id: the UUID of the user who has access to the card with the given card_id
+     *
+     * Returns: 200 ok if the deletion was successful
+     * Returns: 404 Not Found if a card with the given card_id does not exist or if the given user_id does not have permission
+     *          to access the card with the given card_id
+     * Returns: 500 Internal Server Error for database issues
+     *
+     */
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{card_id}")
@@ -275,6 +327,47 @@ public class KudoCardResource {
                 rs.getString("approved_by")!=null ? //approved_by will be null if the card is not approved
                         UUID.fromString(rs.getString("approved_by")) : null
         );
+    }
+
+    //returns true if instructor_id is an instructor and is in the same class as user_id
+    public boolean isInstructorOf(UUID instructor_id, UUID user_id) throws InternalServerErrorException {
+        return isInstructor(instructor_id) && inSameClass(instructor_id, user_id);
+    }
+
+    //returns true if instructor_id is an instructor and is in the same class as user_id
+    public boolean inSameClass(UUID user_1, UUID user_2) throws InternalServerErrorException {
+        try (Connection conn = dataSource.getConnection();) {
+            //Check if they are both in the class
+            PreparedStatement stmt1 = conn.prepareStatement("""
+                    SELECT COUNT(DISTINCT user_id) AS cnt
+                    FROM USER_CLASSES
+                    WHERE user_id IN (?, ?);
+                    """);
+            stmt1.setObject(1, user_1);
+            stmt1.setObject(2, user_2);
+            ResultSet rs = stmt1.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            throw new InternalServerErrorException("Database error");
+        }
+    }
+
+    //returns true if instructor_id is an instructor
+    public boolean isInstructor(UUID instructor_id) throws InternalServerErrorException {
+        try (Connection conn = dataSource.getConnection();) {
+            //Check if they are both in the class
+            PreparedStatement stmt1 = conn.prepareStatement("""
+                    SELECT user_id
+                    FROM USERS
+                    WHERE user_id = ?
+                      AND role = 'INSTRUCTOR';
+                    """);
+            stmt1.setObject(1, instructor_id);
+            ResultSet rs = stmt1.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            throw new InternalServerErrorException("Database error");
+        }
     }
 
 }

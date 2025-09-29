@@ -110,7 +110,7 @@ public class KudocardDTO {
 
         public UpdateStatusRequest(@NotNull UUID cardId,
                 @NotBlank @Pattern(regexp = "PENDING|APPROVED|DENIED|RECEIVED", message = "invalid status") String status,
-                UUID approvedBy) {
+                UUID approvedBy, UUID classId) {
             this.cardId = cardId;
             this.status = status;
             this.approvedBy = approvedBy;

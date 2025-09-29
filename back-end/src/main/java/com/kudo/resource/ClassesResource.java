@@ -94,17 +94,11 @@ public class ClassesResource {
     @Path("{class_id}")
     public ClassDTO.ClassId addStudents(@PathParam("class_id") String class_id,ClassDTO.UserIdList user_ids) {
         //Do a query to confirm the existence of the given class
-        for (int i = 0; i < user_ids.user_id.size(); i++){
-            System.out.println(user_ids.user_id.get(i));
-        }
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement("SELECT class_id FROM CLASSES WHERE class_id = ?;")) {
             stmt.setObject(1, UUID.fromString(class_id));
-            System.out.println("f");
             try  (ResultSet rs = stmt.executeQuery()) {
-                System.out.println("aftr");
                 if (!rs.next()) {
-                    System.out.println("2");
                     throw new NotFoundException();
                 }
             }
@@ -124,16 +118,12 @@ public class ClassesResource {
             }
             int[] rs = stmt1.executeBatch();
 
-            System.out.println("b");
             conn.commit();
 
             if(rs.length == 0)
                 throw new NotFoundException();
-
-            System.out.println("3");
             return new ClassDTO.ClassId(class_id);
         } catch  (SQLException e) {
-            System.out.println("4");
             throw new NotFoundException();
         }
     }
