@@ -23,7 +23,7 @@ function Header({ onCreateNew, showNav = true }) {
         {showNav && (
             <nav className="nav-buttons">
               <button onClick={handleNotif} className="icon-btn" aria-label="Open notifications">
-                <img src="/notifImage.png" alt="" className="notifButton" />
+                <img src="/notifImage.png" alt="Notification Button" className="notifButton" />
               </button>
               <button onClick={handleGoHome}>HOME</button>
               <button onClick={onCreateNew}>CREATE NEW</button>

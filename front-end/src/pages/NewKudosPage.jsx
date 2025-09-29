@@ -5,13 +5,24 @@ import '../styles/Wireframe.css';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
-function NewKudosPage({ onSubmit, navigateBack }) {
+function NewKudosPage({ onSubmit }) {
     const navigate = useNavigate();
+
+    const recipient = ['Kalley', 'Hadassah', 'Brittany', 'Ethan'];
+    const titleOptions = ['Well Done!', 'Nice Job!', 'Great Work!', 'Thank you!'];
+
+    const [isAnonymous, setIsAnonymous] = useState(true);
 
     const [formData, setFormData] = useState ({
         sender: '',
         recipient: '',
-        subject: '',
+        title: titleOptions[0],
+        // get title() {
+        //     return this.title;
+        // },
+        // set title(value) {
+        //     this.title = value;
+        // },
         message: '',
     });
 
@@ -28,11 +39,12 @@ function NewKudosPage({ onSubmit, navigateBack }) {
 
         const newCard = {
             ...formData,
+            sender: isAnonymous ? 'Anonymous' : formData.sender,
             id: Date.now(),
             date: new Date().toLocaleDateString(),
             status: 'Submitted',
             recipientType: 'teacher',
-            senderType: 'subject',
+            senderType: 'student',
             imageUrl: '/img/kudos1.png',
             read: false
         };
@@ -46,7 +58,7 @@ function NewKudosPage({ onSubmit, navigateBack }) {
         .then(res => res.json())
         .then(data => {
             console.log("Kudos submitted:", data);
-            navigate('/studentView');
+            navigate(-1);
         })
 
         .catch(err => console.error("Submission failed:", err));
@@ -54,15 +66,9 @@ function NewKudosPage({ onSubmit, navigateBack }) {
         setFormData({
             sender: '',
             recipient: '',
-            subject: '',
+            title: titleOptions[0],
             message: ''
         });
-
-        // if (onSubmit) onSubmit(newCard);
-
-        // setFormData({sender: '', recipient: '', subject: '', message: ''});
-
-        // if (navigateBack) navigateBack();
     };
 
     return (
@@ -82,54 +88,91 @@ function NewKudosPage({ onSubmit, navigateBack }) {
                                     name = "sender"
                                     value = {formData.sender}
                                     onChange = {handleChange}
-                                    placeholder = "Sender"
-                                    required
+                                    placeholder = {isAnonymous ? "Anonymous" : "Sender"}
+                                    disabled = {isAnonymous}
+                                    required = {!isAnonymous}
                                 />
+                        
+                                <label style = {{ marginTop: '8px', display: 'block'}}>
+                                    <input
+                                    type = "checkbox"
+                                    checked = {isAnonymous} 
+                                    onChange = {(e) => {
+                                        setIsAnonymous(e.target.checked);
+                                        if (e.target.checked) {
+                                            setFormData(prev => ({ ...prev, sender: 'Anonymous'}));
+                                        }
+                                    }} />Send Anonymously</label>
                             </div>
-                            <div className={"form-group"}>
-                                <label htmlFor="recipient">Recipient</label>
-                                <input
+                                
+                            <div className = "form-group">
+                                <label htmlFor="recipient">Who do you want to send a Kudo to?</label>
+                                <select
                                     id={"recipient"}
                                     className={"to-from-title"}
-                                    type="text"
                                     name="recipient"
                                     value={formData.recipient}
                                     onChange={handleChange}
-                                    placeholder="Recipient"
                                     required
-                                />
+                                    >
+                                        <option value="">-- Select a recipient --</option>
+                                        {recipient.map((name, index) => (
+                                            <option key={index} value={name}>
+                                                {name}
+                                            </option>
+                                        ))}
+                                    </select>
                             </div>
                         </div>
                         <div className={"form-group"}>
-                            <label htmlFor="subject">Subject</label>
+                            <label htmlFor="title">Choose a Title</label>
+                            <div className='title-button-group'>
+                                {titleOptions.map((option, index) => (
+                                    <button
+                                    key = {index}
+                                    type = "button"
+                                    className={`title-button ${formData.title === option ? 'selected' : ''}`}
+                                    onClick = {() => setFormData(prev => ({ ...prev, title: option }))}
+                                >
+                                    {option}
+                                </button>
+                            ))}
+                            </div>
                             <input
-                                id={"subject"}
-                                className={"to-from-title"}
-                                type="text"
-                                name="subject"
-                                value={formData.subject}
-                                onChange={handleChange}
-                                placeholder="Subject"
+                                // id={"title"}
+                                // className={"to-from-title"}
+                                type="hidden"
+                                name="title"
+                                value={formData.title}
+                                // onChange={handleChange}
+                                // placeholder="Title"
                                 required
                             />
                         </div>
                         <div className={"form-group"}>
-                            <label htmlFor={"message"}>Message</label>
+                            <label htmlFor={"message"}>Your Message</label>
                             <textarea
                                 id={"message"}
                                 className={"textBox"}
                                 name = "message"
                                 value = {formData.message}
                                 onChange = {handleChange}
-                                placeholder = "Message"
+                                placeholder = "Please enter a message"
                                 rows = {5}
                                 required
                             />
                         </div>
-                        <div style = {{ display: 'flex', justifyContent: 'flex-end', gap: '10px'  }}>
-                            {navigateBack && (
-                                <button className="close-btn" type="button" onClick={() => navigate('/studentView')}>Discard</button>
-                            )} <button className="submit-btn" type = "submit">Submit</button>
+                        <div className='button-row'>
+                            <button
+                            type = "button"
+                            className="discard-btn"
+                            onClick = {() => navigate(-1)}
+                            >Discard</button>
+                            <button 
+                            type = "submit" 
+                            className = "submit-btn"
+                            // onClick = {() => navigate(-1)}
+                            >Send Kudo</button>
                         </div>
                     </form>
                 </div>
