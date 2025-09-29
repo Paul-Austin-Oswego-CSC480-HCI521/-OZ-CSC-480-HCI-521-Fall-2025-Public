@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import '../styles/Wireframe.css';
+import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
-import NewKudosForm from "../components/NewKudosForm";
+// import NewKudosForm from "../components/NewKudosForm";
 import ReceivedKudosStudent from "../components/ReceivedKudosStudent";
 import SentKudosStudent from "../components/SentKudosStudent";
 import Footer from "../components/Footer";
@@ -9,6 +10,7 @@ import Footer from "../components/Footer";
 function StudentView() {
 
     const [showForm, setShowForm] = useState(false);
+    const navigate = useNavigate();
     const [sentKudos, setSentKudos] = useState([]);
     const [receivedKudos, setReceivedKudos] = useState([]);
     const [submittedKudos, setSubmittedKudos] = useState([]);
@@ -65,14 +67,8 @@ function StudentView() {
 
     return (
         <div className="app-container">
-            <Header onCreateNew = {() => setShowForm(true)} />
-            
-            {showForm && (
-                <NewKudosForm 
-                onClose = {() =>setShowForm(false)} 
-                onSubmit = {handleNewKudos} 
-            />
-        )}
+            <Header onCreateNew = {() => navigate('/studentView/new-kudos')} />
+
             <div className="main-content">
                 <ReceivedKudosStudent messages = {receivedKudos} />
                 <SentKudosStudent messages = {sentKudos} />

@@ -3,6 +3,7 @@ import "./styles/Wireframe.css";
 import {BrowserRouter, Routes, Route} from "react-router-dom";
 import StudentView from "./pages/StudentView";
 import ProfessorView from "./pages/ProfessorView";
+import NewKudosPage from "./pages/NewKudosPage";
 import HomePage from "./pages/HomePage";
 
 
@@ -19,6 +20,7 @@ function App(){
                 <Route path = "/" element = {<HomePage />}/>
                 <Route path = "/studentView" element={<StudentView/>} />
                 <Route path = "/professorView" element={<ProfessorView />} />
+                <Route path = "/studentView/new-kudos" element={<NewKudosPage/>}/>
             </Routes>
         </BrowserRouter>
     );
