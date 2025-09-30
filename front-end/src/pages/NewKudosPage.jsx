@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Wireframe.css';
 
@@ -8,6 +8,16 @@ import Footer from '../components/Footer';
 function NewKudosPage({ onSubmit }) {
     const navigate = useNavigate();
 
+    const Users = [
+        {userId: "123", name: "Kalley"},
+        {userId: "456", name: "Hadassah"},
+        {userId: "789", name: "Brittany"},
+        {userId: "098", name: "Ethan"}
+    ];
+    const STUDENT_USER_ID = "87654321-1234-1234-1234-123456789xyz"; 
+    const PLACEHOLDER_CLASS_ID = "12345678-1234-1234-1234-123456789def"; 
+    
+    // const [recipients, setRecipients] = useState([]);
     const recipient = ['Kalley', 'Hadassah', 'Brittany', 'Ethan'];
     const titleOptions = ['Well Done!', 'Nice Job!', 'Great Work!', 'Thank you!'];
 
@@ -25,7 +35,7 @@ function NewKudosPage({ onSubmit }) {
         // },
         message: '',
     });
-
+ 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({
@@ -37,24 +47,32 @@ function NewKudosPage({ onSubmit }) {
     const handleSubmit = (e) =>{
         e.preventDefault();
 
-        const newCard = {
-            ...formData,
-            sender: isAnonymous ? 'Anonymous' : formData.sender,
-            id: Date.now(),
-            date: new Date().toLocaleDateString(),
-            status: 'Submitted',
-            recipientType: 'teacher',
-            senderType: 'student',
-            imageUrl: '/img/kudos1.png',
-            read: false
-        };
+        // const newCard = {
+        //     ...formData,
+        //     sender: isAnonymous ? 'Anonymous' : formData.sender,
+        //     id: Date.now(),
+        //     date: new Date().toLocaleDateString(),
+        //     status: 'Submitted',
+        //     recipientType: 'teacher',
+        //     senderType: 'student',
+        //     imageUrl: '/img/kudos1.png',
+        //     read: false
+        // };
 
-        fetch('http://localhost:3001/cards', {
-            method: 'POST',
-            headers: {'Content-Type' : 'application/json' },
+        const newCard = {
+            senderId: isAnonymous ? null : STUDENT_USER_ID,
+            recipientId: formData.recipient,
+            classId: PLACEHOLDER_CLASS_ID,
+            title: formData.title,
+            content: formData.message,
+            isAnonymous: isAnonymous
+        }
+
+        fetch("http://localhost:8080/kudo-app/api/kudo-card", {
+            method: "POST",
+            headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(newCard)
         })
-
         .then(res => res.json())
         .then(data => {
             console.log("Kudos submitted:", data);
@@ -115,12 +133,18 @@ function NewKudosPage({ onSubmit }) {
                                     onChange={handleChange}
                                     required
                                     >
-                                        <option value="">-- Select a recipient --</option>
+                                        <option value=""> -- Select a recipient --</option>
+                                        {Users.map((user) => (
+                                            <option key = {user.userId} value={user.userId}>
+                                                {user.name}
+                                            </option>
+                                        ))}
+                                        {/* <option value="">-- Select a recipient --</option>
                                         {recipient.map((name, index) => (
                                             <option key={index} value={name}>
                                                 {name}
                                             </option>
-                                        ))}
+                                        ))} */}
                                     </select>
                             </div>
                         </div>
