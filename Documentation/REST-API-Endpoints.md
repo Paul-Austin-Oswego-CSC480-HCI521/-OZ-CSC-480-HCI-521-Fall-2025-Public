@@ -300,7 +300,7 @@ Create a new class.
 
 **Parameters:**
 
--`class_name` (query): Name of the class
+- `class_name` (query): Name of the class
 
 **Example:**
 
@@ -323,7 +323,7 @@ Add students to a class.
 
 **Parameters:**
 
--`class_id` (path): UUID of the class
+- `class_id` (path): UUID of the class
 
 **Request Body:**
 
@@ -384,7 +384,7 @@ Retrieve details of a specific class.
 
 **Parameters:**
 
--`class_id` (path): UUID of the class
+- `class_id` (path): UUID of the class
 
 **Example:**
 
@@ -411,7 +411,7 @@ Delete a class.
 
 **Parameters:**
 
--`class_id` (path): UUID of the class to delete
+- `class_id` (path): UUID of the class to delete
 
 **Example:**
 
@@ -431,8 +431,8 @@ Remove a user from a class.
 
 **Parameters:**
 
--`class_id` (path): UUID of the class
--`user_id` (query): UUID of the user
+- `class_id` (path): UUID of the class
+- `user_id` (query): UUID of the user
 
 **Example:**
 
