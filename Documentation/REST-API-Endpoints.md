@@ -432,7 +432,7 @@ Remove a user from a class.
 **Parameters:**
 
 - `class_id` (path): UUID of the class
-- `user_id` (query): UUID of the user
+- `user_id` (query): UUID of user to delete
 
 **Example:**
 
