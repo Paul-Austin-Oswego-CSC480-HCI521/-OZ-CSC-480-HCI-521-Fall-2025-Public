@@ -21,6 +21,7 @@ function App(){
                 <Route path = "/studentView" element={<StudentView/>} />
                 <Route path = "/professorView" element={<ProfessorView />} />
                 <Route path = "/studentView/new-kudos" element={<NewKudosPage/>}/>
+                <Route path = "/professorView/new-kudos" element={<NewKudosPage/>}/>
             </Routes>
         </BrowserRouter>
     );

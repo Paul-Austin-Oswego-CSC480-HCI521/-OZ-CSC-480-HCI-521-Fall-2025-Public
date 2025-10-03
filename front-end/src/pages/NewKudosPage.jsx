@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import '../styles/Wireframe.css';
 
 import Header from '../components/Header';
@@ -7,6 +7,7 @@ import Footer from '../components/Footer';
 
 function NewKudosPage({ onSubmit }) {
     const navigate = useNavigate();
+    const location = useLocation();
 
     const Users = [
         {userId: "123", name: "Kalley"},
@@ -40,6 +41,14 @@ function NewKudosPage({ onSubmit }) {
         'Great Work!': '/images/greatwork.png',
         'Thank you!': '/images/thankyou.png'
     };
+
+    const handleCreateNew = () => {
+        if (location.pathname.includes("studentView")) {
+            navigate("/studentView/new-kudos");
+        } else if (location.pathname.includes("professorView")) {
+            navigate("/professorView/new-kudos");
+        }
+    }
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -83,7 +92,7 @@ function NewKudosPage({ onSubmit }) {
 
     return (
         <div className = "app-container">
-            <Header onCreateNew={() => navigate('/studentView/new-kudos')} />
+            <Header onCreateNew={handleCreateNew} />
 
             <div className = "main-content">
                 <h1>Create a Kudo Card</h1>

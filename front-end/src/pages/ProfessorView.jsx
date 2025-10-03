@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import '../styles/Wireframe.css';
+import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
-import NewKudosForm from "../components/NewKudosForm";
+// import NewKudosForm from "../components/NewKudosForm";
 import ReceivedKudosProf from "../components/SubmittedKudosProf";
 import ProfReview from "../components/ProfReview";
 import SentKudosProf from "../components/ReviewedKudosProf";
@@ -11,6 +12,7 @@ function ProfessorView() {
     const [showForm, setShowForm] = useState(false);
     const [selectedKudos, setSelectedKudos] = useState(null);
     const [reviewedKudos, setReviewedKudos] = useState([])
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchReviewedKudos();
@@ -56,14 +58,14 @@ function ProfessorView() {
 
     return (
         <div className="app-container">
-            <Header onCreateNew = {() => setShowForm(true)} />
+            <Header onCreateNew = {() => navigate('/professorView/new-kudos')} />
             
-            {showForm && (
+            {/* {showForm && (
                 <NewKudosForm 
                 onClose = {() =>setShowForm(false)} 
                 onSubmit = {handleNewKudos} 
             />
-        )}
+        )} */}
 
         {selectedKudos && (
             <ProfReview

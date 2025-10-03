@@ -39,6 +39,7 @@ function StudentView() {
         if (!response.ok) throw new Error('Failed to fetch card ${cardId}')
             return response.json();
     };
+    
     const getKudos = useCallback(() => {
         let sentCardIds = [];
         let recievedCardIds = [];
