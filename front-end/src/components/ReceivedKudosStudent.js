@@ -1,32 +1,26 @@
 import React, { useState, useEffect } from "react";
-
-//const received = [
-//    {
-//        sender: "Bill Gates",
-//        title: "Totally Awesome!",
-//        message: "Great work on your project!",
-//        date: "9/13/25",
-//        imageUrl: "/img/logo192.png",
-//    },
-//];
+import { useUser } from "./UserContext";
 
 function ReceivedKudosStudent() {
        const [received, setReceived] = useState([]);
        const [selectedImage, setSelectedImage] = useState(null);
        const [selectedRows, setSelectedRows] = useState([]);
+       const { user } = useUser();
 
        useEffect(() => {
-           fetch("http://localhost:3001/cards")
-               .then((res) => res.json())
-               .then((data) => {
-                   const filtered = data.filter(card =>
-                       card.recipientType === "student" &&
-                       card.status === "Approved"
-                   );
-                   setReceived(filtered);
-               })
-               .catch((err) => console.error("Error fetching received kudos:", err));
-       }, []);
+        if (!user) return;
+        fetch("http://localhost:3001/cards")
+            .then((res) => res.json())
+            .then((data) => {
+                const filtered = data.filter(card =>
+                    card.recipientType === "student" &&
+                    card.status === "Approved" &&
+                    (card.recipient === user.name || card.recipientId === user.id)
+                );
+                setReceived(filtered);
+            })
+            .catch((err) => console.error("Error fetching received kudos:", err));
+       }, [user]);
 
     return (
         <section className="received-kudos">
@@ -77,8 +71,9 @@ function ReceivedKudosStudent() {
             {selectedImage && (
                 <div className="modal-overlay" onClick={() => setSelectedImage(null)}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                        <button className="close-btn" onClick={() => setSelectedImage(null)}>✖</button>
-                        <img src={selectedImage} alt="Kudos" />
+                        <button className="close-btn" onClick={() => setSelectedImage(null)}
+                            aria-label="Close image modal">✖</button>
+                        <img src={selectedImage} alt="Kudos Card" />
                     </div>
                 </div>
             )}

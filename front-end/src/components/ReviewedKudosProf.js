@@ -1,9 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useUser } from "../components/UserContext";
 import ImageModal from "./ImageModal";
 
 function ReviewedKudosProf({ reviewedKudos = [] }) {
     const [selectedImage, setSelectedImage] = useState(null);
     const [selectedRows, setSelectedRows] = useState([]);
+    const [reviewedKudos, setReviewedKudos] = useState([])
+    const { user } = useUser();
+
+    useEffect(()=> {
+        if (!user) return;
+
+        fetch("http://localhost:3001/cards")
+        .then((res) =>res.json())
+        .then((data) => {
+            const filtered = data.filter(card =>
+                card.status === "Approved" || "Rejected"
+            );
+            setReviewedKudos(filtered);
+        })
+    }
+    )
 
     return (
         <section className="sent-kudos">
@@ -24,8 +41,8 @@ function ReviewedKudosProf({ reviewedKudos = [] }) {
                 <tbody>
                 {reviewedKudos.map((k, i) => (
                     <tr
-                        className={"received-kudos-row"}
-                        key={i}
+                        className={`received-kudos-row ${selectedRows.includes(i) ? "selected-row" : ""}`}
+                        key={k.id || i}
                         role="button"
                         tabIndex={0}
                         onClick={() => {
@@ -40,7 +57,6 @@ function ReviewedKudosProf({ reviewedKudos = [] }) {
                                 setSelectedImage(k.imageUrl);
                             }
                         }}
-                        className={selectedRows.includes(i) ? "selected-row" : ""}
                     >
                         <td className={'default-kudos-table-data'}>{k.sender}</td>
                         <td className={'default-kudos-table-data'}>{k.recipient}</td>
