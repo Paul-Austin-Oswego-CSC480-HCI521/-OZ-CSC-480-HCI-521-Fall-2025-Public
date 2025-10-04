@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useUser } from "../components/UserContext";
 import ImageModal from "./ImageModal";
 
-function ReviewedKudosProf({ reviewedKudos = [] }) {
+function ReviewedKudosProf() {
     const [selectedImage, setSelectedImage] = useState(null);
     const [selectedRows, setSelectedRows] = useState([]);
     const [reviewedKudos, setReviewedKudos] = useState([])

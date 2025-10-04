@@ -35,7 +35,7 @@ function StudentView() {
 
     //fetch cards by ID
     const Getcard = async (cardId) => {
-        const response = await fetch('${API_URL}/kudo-card/${cardId}?user_id=${STUDENT_USER_ID}');
+        const response = await fetch(`${API_URL}/kudo-card/${cardId}?user_id=${STUDENT_USER_ID}`);
         if (!response.ok) throw new Error('Failed to fetch card ${cardId}')
             return response.json();
     };
@@ -44,10 +44,10 @@ function StudentView() {
         let sentCardIds = [];
         let recievedCardIds = [];
 
-        return fetch('${API_URL}/kudo-card/list/sent?user_id=${STUDENT_USER_ID}')
+        return fetch(`${API_URL}/kudo-card/list/sent?user_id=${STUDENT_USER_ID}`)
         .then(res => res.json())
         .then(sentList => {sentCardIds = sentList.card_id || [];
-            return fetch('${API_URL}/kudo-card/list/recieved?user_id=${STUDENT_USER_ID}')
+            return fetch(`${API_URL}/kudo-card/list/recieved?user_id=${STUDENT_USER_ID}`)
         })
         .then(res => res.json())
         .then(recievedList => {recievedCardIds = recievedList.card_id || [];
@@ -71,7 +71,7 @@ function StudentView() {
     }, [getKudos]);
 
     useEffect(() => {
-        fetch('http://localhost:3001/cards')
+        fetch(`http://localhost:3001/cards`)
         .then((res) => res.json())
         .then((data) => {
             setSentKudos(data.filter(msg => msg.senderType === 'student'));
@@ -100,7 +100,7 @@ function StudentView() {
         // };
 
         // fetch('http://localhost:3001/cards', 
-        fetch('${API_URL}/kudo-card', {
+        fetch(`${API_URL}/kudo-card`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json'},
             body: JSON.stringify(kudos)
