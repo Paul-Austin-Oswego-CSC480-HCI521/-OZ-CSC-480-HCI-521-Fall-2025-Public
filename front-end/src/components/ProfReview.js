@@ -1,4 +1,5 @@
 import React, {useState} from "react";
+import { useUser } from "./UserContext";
 
 function ProfReview({ onClose, onSubmit, initialData, readOnly = false }) {
     const [formData, setFormData] = useState({
@@ -10,6 +11,7 @@ function ProfReview({ onClose, onSubmit, initialData, readOnly = false }) {
     });
 
     const [selectedStatus, setSelectedStatus] = useState(null);
+    const { user } = useUser();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -40,9 +42,9 @@ function ProfReview({ onClose, onSubmit, initialData, readOnly = false }) {
             id: Number(initialData?.id),
             date: initialData?.date || new Date().toLocaleDateString(),
             status: selectedStatus,
+            note: formData.note,
             recipientType: selectedStatus === "Approved" ? "student" : "teacher",
-//            recipient: selectedStatus === "Approved" ? initialData.recipient : initialData.recipient,
-            senderType: initialData?.senderType || 'student',
+            senderType: initialData?.senderType || user.role,
             imageUrl: initialData?.imageUrl || '/img/kudos1.png',
             read: initialData?.read ?? false,
         };
