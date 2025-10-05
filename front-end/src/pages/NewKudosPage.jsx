@@ -117,10 +117,10 @@ function NewKudosPage({ onSubmit }) {
                                     type = "checkbox"
                                     checked = {isAnonymous}
                                     onChange = {(e) => {
-                                        setIsAnonymous(e.target.checked);
-                                        if (e.target.checked) {
-                                            setFormData(prev => ({ ...prev, sender: 'Anonymous'}));
-                                        }
+                                        const isChecked = e.target.checked;
+                                        setIsAnonymous(isChecked);
+                                        setFormData(prev => ({ 
+                                            ...prev, sender: isChecked ? 'Anonymous' : ''}));
                                     }} />Send Anonymously</label>
                         </div>
 
@@ -191,6 +191,7 @@ function NewKudosPage({ onSubmit }) {
                         <button
                             type = "submit"
                             className = "submit-btn"
+                            // onClick = {() => navigate(-1)}
                         >Send Kudo</button>
                     </div>
                 </form>
@@ -206,7 +207,7 @@ function NewKudosPage({ onSubmit }) {
                         className="modal-content"
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <img src={selectedImage} alt="Kudos" className="popup-image" />
+                        <img src={selectedImage} alt={formData.title} className="popup-image" />
                     </div>
                 </div>
             )}

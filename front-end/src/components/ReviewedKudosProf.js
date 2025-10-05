@@ -15,7 +15,7 @@ function ReviewedKudosProf() {
         .then((res) =>res.json())
         .then((data) => {
             const filtered = data.filter(card =>
-                card.status === "Approved" || "Rejected"
+                card.status === "Approved" || card.status === "Rejected"
             );
             setReviewedKudos(filtered);
         })

@@ -8,10 +8,10 @@ function Header({ onCreateNew, showNav = true }) {
   const [showNotif, setShowNotif] = useState(false);
 
 
-  const [notifications] = useState([
-    { id: 1, title: 'Reminder', message: 'Team meeting at 3 PM.', time: 'Today • 10:15 AM', read: false },
-    { id: 2, title: 'Kudos approved', message: 'Your Kudos to Prof. Lee was approved.', time: 'Yesterday • 4:22 PM', read: true },
-  ]);
+  // const [notifications] = useState([
+  //   { id: 1, title: 'Reminder', message: 'Team meeting at 3 PM.', time: 'Today • 10:15 AM', read: false },
+  //   { id: 2, title: 'Kudos approved', message: 'Your Kudos to Prof. Lee was approved.', time: 'Yesterday • 4:22 PM', read: true },
+  // ]);
 
   const handleGoHome = () => navigate('/');
   const handleNotif = () => setShowNotif((v) => !v);
@@ -34,7 +34,7 @@ function Header({ onCreateNew, showNav = true }) {
         <Notification
             open={showNotif}
             onClose={() => setShowNotif(false)}
-            items={notifications}
+            // items={notifications}
         />
       </header>
   );

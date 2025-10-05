@@ -2,35 +2,46 @@ import React, { useCallback, useEffect, useState } from "react";
 import '../styles/Wireframe.css';
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
-// import NewKudosForm from "../components/NewKudosForm";
-import ReceivedKudosProf from "../components/SubmittedKudosProf";
-import ProfReview from "../components/ProfReview";
-import SentKudosProf from "../components/ReviewedKudosProf";
 import Footer from "../components/Footer";
+import { useUser } from "../components/UserContext";
+import ProfReview from "../components/ProfReview";
+import ReviewedKudosProf from "../components/ReviewedKudosProf";
+import SubmittedKudosProf from "../components/SubmittedKudosProf";
+
 
 function ProfessorView() {
     const [showForm, setShowForm] = useState(false);
     const [selectedKudos, setSelectedKudos] = useState(null);
-    const [reviewedKudos, setReviewedKudos] = useState([])
+    const [reviewedKudos, setReviewedKudos] = useState([]);
+    const [submittedKudos, setSubmittedKudos] = useState([]);
     const navigate = useNavigate();
+    const { user } = useUser();
 
-    useEffect(() => {
-        fetchReviewedKudos();
-    }, []);
-
-    const fetchReviewedKudos = () => {
-        fetch("http://localhost:3001/cards")
+    const fetchReviewedKudos = useCallback(() => {
+        fetch(`http://localhost:3001/cards?status=approved,rejected&reviewerId=${user.id}`)
         .then((res) => res.json())
-        .then((data) => {
-            const reviewed = data.filter(
-                (card) =>
-                    card.status === "Approved" ||
-                (typeof card.status === "string" && card.status.startsWith("Rejected"))
-            );
-            setReviewedKudos(reviewed);
-        })
+        .then((data) => 
+            // { const reviewed = data.filter(
+        //         (card) =>
+        //             card.status === "Approved" ||
+        //         (typeof card.status === "string" && card.status.startsWith("Rejected"))
+        //     );
+            setReviewedKudos(data))
+        // })
         .catch((err) => console.error("Error fetching reviewed kudos:", err));
-    };
+    }, [user.id]);
+
+    const fetchSubmittedKudos = useCallback(() => {
+        fetch(`http://localhost:3001/cards?status=pending&reviewerId=${user.id}`)
+        .then((res) => res.json())
+        .then((data) => setSubmittedKudos(data))
+        .catch(err => console.error("Error fetching submitted kudos:", err));
+    }, [user.id]);
+
+        useEffect(() => {
+        fetchReviewedKudos();
+        fetchSubmittedKudos();
+    }, [fetchReviewedKudos, fetchSubmittedKudos]);
 
     const handleNewKudos = (newKudos) => {
         console.log("New kudos submitted:", newKudos);
@@ -50,6 +61,7 @@ function ProfessorView() {
             .then((res) => res.json())
             .then(() => {
                 fetchReviewedKudos();
+                fetchSubmittedKudos();
             })
             .catch((err) => console.error("Failed to update card:", err));
 
@@ -75,8 +87,9 @@ function ProfessorView() {
                 />
         )}
             <div className="main-content">
-                <ReceivedKudosProf onReview = {handleReviewSubmit}/>
-                <SentKudosProf reviewedKudos = {reviewedKudos} />
+                {/* <ReceivedKudosProf onReview = {handleReviewSubmit}/> */}
+                <SubmittedKudosProf messages = {submittedKudos} onSelect = {setSelectedKudos} />
+                <ReviewedKudosProf reviewedKudos = {reviewedKudos} />
             </div>
             <Footer />
         </div>
