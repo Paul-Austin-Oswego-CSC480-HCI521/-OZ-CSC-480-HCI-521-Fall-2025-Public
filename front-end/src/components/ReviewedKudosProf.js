@@ -2,25 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useUser } from "../components/UserContext";
 import ImageModal from "./ImageModal";
 
-function ReviewedKudosProf() {
+function ReviewedKudosProf( {reviewedKudos = []} ) {
     const [selectedImage, setSelectedImage] = useState(null);
     const [selectedRows, setSelectedRows] = useState([]);
-    const [reviewedKudos, setReviewedKudos] = useState([])
     const { user } = useUser();
 
     useEffect(()=> {
         if (!user) return;
-
-        fetch("http://localhost:3001/cards")
-        .then((res) =>res.json())
-        .then((data) => {
-            const filtered = data.filter(card =>
-                card.status === "Approved" || card.status === "Rejected"
-            );
-            setReviewedKudos(filtered);
-        })
-    }
-    )
+    }, [user] )
 
     return (
         <section className="sent-kudos">
