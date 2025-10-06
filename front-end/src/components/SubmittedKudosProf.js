@@ -13,7 +13,7 @@ function SubmittedKudosProf({ onReview }) {
             status: updatedCard.status,
             recipientType: updatedCard.status === "Approved" ? "student" : "teacher"};
 
-    await fetch (`http://localhost:3001/cards/${updatedCard.id}`, {
+    await fetch (`http://localhost:9080/kudo-app/api/kudo-card/${updatedCard.card_id}`, {
         method: "PUT",
         headers: {
             "Content-Type" : "application/json"
@@ -30,7 +30,7 @@ function SubmittedKudosProf({ onReview }) {
     };
 
     useEffect(() => {
-        fetch("http://localhost:3001/cards?recipientType=teacher")
+        fetch("http://localhost:9080/kudo-app/api/kudo-card/list/received?user_id=TEACHER_USER_ID")
             .then((res) => res.json())
             .then((data) => {
             const submittedOnly = data.filter(card => card.status === "Submitted")
