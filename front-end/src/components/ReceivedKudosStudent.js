@@ -7,7 +7,7 @@ function ReceivedKudosStudent() {
        const [selectedRows, setSelectedRows] = useState([]);
        const { user } = useUser();
 
-       const BASE_URL = "http://kudos-app:${APP_HTTP_PORT}/kudo-app/api";
+       const BASE_URL = `http://kudos-app:${APP_HTTP_PORT}/kudo-app/api`;
 
        useEffect(() => {
            if (!user) return;

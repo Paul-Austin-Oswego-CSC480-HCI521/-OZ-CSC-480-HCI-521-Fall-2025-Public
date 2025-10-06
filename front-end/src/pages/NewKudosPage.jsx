@@ -70,6 +70,11 @@ function NewKudosPage({ onSubmit }) {
             isAnonymous: isAnonymous
         }
 
+        if (formData.message.length < 10 || formData.message.length > 500) {
+            alert("Your message must be between 10 and 500 characters.");
+            return;
+        }
+
         fetch("http://localhost:8080/kudo-app/api/kudo-card", {
             method: "POST",
             headers: {'Content-Type': 'application/json'},
@@ -179,8 +184,16 @@ function NewKudosPage({ onSubmit }) {
                             onChange = {handleChange}
                             placeholder = "Please enter a message"
                             rows = {5}
+                            minLength = {10}
+                            maxLength={500}
                             required
                         />
+                        <div className='char-count' style={{
+                            textAlign: 'right',
+                            fontSize: '0.9em',
+                            color: formData.message.length < 10 || formData.message.length > 500 ? 'red' : '#555'
+                        }}>{formData.message.length}/500
+                        </div>
                     </div>
                     <div className='button-row'>
                         <button
