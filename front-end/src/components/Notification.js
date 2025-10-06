@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import '../styles/Wireframe.css';
+import { useUser } from "./UserContext";
 
 function Notification({ open, onClose }) {
     const [items, setItems] = useState([]);
+    const { user } = useUser();
 
     useEffect(() => {
         if (!open) return;
 
         const fetchNotifications = async () => {
             try {
-                const res = await fetch("http://localhost:5000/api/notifications");
+                const res = await fetch(`http://localhost:5000/api/notifications?recipient=${encodeURIComponent(user.name)}`);
                 const data = await res.json();
                 setItems(data);
             } catch (err) {

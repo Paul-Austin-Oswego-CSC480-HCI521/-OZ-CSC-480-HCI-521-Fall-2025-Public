@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import ProfReview from "./ProfReview";
+import { useUser } from "./UserContext";
 
 function SubmittedKudosProf({ onReview }) {
     const [submitted, setSubmitted] = useState([]);
     const [selectedRow, setSelectedRow] = useState(null);
     const [ selectedRows, setSelectedRows] = useState([]);
+    const { user } = useUser();
 
     const handleReviewSubmit = async (updatedCard) => {
         try {
@@ -33,12 +35,14 @@ function SubmittedKudosProf({ onReview }) {
         fetch("http://localhost:3001/cards?recipientType=teacher")
             .then((res) => res.json())
             .then((data) => {
-            const submittedOnly = data.filter(card => card.status === "Submitted")
-            setSubmitted(submittedOnly);
+                const submittedOnly = data.filter(card => 
+                    card.status === "Submitted" &&
+                    card.recipient === user.name
+                );
+                setSubmitted(submittedOnly);
             })
-
             .catch((err) => console.error("Error fetching submitted kudos:", err));
-    }, []);
+    }, [user]);
 
     return (
         <section className="received-kudos">
@@ -61,7 +65,7 @@ function SubmittedKudosProf({ onReview }) {
                     {submitted.map((k, i) => (
                         <tr
                             key={k.id || i}
-                            className="row-click"
+                            className={`"row-click"${selectedRows.includes(i) ? "selected-row" : ""}`}
                             role="button"
                             tabIndex={0}
                             onClick={() => {
@@ -76,7 +80,6 @@ function SubmittedKudosProf({ onReview }) {
                                     setSelectedRow(k);
                                 }
                             }}
-                            className={selectedRows.includes(i) ? "selected-row" : ""}
                         >
                             <td className="default-kudos-table-data">{k.sender}</td>
                             <td className="default-kudos-table-data">{k.recipient}</td>
