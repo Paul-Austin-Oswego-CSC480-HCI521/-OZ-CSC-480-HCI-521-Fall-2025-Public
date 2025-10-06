@@ -1,24 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useUser } from "./UserContext";
 
-function SentKudosStudent() {
+function SentKudosStudent( {messages = []} ) {
     const { user } = useUser();
-    const [sentKudos, setSentKudos] = useState([]);
     const [selectedImage, setSelectedImage] = useState(null);
     const [selectedRows, setSelectedRows] = useState([]);
+    const sentKudos = messages;
 
     useEffect(() => {
         if (!user) return;
-
-        fetch("http://localhost:3001/cards")
-            .then((res) => res.json())
-            .then((data) => {
-                const filtered = data.filter(card =>
-                    card.sender === user.name && card.senderId === user.id
-                );
-                setSentKudos(filtered);
-            })
-            .catch((err) => console.error("Error fetching sent kudos:", err));
         }, [user]);
 
     return (

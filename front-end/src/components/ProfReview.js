@@ -23,7 +23,7 @@ function ProfReview({ onClose, onSubmit, initialData, readOnly = false }) {
         setSelectedStatus(status);
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (readOnly) return;
 
@@ -32,47 +32,68 @@ function ProfReview({ onClose, onSubmit, initialData, readOnly = false }) {
             return;
         }
 
-        if (selectedStatus === 'Rejected' && formData.note.trim() === '') {
+        if (selectedStatus === 'REJECTED' & formData.note.trim() === '') {
             alert("Please provide a reason for rejection.");
             return;
         }
 
-        const updatedCard = {
-            ...formData,
-            id: Number(initialData?.id),
-            date: initialData?.date || new Date().toLocaleDateString(),
-            status: selectedStatus,
-            note: formData.note,
-            recipientType: selectedStatus === "Approved" ? "student" : "teacher",
-            senderType: initialData?.senderType || user.role,
-            imageUrl: initialData?.imageUrl || '/img/kudos1.png',
-            read: initialData?.read ?? false,
-        };
+        try {
+            const BASE_URL = "http://kudos-app:${APP_HTTP_PORT}/kudo-app/api";
 
-//        console.log("Selected status:", selectedStatus);
-//        console.log("Form data:", formData);
-//        console.log("Initial data:", initialData);
 
-        fetch(`http://localhost:3001/cards/${updatedCard.id}`, {
-            method: "PATCH",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(updatedCard),
-        })
-            .then(res => {
-                if (!res.ok) throw new Error("Failed to update card.");
-                return res.json();
-            })
-            .then(data => {
-                onSubmit(data);
-                onClose();
-            })
-            .catch(err => {
-                console.error("Error updating card:", err);
-                alert("There was an error saving the card. Please try again.");
-            });
-        };
+            const updatedCard = {
+                status: selectedStatus.toUpperCase(),
+                note: formData.note,
+            };
+
+            const res = await fetch(
+                `${BASE_URL}/kudo-card/${initialData.id}?user_id=${user.id}`,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(updatedCard),
+                }
+            );
+
+            if (!res.ok)
+                throw new Error("Failed to updatee card.");
+
+            const data = await res.json();
+            onSubmit(data);
+            onClose();
+
+        } catch(error){
+            console.error("Error updating card:", error);
+            alert("There was an error saving the card. Please try again");
+        }
+    };
+
+// //        console.log("Selected status:", selectedStatus);
+// //        console.log("Form data:", formData);
+// //        console.log("Initial data:", initialData);
+//
+//         fetch(`http://localhost:3001/cards/${updatedCard.id}`, {
+//             method: "PATCH",
+//             headers: {
+//                 "Content-Type": "application/json",
+//             },
+//             body: JSON.stringify(updatedCard),
+//         })
+//             .then(res => {
+//                 if (!res.ok) throw new Error("Failed to update card.");
+//                 return res.json();
+//             })
+//             .then(data => {
+//                 onSubmit(data);
+//                 onClose();
+//             })
+//             .catch(err => {
+//                 console.error("Error updating card:", err);
+//                 alert("There was an error saving the card. Please try again.");
+//             });
+//         };
 
     return (
         <div className="modal-overlay">
