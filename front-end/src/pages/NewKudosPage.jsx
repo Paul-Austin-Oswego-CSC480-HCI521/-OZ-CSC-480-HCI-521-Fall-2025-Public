@@ -8,6 +8,7 @@ import Footer from '../components/Footer';
 function NewKudosPage({ onSubmit }) {
     const navigate = useNavigate();
     const location = useLocation();
+    const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
     const Users = [
         {userId: "123", name: "Kalley"},
@@ -15,6 +16,7 @@ function NewKudosPage({ onSubmit }) {
         {userId: "789", name: "Brittany"},
         {userId: "098", name: "Ethan"}
     ];
+    
     const STUDENT_USER_ID = "87654321-1234-1234-1234-123456789xyz";
     const PLACEHOLDER_CLASS_ID = "12345678-1234-1234-1234-123456789def";
 
@@ -75,7 +77,7 @@ function NewKudosPage({ onSubmit }) {
             return;
         }
 
-        fetch("http://localhost:8080/kudo-app/api/kudo-card", {
+        fetch(`${BASE_URL}/kudo-card`, {
             method: "POST",
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(newCard)

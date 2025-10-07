@@ -5,13 +5,14 @@ import { useUser } from "./UserContext";
 function Notification({ open, onClose }) {
     const [items, setItems] = useState([]);
     const { user } = useUser();
+    const BASE_URL = process.env.REACT_APP_BASE_URL;
 
     useEffect(() => {
         if (!open) return;
 
         const fetchNotifications = async () => {
             try {
-                const res = await fetch(`http://localhost:5000/api/notifications?recipient=${encodeURIComponent(user.name)}`);
+                const res = await fetch(`${BASE_URL}/notifications?recipient=${user.id}`);
                 const data = await res.json();
                 setItems(data);
             } catch (err) {

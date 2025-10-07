@@ -16,9 +16,10 @@ function ProfessorView() {
     const [submittedKudos, setSubmittedKudos] = useState([]);
     const navigate = useNavigate();
     const { user } = useUser();
+    const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
     const fetchReviewedKudos = useCallback(() => {
-        fetch(`http://localhost:3001/cards?status=approved,rejected&reviewerId=${user.id}`)
+        fetch(`${BASE_URL}/api/kudo-card/list/reviewed?reviewer_id=${user.id}`)
         .then((res) => res.json())
         .then((data) => 
             // { const reviewed = data.filter(
@@ -32,7 +33,7 @@ function ProfessorView() {
     }, [user.id]);
 
     const fetchSubmittedKudos = useCallback(() => {
-        fetch(`http://localhost:3001/cards?status=pending&reviewerId=${user.id}`)
+        fetch(`${BASE_URL}/api/kudo-card/list/submitted?reviewer_id=${user.id}`)
         .then((res) => res.json())
         .then((data) => setSubmittedKudos(data))
         .catch(err => console.error("Error fetching submitted kudos:", err));
@@ -51,7 +52,7 @@ function ProfessorView() {
     const handleReviewSubmit = (updatedCard) => {
         console.log("Reviewed card submitted:", updatedCard);
         
-        fetch(`http://localhost:3001/cards/${updatedCard.id}`, {
+        fetch(`${BASE_URL}/api/kudo-card/${updatedCard.id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json"

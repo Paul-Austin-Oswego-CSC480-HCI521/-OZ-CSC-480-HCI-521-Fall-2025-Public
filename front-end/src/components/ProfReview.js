@@ -32,17 +32,16 @@ function ProfReview({ onClose, onSubmit, initialData, readOnly = false }) {
             return;
         }
 
-        if (selectedStatus === 'REJECTED' & formData.note.trim() === '') {
+        if (selectedStatus === 'REJECTED' && formData.note.trim() === '') {
             alert("Please provide a reason for rejection.");
             return;
         }
 
         try {
-            const BASE_URL = "http://kudos-app:${APP_HTTP_PORT}/kudo-app/api";
-
+            const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
             const updatedCard = {
-                status: selectedStatus.toUpperCase(),
+                status: selectedStatus,
                 note: formData.note,
             };
 
@@ -58,7 +57,7 @@ function ProfReview({ onClose, onSubmit, initialData, readOnly = false }) {
             );
 
             if (!res.ok)
-                throw new Error("Failed to updatee card.");
+                throw new Error("Failed to update card.");
 
             const data = await res.json();
             onSubmit(data);
@@ -158,15 +157,15 @@ function ProfReview({ onClose, onSubmit, initialData, readOnly = false }) {
                     </div>
                     <div className={"button-row"}>
                         <button 
-                            className={`approve-reject ${selectedStatus === 'Approved' ? 'selected' : ''}`} 
+                            className={`approve-reject ${selectedStatus === 'APPROVED' ? 'selected' : ''}`} 
                             type = "button"
-                            onClick = {() => handleStatusChange('Approved')}
+                            onClick = {() => handleStatusChange('APPROVED')}
                             >Approve
                         </button>
                         <button 
-                            className={`approve-reject ${selectedStatus === 'Rejected' ? 'selected' : ''}`} 
+                            className={`approve-reject ${selectedStatus === 'REJECTED' ? 'selected' : ''}`} 
                             type = "button"
-                            onClick = {() => handleStatusChange('Rejected')}
+                            onClick = {() => handleStatusChange('REJECTED')}
                             >Reject
                         </button>
                     </div>
@@ -185,7 +184,7 @@ function ProfReview({ onClose, onSubmit, initialData, readOnly = false }) {
                     </div>
 
                     <div className="button-row">
-                        <button className="close-btn" onClick={onClose}>✖</button>
+                        <button type = "button" className="close-btn" onClick={onClose}>✖</button>
                         <button className="submit-btn" type = "submit">
                             Submit
                         </button>

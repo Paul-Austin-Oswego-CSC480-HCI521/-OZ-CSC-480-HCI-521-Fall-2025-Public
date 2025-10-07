@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useUser } from "../components/UserContext";
 import ImageModal from "./ImageModal";
 
@@ -7,9 +7,9 @@ function ReviewedKudosProf( {reviewedKudos = []} ) {
     const [selectedRows, setSelectedRows] = useState([]);
     const { user } = useUser();
 
-    useEffect(()=> {
-        if (!user) return;
-    }, [user] )
+    // useEffect(()=> {
+    //     if (!user) return;
+    // }, [user] )
 
     return (
         <section className="sent-kudos">

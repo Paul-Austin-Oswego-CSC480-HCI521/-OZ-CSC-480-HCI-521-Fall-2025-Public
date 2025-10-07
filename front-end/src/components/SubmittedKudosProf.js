@@ -7,15 +7,16 @@ function SubmittedKudosProf({ onReview }) {
     const [selectedRow, setSelectedRow] = useState(null);
     const [ selectedRows, setSelectedRows] = useState([]);
     const { user } = useUser();
+    const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
     const handleReviewSubmit = async (updatedCard) => {
         try {
             const updatedData = {
             ...updatedCard,
             status: updatedCard.status,
-            recipientType: updatedCard.status === "Approved" ? "student" : "teacher"};
+            recipientType: updatedCard.status === "APPROVED" ? "student" : "teacher"};
 
-    await fetch (`http://localhost:9080/kudo-app/api/kudo-card/${updatedCard.card_id}`, {
+    await fetch (`${BASE_URL}/kudo-app/api/kudo-card/${updatedCard.card.id}`, {
         method: "PUT",
         headers: {
             "Content-Type" : "application/json"
@@ -32,11 +33,11 @@ function SubmittedKudosProf({ onReview }) {
     };
 
     useEffect(() => {
-        fetch("http://localhost:9080/kudo-app/api/kudo-card/list/received?user_id=TEACHER_USER_ID")
+        fetch(`${BASE_URL}/kudo-app/api/kudo-card/list/received?user_id=${user.id}`)
             .then((res) => res.json())
             .then((data) => {
                 const submittedOnly = data.filter(card => 
-                    card.status === "Submitted" &&
+                    card.status === "SUBMITTED" &&
                     card.recipient === user.name
                 );
                 setSubmitted(submittedOnly);
@@ -65,7 +66,7 @@ function SubmittedKudosProf({ onReview }) {
                     {submitted.map((k, i) => (
                         <tr
                             key={k.id || i}
-                            className={`"row-click"${selectedRows.includes(i) ? "selected-row" : ""}`}
+                            className={`row-click${selectedRows.includes(i) ? "selected-row" : ""}`}
                             role="button"
                             tabIndex={0}
                             onClick={() => {

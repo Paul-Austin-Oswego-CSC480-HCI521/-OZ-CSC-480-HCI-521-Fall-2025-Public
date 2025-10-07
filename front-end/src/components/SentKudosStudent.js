@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useUser } from "./UserContext";
 
 function SentKudosStudent( {messages = []} ) {
@@ -7,9 +7,9 @@ function SentKudosStudent( {messages = []} ) {
     const [selectedRows, setSelectedRows] = useState([]);
     const sentKudos = messages;
 
-    useEffect(() => {
-        if (!user) return;
-        }, [user]);
+    // useEffect(() => {
+    //     if (!user) return;
+    //     }, [user]);
 
     return (
         <section className="sent-kudos">

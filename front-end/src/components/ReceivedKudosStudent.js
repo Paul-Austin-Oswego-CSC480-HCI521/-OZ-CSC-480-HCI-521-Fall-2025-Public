@@ -7,20 +7,20 @@ function ReceivedKudosStudent() {
        const [selectedRows, setSelectedRows] = useState([]);
        const { user } = useUser();
 
-       const BASE_URL = `http://kudos-app:${APP_HTTP_PORT}/kudo-app/api`;
+       const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
        useEffect(() => {
            if (!user) return;
            const fetchReceivedKudos = async () => {
                try {
                    const listRes = await fetch(
-                       `${BASE_URL}/kudo-card/list/received?user_id=${user.id}'`
+                       `${BASE_URL}/kudo-card/list/received?user_id=${user.id}`
                    );
                    if (!listRes.ok)
                        throw new Error("Failed to fetch card list");
 
                    const listData = await listRes.json();
-                   const cardIds = listData.card_id || [];
+                   const cardIds = listData.map (card => card.id);
 
                    const cardPromises = cardIds.map((id) =>
                        fetch(`${BASE_URL}/kudo-card/${id}?user_id=${user.id}`).then((res) =>

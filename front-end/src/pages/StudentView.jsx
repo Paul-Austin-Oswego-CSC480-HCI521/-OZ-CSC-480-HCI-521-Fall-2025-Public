@@ -13,7 +13,7 @@ const TEACHER_RECIPIENT_ID = "12345678-1234-1234-1234-123456789abc";
 
 function StudentView() {
 
-    const API_URL = "http://kudos-app:8080/kudo-app/api";
+    const BASE_URL = process.env.REACT_APP_API_BASE_URL;
     const navigate = useNavigate();
     const [showForm, setShowForm] = useState();
     const [sentKudos, setSentKudos] = useState([]);
@@ -36,33 +36,33 @@ function StudentView() {
 
     //fetch cards by ID
     const getCard = async (cardId) => {
-        const response = await fetch(`${API_URL}/kudo-card/${cardId}?user_id=${user.id}`);
+        const response = await fetch(`${BASE_URL}/kudo-card/${cardId}?user_id=${user.id}`);
         if (!response.ok) throw new Error(`Failed to fetch card ${cardId}`)
             return response.json();
     };
     
     const getKudos = useCallback(() => {
         let sentCardIds = [];
-        let recievedCardIds = [];
+        let receivedCardIds = [];
 
-        return fetch(`${API_URL}/kudo-card/list/sent?user_id=${user.id}`)
+        return fetch(`${BASE_URL}/kudo-card/list/sent?user_id=${user.id}`)
         .then(res => res.json())
         .then(sentList => {sentCardIds = sentList.card_id || [];
-            return fetch(`${API_URL}/kudo-card/list/recieved?user_id=${user.id}`)
+            return fetch(`${BASE_URL}/kudo-card/list/received?user_id=${user.id}`)
         })
         .then(res => res.json())
-        .then(recievedList => {recievedCardIds = recievedList.card_id || [];
+        .then(receivedList => {receivedCardIds = receivedList.card_id || [];
 
-            const allCardsIds = [...new Set([...sentCardIds, ...recievedCardIds])];
+            const allCardsIds = [...new Set([...sentCardIds, ...receivedCardIds])];
             const cardDetails = allCardsIds.map(getCard)
             return Promise.all(cardDetails);
         })
         .then(allKudos => {
             const sent = allKudos.filter(kudo => kudo.sender_id === user.id);
-            const recieved = allKudos.filter(kudo => kudo.recipient_id === user.id);
+            const received = allKudos.filter(kudo => kudo.recipient_id === user.id);
 
             setSentKudos(sent);
-            setReceivedKudos(recieved);
+            setReceivedKudos(received);
         })
         .catch((err) => console.error('Error fetching kudos:', err));
     }, [user.id]);
@@ -102,7 +102,7 @@ function StudentView() {
         // };
 
         // fetch('http://localhost:3001/cards', 
-        fetch(`${API_URL}/kudo-card`, {
+        fetch(`${BASE_URL}/kudo-card`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json'},
             body: JSON.stringify(kudos)
