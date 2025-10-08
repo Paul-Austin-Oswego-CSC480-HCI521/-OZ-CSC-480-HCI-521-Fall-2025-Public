@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { useUser } from '../components/UserContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import '../styles/Wireframe.css';
+import { v4 as uuidv4 } from 'uuid';
 
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -8,35 +10,18 @@ import Footer from '../components/Footer';
 function NewKudosPage({ onSubmit }) {
     const navigate = useNavigate();
     const location = useLocation();
+    const { user } = useUser();
     const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-    const Users = [
-        {userId: "123", name: "Kalley"},
-        {userId: "456", name: "Hadassah"},
-        {userId: "789", name: "Brittany"},
-        {userId: "098", name: "Ethan"}
-    ];
-    
-    const STUDENT_USER_ID = "87654321-1234-1234-1234-123456789xyz";
+    const [students, setStudents] = useState([]);
+    const [isAnonymous, setIsAnonymous] = useState(true);
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    // const STUDENT_USER_ID = "87654321-1234-1234-1234-123456789xyz";
     const PLACEHOLDER_CLASS_ID = "12345678-1234-1234-1234-123456789def";
 
-
-    const recipient = ['Kalley', 'Hadassah', 'Brittany', 'Ethan'];
     const titleOptions = ['Well Done!', 'Nice Job!', 'Great Work!', 'Thank you!'];
-
-    const [isAnonymous, setIsAnonymous] = useState(true);
-
-    const [formData, setFormData] = useState ({
-        sender: '',
-        recipient: '',
-        title: titleOptions[0],
-        message: '',
-    });
-
-
-    const [selectedImage, setSelectedImage] = useState(null);
-
-
     const imageMap = {
         'Well Done!': '/images/welldone.png',
         'Nice Job!': '/images/nicejob.png',
@@ -44,13 +29,40 @@ function NewKudosPage({ onSubmit }) {
         'Thank you!': '/images/thankyou.png'
     };
 
+    const [formData, setFormData] = useState ({
+        recipient: '',
+        title: titleOptions[0],
+        message: '',
+    });
+
+    useEffect(() => {
+        fetch(`${BASE_URL}/users?role=STUDENT`)
+        .then(res => res.json())
+        .then(data => {
+            setStudents(data);
+            setLoading(false);
+        })
+        .catch(err => {
+            console.error("Failed to load student users:", err);
+            setLoading(false);
+        });
+    }, [BASE_URL]);
+
+    // const Users = [
+    //     {userId: "123", name: "Kalley"},
+    //     {userId: "456", name: "Hadassah"},
+    //     {userId: "789", name: "Brittany"},
+    //     {userId: "098", name: "Ethan"}
+    // ];
+
+    // const recipient = ['Kalley', 'Hadassah', 'Brittany', 'Ethan'];
+
     const handleCreateNew = () => {
-        if (location.pathname.includes("studentView")) {
-            navigate("/studentView/new-kudos");
-        } else if (location.pathname.includes("professorView")) {
-            navigate("/professorView/new-kudos");
-        }
-    }
+        const base = location.pathname.includes("studentView")
+        ? "/studentView/new-kudos"
+        : "/professorView/new-kudos";
+        navigate(base);
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -63,18 +75,26 @@ function NewKudosPage({ onSubmit }) {
     const handleSubmit = (e) =>{
         e.preventDefault();
 
-        const newCard = {
-            senderId: isAnonymous ? null : STUDENT_USER_ID,
-            recipientId: formData.recipient,
-            classId: PLACEHOLDER_CLASS_ID,
-            title: formData.title,
-            content: formData.message,
-            isAnonymous: isAnonymous
+        if (!user) {
+            alert("User not loaded yet.");
+            return;
         }
-
+        
         if (formData.message.length < 10 || formData.message.length > 500) {
             alert("Your message must be between 10 and 500 characters.");
             return;
+        }
+
+        const newCard = {
+            card_id: uuidv4(),
+            sender_id: isAnonymous ? null : user?.user_id,
+            recipient_id: formData.recipient,
+            class_id: PLACEHOLDER_CLASS_ID,
+            title: formData.title,
+            content: formData.message,
+            isAnonymous: isAnonymous,
+            status: "PENDING",
+            approvedBy: null
         }
 
         fetch(`${BASE_URL}/kudo-card`, {
@@ -82,7 +102,12 @@ function NewKudosPage({ onSubmit }) {
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(newCard)
         })
-            .then(res => res.json())
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error("Failed to submit");
+                }
+                return res.json();
+            })
             .then(data => {
                 console.log("Kudos submitted:", data);
                 navigate(-1);
@@ -90,12 +115,13 @@ function NewKudosPage({ onSubmit }) {
             .catch(err => console.error("Submission failed:", err));
 
         setFormData({
-            sender: '',
             recipient: '',
             title: titleOptions[0],
             message: ''
         });
     };
+
+    if (loading) return <div className="app-container">Loading...</div>
 
     return (
         <div className = "app-container">
@@ -108,13 +134,10 @@ function NewKudosPage({ onSubmit }) {
                         <div className={"form-group"}>
                             <label htmlFor="sender">Sender</label>
                             <input
-                                id = "sender"
+                                id = "sender_id"
                                 className={"to-from-title"}
                                 type = "text"
-                                name = "sender"
-                                value = {formData.sender}
-                                onChange = {handleChange}
-                                placeholder = {isAnonymous ? "Anonymous" : "Sender"}
+                                value = {user?.user_id || ''}
                                 disabled = {isAnonymous}
                                 required = {!isAnonymous}
                             />
@@ -126,8 +149,6 @@ function NewKudosPage({ onSubmit }) {
                                     onChange = {(e) => {
                                         const isChecked = e.target.checked;
                                         setIsAnonymous(isChecked);
-                                        setFormData(prev => ({ 
-                                            ...prev, sender: isChecked ? 'Anonymous' : ''}));
                                     }} />Send Anonymously</label>
                         </div>
 
@@ -142,9 +163,9 @@ function NewKudosPage({ onSubmit }) {
                                 required
                             >
                                 <option value=""> -- Select a recipient --</option>
-                                {Users.map((user) => (
-                                    <option key = {user.userId} value={user.userId}>
-                                        {user.name}
+                                {students.map((student) => (
+                                    <option key = {student.user_id} value={student.user_id}>
+                                        {student.name}
                                     </option>
                                 ))}
                             </select>

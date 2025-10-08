@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function ImageModal({ src, alt = "Kudos", onClose }) {
     if (!src) return null;
 

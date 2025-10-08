@@ -5,14 +5,14 @@ import { useUser } from "./UserContext";
 function Notification({ open, onClose }) {
     const [items, setItems] = useState([]);
     const { user } = useUser();
-    const BASE_URL = process.env.REACT_APP_BASE_URL;
+    const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
     useEffect(() => {
-        if (!open) return;
+        if (!open || !user?.user_id) return;
 
         const fetchNotifications = async () => {
             try {
-                const res = await fetch(`${BASE_URL}/notifications?recipient=${user.id}`);
+                const res = await fetch(`${BASE_URL}/notifications?recipient=${user.user_id}`);
                 const data = await res.json();
                 setItems(data);
             } catch (err) {
@@ -31,7 +31,7 @@ function Notification({ open, onClose }) {
             document.removeEventListener('keydown', onKey);
             document.body.style.overflow = prev;
         };
-    }, [open, onClose]);
+    }, [open, onClose, user]);
 
     if (!open) return null;
 

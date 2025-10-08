@@ -3,10 +3,10 @@ import { useUser } from "./UserContext";
 
 function ProfReview({ onClose, onSubmit, initialData, readOnly = false }) {
     const [formData, setFormData] = useState({
-        sender: initialData?.sender || '',
-        recipient: initialData?.recipient || '',
-        subject: initialData?.subject || '',
-        message: initialData?.message || '',
+        sender_id: initialData?.sender_id || '',
+        recipient_id: initialData?.recipient_id || '',
+        title: initialData?.title || '',
+        message: initialData?.message || initialData?.content || '',
         note: initialData?.note || '',
     });
 
@@ -46,7 +46,7 @@ function ProfReview({ onClose, onSubmit, initialData, readOnly = false }) {
             };
 
             const res = await fetch(
-                `${BASE_URL}/kudo-card/${initialData.id}?user_id=${user.id}`,
+                `${BASE_URL}/kudo-card/${initialData.card_id}?user_id=${user.user_id}`,
                 {
                     method: "PUT",
                     headers: {
@@ -69,31 +69,6 @@ function ProfReview({ onClose, onSubmit, initialData, readOnly = false }) {
         }
     };
 
-// //        console.log("Selected status:", selectedStatus);
-// //        console.log("Form data:", formData);
-// //        console.log("Initial data:", initialData);
-//
-//         fetch(`http://localhost:3001/cards/${updatedCard.id}`, {
-//             method: "PATCH",
-//             headers: {
-//                 "Content-Type": "application/json",
-//             },
-//             body: JSON.stringify(updatedCard),
-//         })
-//             .then(res => {
-//                 if (!res.ok) throw new Error("Failed to update card.");
-//                 return res.json();
-//             })
-//             .then(data => {
-//                 onSubmit(data);
-//                 onClose();
-//             })
-//             .catch(err => {
-//                 console.error("Error updating card:", err);
-//                 alert("There was an error saving the card. Please try again.");
-//             });
-//         };
-
     return (
         <div className="modal-overlay">
             <div className="modal-content">
@@ -104,8 +79,8 @@ function ProfReview({ onClose, onSubmit, initialData, readOnly = false }) {
                             <input
                                 id="sender"
                                 className={"to-from-title"}
-                                name="sender"
-                                value={formData.sender}
+                                name="sender_id"
+                                value={formData.sender_id}
                                 onChange={handleChange}
                                 placeholder="Sender"
                                 required
@@ -117,8 +92,8 @@ function ProfReview({ onClose, onSubmit, initialData, readOnly = false }) {
                             <input
                                 id="recipient"
                                 className={"to-from-title"}
-                                name="recipient"
-                                value={formData.recipient}
+                                name="recipient_id"
+                                value={formData.recipient_id}
                                 onChange={handleChange}
                                 placeholder="Recipient"
                                 required
@@ -128,14 +103,14 @@ function ProfReview({ onClose, onSubmit, initialData, readOnly = false }) {
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="subject">Subject</label>
+                        <label htmlFor="title">Title</label>
                         <input
-                            id="subject"
+                            id="title"
                             className={"to-from-title"}
-                            name="subject"
-                            value={formData.subject}
+                            name="title"
+                            value={formData.title}
                             onChange={handleChange}
-                            placeholder="Subject"
+                            placeholder="Title"
                             required
                             readOnly={true}
                         />
@@ -147,7 +122,7 @@ function ProfReview({ onClose, onSubmit, initialData, readOnly = false }) {
                             id="message"
                             className={"textBox"}
                             name="message"
-                            value={formData.message}
+                            value={formData.message || formData.content}
                             onChange={handleChange}
                             placeholder="Message"
                             rows={5}

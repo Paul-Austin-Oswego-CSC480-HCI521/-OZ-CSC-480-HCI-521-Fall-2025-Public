@@ -10,49 +10,51 @@ import SubmittedKudosProf from "../components/SubmittedKudosProf";
 
 
 function ProfessorView() {
-    const [showForm, setShowForm] = useState(false);
     const [selectedKudos, setSelectedKudos] = useState(null);
     const [reviewedKudos, setReviewedKudos] = useState([]);
     const [submittedKudos, setSubmittedKudos] = useState([]);
     const navigate = useNavigate();
     const { user } = useUser();
     const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     const fetchReviewedKudos = useCallback(() => {
-        fetch(`${BASE_URL}/api/kudo-card/list/reviewed?reviewer_id=${user.id}`)
-        .then((res) => res.json())
-        .then((data) => 
-            // { const reviewed = data.filter(
-        //         (card) =>
-        //             card.status === "Approved" ||
-        //         (typeof card.status === "string" && card.status.startsWith("Rejected"))
-        //     );
-            setReviewedKudos(data))
-        // })
-        .catch((err) => console.error("Error fetching reviewed kudos:", err));
-    }, [user.id]);
+        return fetch(`${BASE_URL}/kudo-card/list/reviewed?reviewer_id=${user.user_id}`)
+        .then((res) => {
+            if (!res.ok) throw new Error("Failed to fetch reviewed kudos");
+            return res.json();
+        }) .then((data) => setReviewedKudos(data))
+    }, [user.use_iId]);
+        
 
     const fetchSubmittedKudos = useCallback(() => {
-        fetch(`${BASE_URL}/api/kudo-card/list/submitted?reviewer_id=${user.id}`)
-        .then((res) => res.json())
+        return fetch(`${BASE_URL}/kudo-card/list/submitted?reviewer_id=${user.user_id}`)
+        .then((res) => {
+            if (!res.ok) throw new Error ("Failed to fetch submitted kudos");
+
+            return res.json()
+    })
         .then((data) => setSubmittedKudos(data))
-        .catch(err => console.error("Error fetching submitted kudos:", err));
-    }, [user.id]);
+    }, [user.user_id]);
 
         useEffect(() => {
-        fetchReviewedKudos();
-        fetchSubmittedKudos();
-    }, [fetchReviewedKudos, fetchSubmittedKudos]);
+            if (!user?.user_id) return;
+
+            setLoading(true);
+            Promise.all([fetchReviewedKudos(), fetchSubmittedKudos()])
+            .catch((err) => setError("Failed to load kudos."))
+            .finally(() => setLoading(false));
+    }, [fetchReviewedKudos, fetchSubmittedKudos, user?.user_id]);
 
     const handleNewKudos = (newKudos) => {
         console.log("New kudos submitted:", newKudos);
-        setShowForm(false);
     };
 
     const handleReviewSubmit = (updatedCard) => {
         console.log("Reviewed card submitted:", updatedCard);
         
-        fetch(`${BASE_URL}/api/kudo-card/${updatedCard.id}`, {
+        fetch(`${BASE_URL}/kudo-card/${updatedCard.card_id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json"
@@ -72,13 +74,6 @@ function ProfessorView() {
     return (
         <div className="app-container">
             <Header onCreateNew = {() => navigate('/professorView/new-kudos')} />
-            
-            {/* {showForm && (
-                <NewKudosForm 
-                onClose = {() =>setShowForm(false)} 
-                onSubmit = {handleNewKudos} 
-            />
-        )} */}
 
         {selectedKudos && (
             <ProfReview
@@ -88,9 +83,15 @@ function ProfessorView() {
                 />
         )}
             <div className="main-content">
-                {/* <ReceivedKudosProf onReview = {handleReviewSubmit}/> */}
-                <SubmittedKudosProf messages = {submittedKudos} onSelect = {setSelectedKudos} />
-                <ReviewedKudosProf reviewedKudos = {reviewedKudos} />
+                {loading && <p>Loading kudos...</p>}
+                {error && <p style = {{ color: 'red' }}>{error}</p>}
+
+                {!loading && !error && (
+                    <>
+                    <SubmittedKudosProf messages = {submittedKudos} onSelect = {setSelectedKudos} />
+                    <ReviewedKudosProf reviewedKudos = {reviewedKudos} />
+                    </>
+                )}
             </div>
             <Footer />
         </div>

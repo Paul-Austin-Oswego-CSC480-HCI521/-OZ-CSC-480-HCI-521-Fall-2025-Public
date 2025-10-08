@@ -6,125 +6,127 @@ import Footer from "../components/Footer";
 import ReceivedKudosStudent from "../components/ReceivedKudosStudent";
 import SentKudosStudent from "../components/SentKudosStudent";
 import { useUser } from "../components/UserContext";
+import { v4 as uuidv4} from 'uuid';
 
-// const STUDENT_USER_ID = "87654321-1234-1234-1234-123456789xyz"; 
-const PLACEHOLDER_CLASS_ID = "12345678-1234-1234-1234-123456789def"; 
-const TEACHER_RECIPIENT_ID = "12345678-1234-1234-1234-123456789abc";
+// const PLACEHOLDER_CLASS_ID = "12345678-1234-1234-1234-123456789def"; 
+// const TEACHER_RECIPIENT_ID = "12345678-1234-1234-1234-123456789abc";
 
 function StudentView() {
-
     const BASE_URL = process.env.REACT_APP_API_BASE_URL;
     const navigate = useNavigate();
-    const [showForm, setShowForm] = useState();
     const [sentKudos, setSentKudos] = useState([]);
     const [receivedKudos, setReceivedKudos] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
     const { user } = useUser();
 
-    // const fetchSubmittedKudos = () => {
-    //     fetch('http://localhost:3001/cards?recipientType=teacher')
-    //     .then(res => res.json())
-    //     .then(data => setSubmittedKudos(data))
-    //     .catch(err => console.error("Error fetching submitted kudos:", err));
-    // };
-    
-    // const fetchSentKudos = () => {
-    //     fetch('http://localhost:3001/cards?senderType=student')
-    //     .then(res => res.json())
-    //     .then(data => setSentKudos(data))
-    //     .catch(err => console.error("Error fetching sent kudos:", err));
-    // };
-
-    //fetch cards by ID
     const getCard = async (cardId) => {
-        const response = await fetch(`${BASE_URL}/kudo-card/${cardId}?user_id=${user.id}`);
-        if (!response.ok) throw new Error(`Failed to fetch card ${cardId}`)
-            return response.json();
+        const response = await fetch(`${BASE_URL}/kudo-card/${cardId}?user_id=${user.user_id}`);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch card ${cardId}`);
+        }
+        return await response.json();
     };
     
-    const getKudos = useCallback(() => {
-        let sentCardIds = [];
-        let receivedCardIds = [];
+    const getKudos = useCallback(async () => {
+        if (!user?.user_id) return;
 
-        return fetch(`${BASE_URL}/kudo-card/list/sent?user_id=${user.id}`)
-        .then(res => res.json())
-        .then(sentList => {sentCardIds = sentList.card_id || [];
-            return fetch(`${BASE_URL}/kudo-card/list/received?user_id=${user.id}`)
-        })
-        .then(res => res.json())
-        .then(receivedList => {receivedCardIds = receivedList.card_id || [];
+        setLoading(true);
+        setError(null);
+
+        try {
+            const sentRes = await fetch(`${BASE_URL}/kudo-card/list/sent?user_id=${user.user_id}`);
+            const sentList = await sentRes.json();
+            const receivedRes = await fetch(`${BASE_URL}/kudo-card/list/received?user_id=${user.user_id}`);
+            const receivedList = await receivedRes.json();
+
+            const sentCardIds = sentList.map(card => card.card_id);
+            const receivedCardIds = receivedList.map(card => card.card_id);
 
             const allCardsIds = [...new Set([...sentCardIds, ...receivedCardIds])];
-            const cardDetails = allCardsIds.map(getCard)
-            return Promise.all(cardDetails);
-        })
-        .then(allKudos => {
-            const sent = allKudos.filter(kudo => kudo.sender_id === user.id);
-            const received = allKudos.filter(kudo => kudo.recipient_id === user.id);
+            const cardDetails = await Promise.all(allCardsIds.map(getCard));
+
+            const formatKudo = (kudo) => ({
+                id: kudo.card_id,
+                recipient: kudo.recipient_id,
+                sender: kudo.sender_id,
+                title: kudo.title,
+                status: kudo.status,
+                date: kudo.dateSent || kudo.date || "-",
+                imageUrl: kudo.imageUrl || null
+            });
+
+            const sent = cardDetails
+                .filter(kudo => kudo.sender_id === user.user_id)
+                .map(formatKudo);
+
+            const received = cardDetails
+                .filter(kudo => kudo.recipient_id === user.user_id)
+                .map(formatKudo);
 
             setSentKudos(sent);
             setReceivedKudos(received);
-        })
-        .catch((err) => console.error('Error fetching kudos:', err));
-    }, [user.id]);
+        } catch (err) {
+            console.error('Error fetching kudos:', err);
+            setError('Failed to load kudos. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    }, [user?.user_id]);
 
     useEffect(() => {
         getKudos();
     }, [getKudos]);
 
-    // useEffect(() => {
-    //     fetch(`http://localhost:3001/cards`)
-    //     .then((res) => res.json())
-    //     .then((data) => {
-    //         setSentKudos(data.filter(msg => msg.senderType === 'student'));
-    //         setReceivedKudos(data.filter(msg => msg.recipientType === 'student'));
-    //     })
-    //     .catch((err) => console.error('Error fetching kudos:', err));
-    //     // fetchSubmittedKudos();
-    //     // fetchSentKudos();
-    // }, []);
-
-    const handleNewKudos = (newKudos) => {
+    const handleNewKudos = async (newKudos) => {
+        if (!user.user_id) return;
         
         const kudos = {
-            ...newKudos,
-            senderId: user.id,
-            recipientId: TEACHER_RECIPIENT_ID,
-            classId: PLACEHOLDER_CLASS_ID,
-            isAnonymous: newKudos.isAnonymous || false
-        }
+            // ...newKudos,
+            card_id: uuidv4(),
+            sender_id: user.user_id,
+            recipient_id: newKudos.recipient_id,
+            class_id: newKudos.class_id,
+            title: newKudos.title,
+            content: newKudos.message,
+            isAnonymous: newKudos.isAnonymous || false,
+            status: "PENDING",
+            approvedBy: null
+        };
 
-        // const kudosWithDate = {
-        //     ...newKudos,
-        //     date: new Date().toLocaleDateString(),
-        //     recipientType: 'teacher',
-        //     senderType: 'student',
-        //     status: "Submitted"
-        // };
+        try {
+            const res = await fetch(`${BASE_URL}/kudo-card`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json'},
+                body: JSON.stringify(kudos)
+            });
 
-        // fetch('http://localhost:3001/cards', 
-        fetch(`${BASE_URL}/kudo-card`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json'},
-            body: JSON.stringify(kudos)
-        })
-        .then(res => res.json())
-        .then(data => {
+            if (!res.ok) throw new Error('Failed to submit kudos');
+
+            const data = await res.json();
             console.log("New kudos submitted:", data);
-            setShowForm(false);
-            // fetchSubmittedKudos();
-            // fetchSentKudos();
             getKudos();
-        })
-        .catch(err => console.error("Error saving new kudos:", err));
-    };
+        } catch(err) {
+            console.error("Error saving new kudos:", err);
+            setError('Failed to submit kudos. Please try again.');
+        }
+    }; 
 
     return (
         <div className="app-container">
             <Header onCreateNew = {() => navigate('/studentView/new-kudos')} />
 
             <div className="main-content">
-                <ReceivedKudosStudent messages = {receivedKudos} />
-                <SentKudosStudent messages = {sentKudos} />
+                {loading && <p>Loading kudos...</p>}
+                {error && <p style = {{ color: 'red' }}>{error}</p>}
+
+                {!loading && !error && (
+                    <>
+                    <ReceivedKudosStudent messages = {receivedKudos} />
+                    <SentKudosStudent messages = {sentKudos} />
+                    </>                 
+                )}
+
             </div>
             <Footer />
         </div>

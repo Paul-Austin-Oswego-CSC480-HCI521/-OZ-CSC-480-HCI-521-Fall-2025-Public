@@ -14,16 +14,16 @@ function ReceivedKudosStudent() {
            const fetchReceivedKudos = async () => {
                try {
                    const listRes = await fetch(
-                       `${BASE_URL}/kudo-card/list/received?user_id=${user.id}`
+                       `${BASE_URL}/kudo-card/list/received?user_id=${user.user_id}`
                    );
                    if (!listRes.ok)
                        throw new Error("Failed to fetch card list");
 
                    const listData = await listRes.json();
-                   const cardIds = listData.map (card => card.id);
+                   const cardIds = listData.map (card => card.card_id);
 
-                   const cardPromises = cardIds.map((id) =>
-                       fetch(`${BASE_URL}/kudo-card/${id}?user_id=${user.id}`).then((res) =>
+                   const cardPromises = cardIds.map((card_id) =>
+                       fetch(`${BASE_URL}/kudo-card/${card_id}?user_id=${user.user_id}`).then((res) =>
                            res.json()
                        )
                    );
@@ -35,7 +35,7 @@ function ReceivedKudosStudent() {
                    );
 
                    const formatted = approvedCards.map((card) => ({
-                       sender: card.sender_id || "Anonymous",
+                       sender_id: card.sender_id || "Anonymous",
                        title: card.title,
                        message: card.content,
                        date: card.dateSent || "-",
@@ -69,7 +69,7 @@ function ReceivedKudosStudent() {
                 <tbody>
                 {received.map((k, i) => (
                     <tr
-                        key={i}
+                        key={k.card_id}
                         role="button"
                         tabIndex={0}
                         onClick={() => {
@@ -80,14 +80,15 @@ function ReceivedKudosStudent() {
                         }}
                         onKeyDown={(e) => {
                             if (e.key === "Enter" || e.key === " ") {
-                                setSelectedRows(i);
+                                setSelectedRows((prev) => 
+                                    prev.includes(i) ? prev.filter((idx) => idx !== i) : [...prev, i]);
                                 setSelectedImage(k.imageUrl);
                             }
                         }}
                         className={selectedRows.includes(i) ? "selected-row" : ""}
                     >
-                        <td className={'default-kudos-table-data'}>{k.sender}</td>
-                        <td className={'default-kudos-table-data'}>{k.title || k.subject}</td>
+                        <td className={'default-kudos-table-data'}>{k.sender_id}</td>
+                        <td className={'default-kudos-table-data'}>{k.title}</td>
                         <td className={'default-kudos-table-data'}>{k.message}</td>
                         <td className={'default-kudos-table-data'}>{k.date}</td>
                     </tr>

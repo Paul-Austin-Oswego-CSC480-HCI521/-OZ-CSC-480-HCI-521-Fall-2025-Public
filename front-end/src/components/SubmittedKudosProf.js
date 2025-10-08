@@ -5,7 +5,7 @@ import { useUser } from "./UserContext";
 function SubmittedKudosProf({ onReview }) {
     const [submitted, setSubmitted] = useState([]);
     const [selectedRow, setSelectedRow] = useState(null);
-    const [ selectedRows, setSelectedRows] = useState([]);
+    // const [selectedRows, setSelectedRows] = useState([]);
     const { user } = useUser();
     const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -14,9 +14,13 @@ function SubmittedKudosProf({ onReview }) {
             const updatedData = {
             ...updatedCard,
             status: updatedCard.status,
-            recipientType: updatedCard.status === "APPROVED" ? "student" : "teacher"};
+            approvedBy: user.user_id
+            // shouldn't need to update recipientType because user.role stores the type,
+            // and new logic means students will only see kudos with themselves as the recipient that have been approved, 
+            // or themselves as the sender
+        };
 
-    await fetch (`${BASE_URL}/kudo-app/api/kudo-card/${updatedCard.card.id}`, {
+        await fetch (`${BASE_URL}/kudo-app/api/kudo-card/${updatedCard.card_id}`, {
         method: "PUT",
         headers: {
             "Content-Type" : "application/json"
@@ -24,7 +28,7 @@ function SubmittedKudosProf({ onReview }) {
             body: JSON.stringify(updatedData)
         });
 
-        setSubmitted(prev => prev.filter(card => Number(card.id) !== Number(updatedCard.id)));
+        setSubmitted((prev) => prev.filter((card) => card.card_id !== updatedCard.card_id));
         if (onReview) onReview(updatedCard);
         setSelectedRow(null);
         } catch (error) {
@@ -33,17 +37,34 @@ function SubmittedKudosProf({ onReview }) {
     };
 
     useEffect(() => {
-        fetch(`${BASE_URL}/kudo-app/api/kudo-card/list/received?user_id=${user.id}`)
-            .then((res) => res.json())
-            .then((data) => {
-                const submittedOnly = data.filter(card => 
-                    card.status === "SUBMITTED" &&
-                    card.recipient === user.name
-                );
-                setSubmitted(submittedOnly);
-            })
-            .catch((err) => console.error("Error fetching submitted kudos:", err));
-    }, [user]);
+        if (!user) return;
+
+        async function fetchSubmittedKudos() {
+            try {
+                const res = await fetch(
+                    `${BASE_URL}/kudo-app/api/kudo-card/list/received?user_id=${user.user_id}`);
+
+                    if (!res.ok) throw new Error("Failed to fetch submitted kudos");
+
+                    const data = await res.json();
+                    const submittedOnly = data.filter(
+                        (card) => card.status === "SUBMITTED" && 
+                        Array.isArray(user.classes) &&
+                        user.classes.map(cls => cls.class_id).includes(card.class_id)
+                        // && card.recipient_id === user.userId
+                        );
+                    setSubmitted(submittedOnly);
+            } catch (err) {
+                console.error("Error fetching submitted kudos:", err);
+            }
+        }
+        
+        fetchSubmittedKudos();
+    }, [user, BASE_URL]);
+
+    if (!user) {
+        return <p>Loading user data...</p>;
+    }
 
     return (
         <section className="received-kudos">
@@ -65,26 +86,26 @@ function SubmittedKudosProf({ onReview }) {
                     <tbody>
                     {submitted.map((k, i) => (
                         <tr
-                            key={k.id || i}
-                            className={`row-click${selectedRows.includes(i) ? "selected-row" : ""}`}
+                            key={k.card_id || i}
+                            className={`row-click${selectedRow?.card_id === k.card_id ? "selected-row" : ""}`}
                             role="button"
                             tabIndex={0}
-                            onClick={() => {
-                                setSelectedRows((prev) =>
-                                    prev.includes(i) ? prev.filter((idx) => idx !== i): [...prev, i]
-                                );
-                                setSelectedRow(k);
-                            }}
+                            onClick={() => setSelectedRow(k)}
+                            //     setSelectedRows((prev) =>
+                            //         prev.includes(i) ? prev.filter((idx) => idx !== i): [...prev, i]
+                            //     );
+                            //     setSelectedRow(k);
+                            // }}
                             onKeyDown={(e) => {
                                 if (e.key === "Enter" || e.key === " ") {
-                                    setSelectedRows(i);
+                                    // setSelectedRows(i);
                                     setSelectedRow(k);
                                 }
                             }}
                         >
-                            <td className="default-kudos-table-data">{k.sender}</td>
-                            <td className="default-kudos-table-data">{k.recipient}</td>
-                            <td className="default-kudos-table-data">{k.title || k.subject}</td>
+                            <td className="default-kudos-table-data">{k.sender_id}</td>
+                            <td className="default-kudos-table-data">{k.recipient_id}</td>
+                            <td className="default-kudos-table-data">{k.title}</td>
                             <td className="default-kudos-table-data">{k.message || k.content}</td>
                             <td className="default-kudos-table-data">{k.date || "-"}</td>
                         </tr>
@@ -96,13 +117,6 @@ function SubmittedKudosProf({ onReview }) {
             {selectedRow && (
                 <ProfReview
                     initialData={selectedRow}
-                    // initialData={{
-                    //     sender: selectedRow.sender,
-                    //     recipient: selectedRow.recipient,
-                    //     subject: selectedRow.subject,
-                    //     message:selectedRow.message,
-                    //     date:selectedRow.date,
-                    // }}
                     readOnly={false}
                     onClose={() => setSelectedRow(null)}
                     onSubmit={handleReviewSubmit}
