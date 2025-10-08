@@ -18,7 +18,6 @@ function NewKudosPage({ onSubmit }) {
     const [selectedImage, setSelectedImage] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    // const STUDENT_USER_ID = "87654321-1234-1234-1234-123456789xyz";
     const PLACEHOLDER_CLASS_ID = "12345678-1234-1234-1234-123456789def";
 
     const titleOptions = ['Well Done!', 'Nice Job!', 'Great Work!', 'Thank you!'];
@@ -29,7 +28,7 @@ function NewKudosPage({ onSubmit }) {
         'Thank you!': '/images/thankyou.png'
     };
 
-    const [formData, setFormData] = useState ({
+    const [formData, setFormData] = useState({
         recipient: '',
         title: titleOptions[0],
         message: '',
@@ -37,30 +36,21 @@ function NewKudosPage({ onSubmit }) {
 
     useEffect(() => {
         fetch(`${BASE_URL}/users?role=STUDENT`)
-        .then(res => res.json())
-        .then(data => {
-            setStudents(data);
-            setLoading(false);
-        })
-        .catch(err => {
-            console.error("Failed to load student users:", err);
-            setLoading(false);
-        });
+            .then(res => res.json())
+            .then(data => {
+                setStudents(data);
+                setLoading(false);
+            })
+            .catch(err => {
+                console.error("Failed to load student users:", err);
+                setLoading(false);
+            });
     }, [BASE_URL]);
-
-    // const Users = [
-    //     {userId: "123", name: "Kalley"},
-    //     {userId: "456", name: "Hadassah"},
-    //     {userId: "789", name: "Brittany"},
-    //     {userId: "098", name: "Ethan"}
-    // ];
-
-    // const recipient = ['Kalley', 'Hadassah', 'Brittany', 'Ethan'];
 
     const handleCreateNew = () => {
         const base = location.pathname.includes("studentView")
-        ? "/studentView/new-kudos"
-        : "/professorView/new-kudos";
+            ? "/studentView/new-kudos"
+            : "/professorView/new-kudos";
         navigate(base);
     };
 
@@ -72,14 +62,25 @@ function NewKudosPage({ onSubmit }) {
         }));
     };
 
-    const handleSubmit = (e) =>{
+    const handlePaste = (e) => {
+        const pastedText = e.clipboardData.getData('text');
+        console.log("Pasted from clipboard:", pastedText);
+        const cleanedText = pastedText.trim();
+        setFormData(prev => ({
+            ...prev,
+            message: prev.message + cleanedText
+        }));
+        e.preventDefault();
+    };
+
+    const handleSubmit = (e) => {
         e.preventDefault();
 
         if (!user) {
             alert("User not loaded yet.");
             return;
         }
-        
+
         if (formData.message.length < 10 || formData.message.length > 500) {
             alert("Your message must be between 10 and 500 characters.");
             return;
@@ -95,17 +96,15 @@ function NewKudosPage({ onSubmit }) {
             isAnonymous: isAnonymous,
             status: "PENDING",
             approvedBy: null
-        }
+        };
 
         fetch(`${BASE_URL}/kudo-card`, {
             method: "POST",
-            headers: {'Content-Type': 'application/json'},
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(newCard)
         })
             .then(res => {
-                if (!res.ok) {
-                    throw new Error("Failed to submit");
-                }
+                if (!res.ok) throw new Error("Failed to submit");
                 return res.json();
             })
             .then(data => {
@@ -121,42 +120,42 @@ function NewKudosPage({ onSubmit }) {
         });
     };
 
-    if (loading) return <div className="app-container">Loading...</div>
+    if (loading) return <div className="app-container">Loading...</div>;
 
     return (
-        <div className = "app-container">
+        <div className="app-container">
             <Header onCreateNew={handleCreateNew} />
 
-            <div className = "main-content">
+            <div className="main-content">
                 <h1>Create a Kudo Card</h1>
-                <form onSubmit = {handleSubmit} className = "kudos-form">
-                    <div className ="form-row">
-                        <div className={"form-group"}>
+                <form onSubmit={handleSubmit} className="kudos-form">
+                    <div className="form-row">
+                        <div className="form-group">
                             <label htmlFor="sender">Sender</label>
                             <input
-                                id = "sender_id"
-                                className={"to-from-title"}
-                                type = "text"
-                                value = {user?.user_id || ''}
-                                disabled = {isAnonymous}
-                                required = {!isAnonymous}
+                                id="sender_id"
+                                className="to-from-title"
+                                type="text"
+                                value={user?.user_id || ''}
+                                disabled={isAnonymous}
+                                required={!isAnonymous}
                             />
 
-                            <label style = {{ marginTop: '8px', display: 'block'}}>
+                            <label style={{ marginTop: '8px', display: 'block' }}>
                                 <input
-                                    type = "checkbox"
-                                    checked = {isAnonymous}
-                                    onChange = {(e) => {
-                                        const isChecked = e.target.checked;
-                                        setIsAnonymous(isChecked);
-                                    }} />Send Anonymously</label>
+                                    type="checkbox"
+                                    checked={isAnonymous}
+                                    onChange={(e) => setIsAnonymous(e.target.checked)}
+                                />
+                                Send Anonymously
+                            </label>
                         </div>
 
-                        <div className = "form-group">
+                        <div className="form-group">
                             <label htmlFor="recipient">Who do you want to send a Kudo to?</label>
                             <select
-                                id={"recipient"}
-                                className={"to-from-title"}
+                                id="recipient"
+                                className="to-from-title"
                                 name="recipient"
                                 value={formData.recipient}
                                 onChange={handleChange}
@@ -164,24 +163,24 @@ function NewKudosPage({ onSubmit }) {
                             >
                                 <option value=""> -- Select a recipient --</option>
                                 {students.map((student) => (
-                                    <option key = {student.user_id} value={student.user_id}>
+                                    <option key={student.user_id} value={student.user_id}>
                                         {student.name}
                                     </option>
                                 ))}
                             </select>
                         </div>
                     </div>
-                    <div className={"form-group"}>
+
+                    <div className="form-group">
                         <label htmlFor="title">Choose a Title</label>
-                        <div className='title-button-group'>
+                        <div className="title-button-group">
                             {titleOptions.map((option, index) => (
                                 <button
-                                    key = {index}
-                                    type = "button"
+                                    key={index}
+                                    type="button"
                                     className={`title-button ${formData.title === option ? 'selected' : ''}`}
-                                    onClick = {() => {
+                                    onClick={() => {
                                         setFormData(prev => ({ ...prev, title: option }));
-
                                         const img = imageMap[option];
                                         if (img) setSelectedImage(img);
                                     }}
@@ -190,65 +189,98 @@ function NewKudosPage({ onSubmit }) {
                                 </button>
                             ))}
                         </div>
-                        <input
-                            type="hidden"
-                            name="title"
-                            value={formData.title}
-                            required
-                        />
+                        <input type="hidden" name="title" value={formData.title} required />
                     </div>
-                    <div className={"form-group"}>
-                        <label htmlFor={"message"}>Your Message</label>
-                        <textarea
-                            id={"message"}
-                            className={"textBox"}
-                            name = "message"
-                            value = {formData.message}
-                            onChange = {handleChange}
-                            placeholder = "Please enter a message"
-                            rows = {5}
-                            minLength = {10}
-                            maxLength={500}
-                            required
-                        />
-                        <div className='char-count' style={{
-                            textAlign: 'right',
-                            fontSize: '0.9em',
-                            color: formData.message.length < 10 || formData.message.length > 500 ? 'red' : '#555'
-                        }}>{formData.message.length}/500
+
+                    {/* 🖼️ Message + image container */}
+                    <div
+                        className="message-image-container"
+                        style={{
+                            display: 'flex',
+                            alignItems: 'flex-start',
+                            justifyContent: 'space-between',
+                            gap: '20px',
+                            flexWrap: 'nowrap'
+                        }}
+                    >
+                        {/* Message box on the left */}
+                        <div style={{ flex: 1, minWidth: '60%' }}>
+                            <label htmlFor="message">Your Message</label>
+                            <textarea
+                                id="message"
+                                className="textBox"
+                                name="message"
+                                value={formData.message}
+                                onChange={handleChange}
+                                onPaste={handlePaste}
+                                placeholder="Please enter a message"
+                                rows={5}
+                                minLength={10}
+                                maxLength={500}
+                                required
+                                style={{ width: '100%' }}
+                            />
+                            <div
+                                className="char-count"
+                                style={{
+                                    textAlign: 'right',
+                                    fontSize: '0.9em',
+                                    color:
+                                        formData.message.length < 10 ||
+                                        formData.message.length > 500
+                                            ? 'red'
+                                            : '#555'
+                                }}
+                            >
+                                {formData.message.length}/500
+                            </div>
                         </div>
+
+                        {/* Image preview to the right */}
+                        {selectedImage && (
+                            <div
+                                style={{
+                                    width: '200px',
+                                    height: '200px',
+                                    borderRadius: '12px',
+                                    overflow: 'hidden',
+                                    boxShadow: '0 0 8px rgba(0,0,0,0.2)',
+                                    backgroundColor: '#f9f9f9',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    flexShrink: 0
+                                }}
+                            >
+                                <img
+                                    src={selectedImage}
+                                    alt={formData.title}
+                                    style={{
+                                        width: '100%',
+                                        height: '100%',
+                                        objectFit: 'contain'
+                                    }}
+                                />
+                            </div>
+                        )}
                     </div>
-                    <div className='button-row'>
+
+                    <div className="button-row">
                         <button
-                            type = "button"
+                            type="button"
                             className="discard-btn"
-                            onClick = {() => navigate(-1)}
-                        >Discard</button>
-                        <button
-                            type = "submit"
-                            className = "submit-btn"
-                            // onClick = {() => navigate(-1)}
-                        >Send Kudo</button>
+                            onClick={() => navigate(-1)}
+                        >
+                            Discard
+                        </button>
+                        <button type="submit" className="submit-btn">
+                            Send Kudo
+                        </button>
                     </div>
                 </form>
             </div>
-            {selectedImage && (
-                <div
-                    className="modal-overlay"
-                    onClick={() => setSelectedImage(null)}
-                    role="dialog"
-                    aria-modal="true"
-                >
-                    <div
-                        className="modal-content"
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        <img src={selectedImage} alt={formData.title} className="popup-image" />
-                    </div>
-                </div>
-            )}
 
-            <Footer/>
+            <Footer />
         </div>
     );
 }
