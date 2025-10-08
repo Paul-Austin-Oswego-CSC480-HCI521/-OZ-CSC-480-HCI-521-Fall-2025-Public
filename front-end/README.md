@@ -1,12 +1,8 @@
-To launch the webpage with json:
+To launch the webpage front end:
 
 Install npm on your device
 
 In the terminal navigate to the front-end directory
-
-Run "npm install -g json-server"
-
-Once installed, run "json-server --watch db.json --port 3001"
 
 In a new terminal window, run "npm start"
 
