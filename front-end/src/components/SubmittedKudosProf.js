@@ -7,6 +7,7 @@ function SubmittedKudosProf({ onReview }) {
     const [selectedRow, setSelectedRow] = useState(null);
     // const [selectedRows, setSelectedRows] = useState([]);
     const { user } = useUser();
+    const safeSubmittedKudos = Array.isArray(submitted) ? submitted : [];
     const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
     const handleReviewSubmit = async (updatedCard) => {
@@ -62,16 +63,16 @@ function SubmittedKudosProf({ onReview }) {
         fetchSubmittedKudos();
     }, [user, BASE_URL]);
 
-    if (!user) {
-        return <p>Loading user data...</p>;
-    }
+    // if (!user) {
+    //     return <p>Loading user data...</p>;
+    // }
 
     return (
         <section className="received-kudos">
             <h2>Submitted Kudos</h2>
 
-            {submitted.length === 0 ? (
-                <p style={{ padding: "1rem", fontStyle: "italic" }}>No Cards Submitted.</p>
+            {safeSubmittedKudos.length === 0 ? (
+                <p style={{ padding: "1rem", fontStyle: "italic" }}>No submitted Kudos yet.</p>
             ) : (
                 <table className="k-table">
                     <thead>

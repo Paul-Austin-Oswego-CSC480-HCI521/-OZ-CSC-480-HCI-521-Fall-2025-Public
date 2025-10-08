@@ -4,11 +4,12 @@ import ImageModal from "./ImageModal";
 function ReviewedKudosProf( {reviewedKudos = []} ) {
     const [selectedImage, setSelectedImage] = useState(null);
     const [selectedRows, setSelectedRows] = useState([]);
+    const safeReviewedKudos = Array.isArray(reviewedKudos) ? reviewedKudos : [];
 
     return (
         <section className="sent-kudos">
             <h2>Reviewed Kudos</h2>
-            {reviewedKudos.length === 0 ? (
+            {safeReviewedKudos.length === 0 ? (
                 <p style = {{ padding: "1rem", fontStyle: "italic"}}>No Reviewed Kudos Yet.</p>
             ) : (
                 <table>

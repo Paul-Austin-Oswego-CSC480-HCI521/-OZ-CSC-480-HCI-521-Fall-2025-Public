@@ -20,31 +20,41 @@ function ProfessorView() {
     const [error, setError] = useState(null);
 
     const fetchReviewedKudos = useCallback(() => {
+        if (!user?.user_id) return Promise.resolve();
+
         return fetch(`${BASE_URL}/kudo-card/list/reviewed?reviewer_id=${user.user_id}`)
         .then((res) => {
             if (!res.ok) throw new Error("Failed to fetch reviewed kudos");
             return res.json();
-        }) .then((data) => setReviewedKudos(data))
-    }, [user.use_iId]);
+        }) .then((data) => {
+            setReviewedKudos(Array.isArray(data) ? data : []);
+            return true;
+        });
+    }, [user?.user_id]);
         
 
     const fetchSubmittedKudos = useCallback(() => {
+        if (!user?.user_id) return Promise.resolve();
+
         return fetch(`${BASE_URL}/kudo-card/list/submitted?reviewer_id=${user.user_id}`)
         .then((res) => {
             if (!res.ok) throw new Error ("Failed to fetch submitted kudos");
 
             return res.json()
     })
-        .then((data) => setSubmittedKudos(data))
-    }, [user.user_id]);
+        .then((data) => {
+            setSubmittedKudos(Array.isArray(data) ? data : []);
+            return true;
+        });
+    }, [user?.user_id]);
 
-        useEffect(() => {
-            if (!user?.user_id) return;
+    useEffect(() => {
+        if (!user?.user_id) return;
 
-            setLoading(true);
-            Promise.all([fetchReviewedKudos(), fetchSubmittedKudos()])
-            .catch((err) => setError("Failed to load kudos."))
-            .finally(() => setLoading(false));
+        setLoading(true);
+        Promise.all([fetchReviewedKudos(), fetchSubmittedKudos()])
+        .catch((err) => setError("Failed to load kudos."))
+        .finally(() => setLoading(false));
     }, [fetchReviewedKudos, fetchSubmittedKudos, user?.user_id]);
 
     const handleNewKudos = (newKudos) => {
@@ -83,15 +93,15 @@ function ProfessorView() {
                 />
         )}
             <div className="main-content">
-                {loading && <p>Loading kudos...</p>}
-                {error && <p style = {{ color: 'red' }}>{error}</p>}
+                {/* {loading && <p>Loading kudos...</p>} */}
+                {/* {error && <p style = {{ color: 'red' }}>{error}</p>} */}
 
-                {!loading && !error && (
+                {/* {!loading && !error && ( */}
                     <>
                     <SubmittedKudosProf messages = {submittedKudos} onSelect = {setSelectedKudos} />
                     <ReviewedKudosProf reviewedKudos = {reviewedKudos} />
                     </>
-                )}
+                {/* )} */}
             </div>
             <Footer />
         </div>
