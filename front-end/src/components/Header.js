@@ -16,11 +16,15 @@ function Header({ onCreateNew, showNav = true }) {
 
         {showNav && (
             <nav className="nav-buttons">
-              <button onClick={handleNotif} className="icon-btn" aria-label="Open notifications">
-                <img src="/notifImage.png" alt="Notification Button" className="notifButton" />
+              <button onClick={handleNotif} className="icon-btn notif-btn">
+                <img src="/notification.png" alt="Notification Button" />
               </button>
-              <button onClick={handleGoHome}>HOME</button>
-              <button onClick={onCreateNew}>CREATE NEW</button>
+              <button onClick={handleGoHome} className = "icon-btn">
+                  <img src="/home.png" alt="Home Button"  />
+              </button>
+              <button onClick={onCreateNew} className="icon-btn">
+                  <img src="/create.png" alt="New Button" />
+              </button>
               <button>LOG OUT</button>
             </nav>
         )}

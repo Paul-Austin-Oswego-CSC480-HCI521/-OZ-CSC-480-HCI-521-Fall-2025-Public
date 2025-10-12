@@ -5,7 +5,7 @@ import { useUser } from "./UserContext";
 function SubmittedKudosProf({ onReview }) {
     const [submitted, setSubmitted] = useState([]);
     const [selectedRow, setSelectedRow] = useState(null);
-    // const [selectedRows, setSelectedRows] = useState([]);
+    const [activeRow, setActiveRow] = useState([]);
     const { user } = useUser();
     const safeSubmittedKudos = Array.isArray(submitted) ? submitted : [];
     const BASE_URL = process.env.REACT_APP_API_BASE_URL;
@@ -88,18 +88,22 @@ function SubmittedKudosProf({ onReview }) {
                     {submitted.map((k, i) => (
                         <tr
                             key={k.card_id || i}
-                            className={`row-click${selectedRow?.card_id === k.card_id ? "selected-row" : ""}`}
+                            className={`row-click ${activeRow.includes(k.card_id) ? "selected-row" : ""}`}
                             role="button"
                             tabIndex={0}
-                            onClick={() => setSelectedRow(k)}
-                            //     setSelectedRows((prev) =>
-                            //         prev.includes(i) ? prev.filter((idx) => idx !== i): [...prev, i]
-                            //     );
-                            //     setSelectedRow(k);
-                            // }}
+                            onClick={() => {
+                                 setActiveRow((prev) =>
+                                     prev.includes(k.card_id) ? prev : [...prev, k.card_id]
+                                );
+
+                                setSelectedRow(k);
+                            }}
                             onKeyDown={(e) => {
                                 if (e.key === "Enter" || e.key === " ") {
-                                    // setSelectedRows(i);
+                                    setActiveRow((prev) =>
+                                        prev.includes(k.card_id) ? prev : [...prev, k.card_id]
+                                    );
+
                                     setSelectedRow(k);
                                 }
                             }}

@@ -161,7 +161,7 @@ function NewKudosPage({ onSubmit }) {
                                 onChange={handleChange}
                                 required
                             >
-                                <option value=""> -- Select a recipient --</option>
+                                <option value=""></option>
                                 {students.map((student) => (
                                     <option key={student.user_id} value={student.user_id}>
                                         {student.name}

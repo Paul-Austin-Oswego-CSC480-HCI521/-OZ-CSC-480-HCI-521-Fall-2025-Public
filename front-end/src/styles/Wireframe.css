@@ -5,7 +5,7 @@
     flex-direction: column;
     gap: 20px;
     padding: 2.5%;
-    background-color: #E6F3F3;
+    background-color: #FAFDF2;
     font-family: 'Poppins', sans-serif;
 }
 
@@ -14,10 +14,10 @@
     overflow-y: auto;
     flex: 1;
     gap: 20px;
-    border: 2px solid #E6F3F3;
+    border: 2px solid #FAFDF2;
     padding: 20px 40px;
     border-radius: 8px;
-    background-color: #E6F3F3;
+    background-color: #FAFDF2;
 }
 
 .received-kudos h2, .sent-kudos h2{
@@ -34,15 +34,17 @@
     color: #555;
 }
 
-.app-container .header {
+.header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 20px 40px;
-    background-color: #05888A;
-    border: #0077aa;
+    background-color: white;
     color: white;
     font-family: 'Merriweather', serif;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    position: relative;
+
 }
 
 /*header formatted*/
@@ -68,25 +70,66 @@
 
 /*kudos logo*/
 .logo {
-    height: 100px;
+    height: 50px;
     width: auto;
+}
+
+.nav-buttons{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 5px;
 }
 
 /*header navigation buttons*/
 .nav-buttons button {
-    margin-left: 15px;
-    padding: 8px 16px;
-    font-family: 'Merriweather', serif;
-    font-size: 14px;
-    cursor: pointer;
-    background-color: #EBEBEB;
-    color: #061826;
+    background: none;
     border: none;
-    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.nav-buttons button:hover {
+.icon-btn {
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-btn img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+}
+
+.notif-btn img {
+    width: 80px;
+    height: 85px;
+    object-fit:contain;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: 1px solid white;
+    cursor: pointer;
+}
+
+.nav-buttons button:not(.icon-btn) {
+    font-size: 14px;
+    padding: 6px 12px;
+    border: 1px solid #093B3B;
+    border-radius: 6px;
+    color: #093B3B;
     background-color: white;
+    transition: background 0.2s;
+}
+
+.nav-buttons button:not(.icon-btn):hover {
+    background-color: #EBEBEB;
+    color: black;
 }
 
 .title-button-group {
@@ -102,9 +145,9 @@
     font-family: 'Poppins', sans-serif;
     font-weight: bold;
     border-radius: 6px;
-    border: 2px solid #B1D2D3;
-    background-color: white;
-    color: #05888A;
+    border: 2px solid #EBEBEB;
+    background-color: #EBEBEB;
+    color: black;
     cursor: pointer;
     transition: background-color 0.3s ease, color 0.3s ease;
     user-select: none;
@@ -116,7 +159,7 @@
 }
 
 .title-button.selected {
-    background-color: #333;
+    background-color: #093B3B;
     color: white;
     border-color: #333;
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
@@ -124,7 +167,7 @@
 
 /*footer layout*/
 .footer {
-    background-color: #05888A;
+    background-color: white;
     color: black;
     text-align: center;
     padding: 15px;
@@ -149,15 +192,16 @@ table {
 }
 
 th, td {
-    padding: 12px;
-    border-bottom: 8px solid #EBEBEB;
+    padding: 5px;
+    border-right: 1px solid white;
     text-align: left;
     font-family: 'Poppins', sans-serif;
 }
 
 th {
-    background: #EBEBEB;
+    background: #093B3B;
     font-weight: bold;
+    color: white;
 }
 
 
@@ -203,30 +247,14 @@ th {
 
 
 tr {
-    background:#05888A;
-    border-bottom: 8px solid #EBEBEB;
-    border-left:8px solid #EBEBEB;
-    border-right:8px solid #EBEBEB;
+    background:white;
+    border-bottom: 1px solid #093B3B;
+    border-left:1px solid #093B3B;
+    border-right:1px solid #093B3B;
 }
 
 tr:hover {
-    background: white;
-}
-
-/* on click formatted */
-tr.selected-row {
-    background-color:#B1D2D3;;
-    color: black;
-}
-
-tr.selected-row td.default-kudos-table-data:not(:first-child)::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 25%;
-    height: 50%;
-    width: 1px;
-    background-color: black;
+    background: #EBEBEB;
 }
 
 /* Table Formatted */
@@ -235,23 +263,19 @@ td.default-kudos-table-data {
     padding: 8px 16px;
     vertical-align: middle;
     color: black;
+    border: 1px solid #093B3B;
+    max-width: 250px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     font-weight: bold;
 }
 
-/* Partial left border for all except first column */
-td.default-kudos-table-data:not(:first-child)::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 25%;
-    height: 50%;
-    width: 1px;
-    background-color: #EBEBEB;
-}
-
-/* Remove border on first column */
-td.default-kudos-table-data:first-child::before {
-    display: none;
+/* on click formatted */
+tr.selected-row td.default-kudos-table-data {
+    background-color:white;
+    color: black;
+    font-weight: normal !important;
 }
 
 .home-content {
@@ -345,18 +369,19 @@ td.default-kudos-table-data:first-child::before {
     flex-direction:column;
     flex:1;
     margin-bottom:1rem;
+    border: 2px #093B3B;
 }
 
 .to-from-title {
     padding:6px 6px;
-    border: 1px solid white;
+    border: 1px solid #093B3B;
     border-radius:6px;
     background-color:white;
     font-family:'Poppins', sans-serif;
     font-size:18px;
     font-weight:bold;
     outline:none;
-    color: #05888A;
+    color: #093B3B;
 }
 
 .to-from-title:focus{
@@ -366,9 +391,9 @@ td.default-kudos-table-data:first-child::before {
 
 .textBox{
     padding: 6px 12px;
-    border:1px solid white;
+    border:1px solid #093B3B;
     border-radius:6px;
-    background-color: #fcffff;
+    background-color: white;
     font-family:'Poppins', sans-serif;
     color:black;
     outline:none;
@@ -376,7 +401,7 @@ td.default-kudos-table-data:first-child::before {
 }
 
 .textBox:focus{
-    border-color:#B1D2D3;
+    border-color:#093B3B;
 }
 
 .close-btn {
@@ -403,7 +428,7 @@ td.default-kudos-table-data:first-child::before {
 }
 
 .submit-btn, .discard-btn {
-    background: #B1D2D3;
+    background: #CCDDBE;
     color: black;
     font-family: 'Poppins', sans-serif;
     border:none;
@@ -414,7 +439,7 @@ td.default-kudos-table-data:first-child::before {
 }
 
 .submit-btn:hover, .discard-btn:hover{
-    background-color: #05888A;
+    background-color: #EBEBEB;
 }
 
 .approve-reject{
@@ -430,9 +455,11 @@ td.default-kudos-table-data:first-child::before {
     cursor: pointer;
     transition: background 0.3s ease;
 }
+
 .notifButton {
     height: 20px;
     width: 20px;
+    background: white;
     object-fit: cover;
 }
 
