@@ -1,4 +1,4 @@
-.app-container{
+.app-container {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
@@ -11,24 +11,26 @@
     flex-direction: column;
     gap: 20px;
     padding: 2.5%;
-    background-color: #FAFDF2;
+    background-color: #fafdf2;
     font-family: 'Poppins', sans-serif;
     flex: 1;
 }
 
-/*received/sent kudos forms*/
-.received-kudos, .sent-kudos {
+/* received/sent kudos forms */
+.received-kudos,
+.sent-kudos {
     overflow-y: auto;
     flex: 1;
     gap: 20px;
-    border: 2px solid #FAFDF2;
+    border: 2px solid #fafdf2;
     padding: 20px 40px;
     border-radius: 8px;
-    background-color: #FAFDF2;
+    background-color: #fafdf2;
 }
 
-.received-kudos h2, .sent-kudos h2{
-    font-family:'Merriweather', serif;
+.received-kudos h2,
+.sent-kudos h2 {
+    font-family: 'Merriweather', serif;
 }
 
 .wireframe-box {
@@ -53,7 +55,7 @@
     position: relative;
 }
 
-/*header formatted*/
+/* header formatted */
 .kudos-list-header {
     display: flex;
     justify-content: space-between;
@@ -74,13 +76,13 @@
     width: 50%;
 }
 
-/*kudos logo*/
+/* kudos logo */
 .logo {
     height: 50px;
     width: auto;
 }
 
-.nav-buttons{
+.nav-buttons {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -88,7 +90,7 @@
     gap: 5px;
 }
 
-/*header navigation buttons*/
+/* header navigation buttons */
 .nav-buttons button {
     background: none;
     border: none;
@@ -114,7 +116,7 @@
 .notif-btn img {
     width: 80px;
     height: 85px;
-    object-fit:contain;
+    object-fit: contain;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -126,15 +128,15 @@
 .nav-buttons button:not(.icon-btn) {
     font-size: 14px;
     padding: 6px 12px;
-    border: 1px solid #093B3B;
+    border: 1px solid #093b3b;
     border-radius: 6px;
-    color: #093B3B;
+    color: #093b3b;
     background-color: white;
     transition: background 0.2s;
 }
 
 .nav-buttons button:not(.icon-btn):hover {
-    background-color: #EBEBEB;
+    background-color: #ebebeb;
     color: black;
 }
 
@@ -151,8 +153,8 @@
     font-family: 'Poppins', sans-serif;
     font-weight: bold;
     border-radius: 6px;
-    border: 2px solid #EBEBEB;
-    background-color: #EBEBEB;
+    border: 2px solid #ebebeb;
+    background-color: #ebebeb;
     color: black;
     cursor: pointer;
     transition: background-color 0.3s ease, color 0.3s ease;
@@ -161,17 +163,17 @@
 }
 
 .title-button:hover:not(.selected) {
-    background-color: #E6F3F3;
+    background-color: #e6f3f3;
 }
 
 .title-button.selected {
-    background-color: #093B3B;
+    background-color: #093b3b;
     color: white;
     border-color: #333;
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
 }
 
-/*footer layout*/
+/* footer layout */
 .footer {
     background-color: white;
     color: black;
@@ -187,17 +189,18 @@
     }
 }
 
-/*general table formatting*/
+/* general table formatting */
 table {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 20px;
-    background: #EBEBEB;
-    border: 1px solid #EBEBEB;
+    background: #ebebeb;
+    border: 1px solid #ebebeb;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
 }
 
-th, td {
+th,
+td {
     padding: 5px;
     border-right: 1px solid white;
     text-align: left;
@@ -205,7 +208,7 @@ th, td {
 }
 
 th {
-    background: #093B3B;
+    background: #093b3b;
     font-weight: bold;
     color: white;
 }
@@ -213,63 +216,270 @@ th {
 .modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.35);
+    background: rgba(0, 0, 0, 0.35);
     z-index: 2000;
 }
 
+.notif-modal {
+    position: absolute;
+    color: black;
+    font-size: small;
+    top: 80px;
+    right: 24px;
+    width: 320px;
+    max-height: 70vh;
+    overflow: auto;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+    padding: 14px;
+}
+
+.notif-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.notif-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.notif-item {
+    padding: 8px 0;
+    border-top: 1px solid #f0f0f0;
+}
+
+.notif-item:first-child {
+    border-top: none;
+}
+
+.notif-title {
+    font-weight: 600;
+}
+
+.notif-message {
+    font-size: 0.95rem;
+    margin-top: 2px;
+}
+
+.notif-time {
+    font-size: 0.85rem;
+    opacity: 0.7;
+    margin-top: 4px;
+}
+
+.unread .notif-title {
+    font-weight: 700;
+}
+
 tr {
-    background:white;
-    border-bottom: 1px solid #093B3B;
-    border-left:1px solid #093B3B;
-    border-right:1px solid #093B3B;
+    background: white;
+    border-bottom: 1px solid #093b3b;
+    border-left: 1px solid #093b3b;
+    border-right: 1px solid #093b3b;
 }
 
 tr:hover {
-    background: #EBEBEB;
+    background: #ebebeb;
 }
 
-.form-row{
-    display:flex;
-    gap:1rem;
-    margin-bottom:12px;
+/* Table Formatted */
+td.default-kudos-table-data {
+    position: relative;
+    padding: 8px 16px;
+    vertical-align: middle;
+    color: black;
+    border: 1px solid #093b3b;
+    max-width: 250px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: bold;
+}
+
+/* on click formatted */
+tr.selected-row td.default-kudos-table-data {
+    background-color: white;
+    color: black;
+    font-weight: normal !important;
+}
+
+.home-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    font-family: 'Poppins', sans-serif;
+    background-color: #e6f3f3;
+    height: calc(100vh - 120px);
+    text-align: center;
+}
+
+.home-content h1 {
+    font-family: 'Merriweather', serif;
+    margin-bottom: 3rem;
+    font-size: 3rem;
+    color: #061826;
+}
+
+.home-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+    width: 100%;
+    max-width: 300px;
+    justify-content: center;
+}
+
+.home-button {
+    padding: 1.5rem 2rem;
+    font-size: 1.25rem;
+    font-family: 'Merriweather', serif;
+    background-color: #05888a;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 300px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.home-button:hover {
+    background-color: #006e70;
+    transform: scale(1.03);
+}
+
+.modal-content img {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 6px;
+}
+
+.review-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fafdf2;
+    min-height: 100vh;
+    font-family: 'Poppins', sans-serif;
+}
+
+.review-page h2 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
+
+.review-page form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+}
+
+.horizontal-row {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.horizontal-row .form-group {
+    flex: 1;
+    min-width: 150px;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 12px;
 }
 
 .form-group {
-    display:flex;
-    flex-direction:column;
-    flex:1;
-    margin-bottom:1rem;
-    border: 2px #093B3B;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    margin-bottom: 1rem;
+    border: 2px #093b3b;
     font-weight: bold;
-    color: #093B3B;
+    color: #093b3b;
     font-size: 18px;
 }
 
 .to-from-title {
-    padding:6px 6px;
+    padding: 6px 6px;
     border: none;
-    background-color:#FAFDF2;
-    font-family:'Poppins', sans-serif;
-    font-size:20px;
-    font-weight:bold;
-    outline:none;
+    background-color: #fafdf2;
+    font-family: 'Poppins', sans-serif;
+    font-size: 20px;
+    font-weight: bold;
+    outline: none;
     color: black;
 }
 
-.textBox{
-    padding: 6px 12px;
-    border:2px solid #093B3B;
-    border-radius:3px;
-    background-color: white;
-    font-family:'Poppins', sans-serif;
-    color:black;
-    outline:none;
-    font-size:14px;
-    width: 100%;
+.to-from-title:focus {
+    border-color: #b1d2d3;
+    box-shadow: 0 0 3px rgba(177, 210, 211, 0.5);
 }
 
-.textBox:focus{
-    border-color:#093B3B;
+.review-page .to-from-title,
+.review-page .textBox {
+    width: 100%;
+    font-size: 1.5rem;
+    padding: 12px 16px;
+    border-radius: 6px;
+}
+
+.textBox {
+    padding: 6px 12px;
+    border: 2px solid #093b3b;
+    border-radius: 3px;
+    background-color: white;
+    font-family: 'Poppins', sans-serif;
+    color: black;
+    outline: none;
+    font-size: 14px;
+}
+
+.textBox:focus {
+    border-color: #093b3b;
+}
+
+.close-btn {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    background: transparent;
+    border: none;
+    font-size: 22px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #333;
+}
+
+.close-btn:hover {
+    color: #0077aa;
+}
+
+.exit-btn {
+    background: #ccddbe;
+    color: #093b3b;
+    font-family: 'Poppins', sans-serif;
+    border: none;
+    border-radius: 6px;
+    padding: 12px 30px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1.2rem;
+    transition: background 0.3s ease;
 }
 
 .button-row {
@@ -277,37 +487,106 @@ tr:hover {
     justify-content: center;
     gap: 20px;
     margin-top: 20px;
-    flex:1;
+    flex: 1;
     flex-direction: column;
 }
 
-.submit-btn, .discard-btn {
-    background: #CCDDBE;
-    color: #093B3B;
+.submit-btn,
+.discard-btn {
+    background: #ccddbe;
+    color: #093b3b;
     font-family: 'Poppins', sans-serif;
-    border:none;
+    border: none;
     border-radius: 6px;
     padding: 12px 50px;
     cursor: pointer;
     transition: background 0.3s ease;
-    font-weight:bold;
+    font-weight: bold;
     width: 50%;
     display: block;
     margin: 0 auto;
 }
 
-.submit-btn:hover, .discard-btn:hover{
-    background-color: #EBEBEB;
+.submit-btn:hover,
+.discard-btn:hover {
+    background-color: #ebebeb;
+}
+
+.approve-reject {
+    position: relative;
+    bottom: 6px;
+    background: #093b3b;
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    border: 2px solid #093b3b;
+    margin: 1px 1px;
+    border-radius: 6px;
+    width: 100%;
+    padding: 10px 95px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.notifButton {
+    height: 20px;
+    width: 20px;
+    background: white;
+    object-fit: cover;
+}
+
+.approve-reject:hover {
+    background-color: #ebebeb;
+    color: black;
+}
+
+.approve-reject.selected {
+    background-color: #ebebeb;
+    color: #093b3b;
+}
+
+.review-page .form-group {
+    margin-bottom: 25px;
+}
+
+.review-page .button-row {
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.review-page .approve-reject,
+.review-page .submit-btn,
+.review-page .close-btn {
+    font-size: 1.5rem;
+    padding: 16px 60px;
+    border-radius: 8px;
+}
+
+.review-page .submit-btn .close-btn {
+    display: block;
+    margin: 20px auto;
+}
+
+/* animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 
+/* 🧩 Message + image side-by-side layout */
 .message-image-container {
     display: flex;
     align-items: flex-start;
     justify-content: flex-start;
-    gap: 40px;
+    gap: 40px; /* increased spacing between textbox and image */
     margin-top: 20px;
-    padding-right: 10px;
+    padding-right: 10px; /* adds breathing room */
     flex-wrap: nowrap;
 }
 
@@ -315,12 +594,13 @@ tr:hover {
     flex: 1;
 }
 
-
+/* Text area */
 .message-image-container .textBox {
     width: 100%;
     resize: vertical;
 }
 
+/* Image preview box */
 .image-preview {
     width: 200px;
     height: 200px;
@@ -332,17 +612,17 @@ tr:hover {
     justify-content: center;
     align-items: center;
     flex-shrink: 0;
-    margin-left: 10px;
+    margin-left: 10px; /* extra buffer from the textbox */
 }
 
-
+/* Image inside the preview */
 .image-preview img {
     width: 100%;
     height: 100%;
     object-fit: contain;
 }
 
-
+/* Responsive stacking for small screens */
 @media (max-width: 768px) {
     .message-image-container {
         flex-direction: column;

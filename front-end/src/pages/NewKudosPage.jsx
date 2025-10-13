@@ -208,7 +208,19 @@ function NewKudosPage({ onSubmit }) {
                                 maxLength={500}
                                 required
                             />
-                            <div className="char-count">{formData.message.length}/500</div>
+                            <div
+                                className="char-count"
+                                style={{
+                                    textAlign: 'right',
+                                    fontSize: '0.9em',
+                                    color:
+                                        formData.message.length < 10 || formData.message.length > 500
+                                            ? 'red'
+                                            : '#555',
+                                }}
+                            >
+                                {formData.message.length}/500
+                            </div>
                         </div>
 
                         {selectedImage && (
