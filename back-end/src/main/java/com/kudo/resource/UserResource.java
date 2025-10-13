@@ -75,7 +75,7 @@ public class UserResource {
 
 
     /**
-     * GET /kudo-app/api/users/{id} - Retrieve a specific user by UUID
+     * GET /kudo-app/api/users/{user_id} - Retrieve a specific user by UUID
      *
      * Call: GET http://localhost:9080/kudo-app/api/users/36f6b7db-63c2-4d4a-aeac-0bf909295f7f
      *
@@ -88,11 +88,11 @@ public class UserResource {
      * {"user_id":"36f6b7db-63c2-4d4a-aeac-0bf909295f7f","email":"john.doe@example.com","name":"John Doe","role":"STUDENT"}
      */
     @GET
-    @Path("{id}")
+    @Path("{user_id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getUserById(@PathParam("id") String idStr) throws SQLException {
-        UUID user_id = UUID.fromString(idStr);
-        Optional<User> user = userService.getUserById(user_id);
+    public Response getUserById(@PathParam("user_id") String idStr) throws SQLException {
+        UUID userId = UUID.fromString(idStr);
+        Optional<User> user = userService.getUserById(userId);
 
         if (user.isEmpty()) {
             throw new SQLException("User not found");
@@ -132,7 +132,7 @@ public class UserResource {
     }
 
     /**
-     * PUT /kudo-app/api/users/{id} - Update an existing user (name and role only, email is immutable)
+     * PUT /kudo-app/api/users/{user_id} - Update an existing user (name and role only, email is immutable)
      *
      * Call: PUT http://localhost:9080/kudo-app/api/users/36f6b7db-63c2-4d4a-aeac-0bf909295f7f
      * Content-Type: application/json
@@ -147,11 +147,11 @@ public class UserResource {
      * {"user_id":"36f6b7db-63c2-4d4a-aeac-0bf909295f7f","email":"john.doe@example.com","name":"John Updated Doe","role":"INSTRUCTOR"}
      */
     @PUT
-    @Path("{id}")
+    @Path("{user_id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateUser(@PathParam("id") String idStr, @Valid UserDTO.UserData userUpdateDTO) throws SQLException {
-        UUID user_id = UUID.fromString(idStr);
+    public Response updateUser(@PathParam("user_id") String idStr, @Valid UserDTO.UserData userUpdateDTO) throws SQLException {
+        UUID userId = UUID.fromString(idStr);
 
         Optional<User> existingUser = userService.getUserById(user_id);
         if (existingUser.isEmpty()) {
@@ -166,7 +166,7 @@ public class UserResource {
     }
 
     /**
-     * DELETE /kudo-app/api/users/{id} - Delete a user (cascades to related records)
+     * DELETE /kudo-app/api/users/{user_id} - Delete a user (cascades to related records)
      *
      * Call: DELETE http://localhost:9080/kudo-app/api/users/36f6b7db-63c2-4d4a-aeac-0bf909295f7f
      *
@@ -178,10 +178,10 @@ public class UserResource {
      * Note: Deletion cascades to USER_CLASSES and KUDOS_CARDS per database schema
      */
     @DELETE
-    @Path("{id}")
-    public Response deleteUser(@PathParam("id") String idStr) throws SQLException {
-        UUID user_id = UUID.fromString(idStr);
-        boolean deleted = userService.deleteUser(user_id);
+    @Path("{user_id}")
+    public Response deleteUser(@PathParam("user_id") String idStr) throws SQLException {
+        UUID userId = UUID.fromString(idStr);
+        boolean deleted = userService.deleteUser(userId);
 
         if (!deleted) {
             throw new SQLException("User not found");

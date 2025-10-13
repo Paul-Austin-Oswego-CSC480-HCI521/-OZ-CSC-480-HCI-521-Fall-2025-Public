@@ -10,7 +10,7 @@ import com.kudo.adapter.UserRoleAdapter;
 public class User {
     @JsonbProperty("user_id")
     private UUID user_id;
-    
+
     @JsonbProperty("email")
     private String email;
     
