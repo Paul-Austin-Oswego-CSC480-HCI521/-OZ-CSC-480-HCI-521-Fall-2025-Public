@@ -1,5 +1,6 @@
 package com.kudo.resource;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -129,7 +130,18 @@ public class KudoCardResource {
      * Returns: 500 Internal Server Error for database issues
      *
      * Example response:
-     * {"anonymous":false,"card_id":"W-W-W-W-W","class_id":"X-X-X-X-X","content":"Good work today!","recipient_id":"Y-Y-Y-Y-Y","sender_id":"Z-Z-Z-Z-Z","status":"PENDING","title":"Good work!"}
+     * {
+     *  "anonymous":false,
+     *  "card_id":"W-W-W-W-W",
+     *  "class_id":"X-X-X-X-X",
+     *  "content":"Good work today!",
+     *  "recipient_id":"Y-Y-Y-Y-Y",
+     *  "sender_id":"Z-Z-Z-Z-Z",
+     *  "status":"PENDING",
+     *  "title":"Good work!",
+     *  "created_at":"date",
+     *  "professor_note":null
+     * }
      */
     @GET
     @Path("{card_id}")
@@ -177,14 +189,14 @@ public class KudoCardResource {
      * Content-type: JSON
      * Request Body: 
      * {
-        "senderId": "SENDER-UUID",
+        "sender_id": "SENDER-UUID",
         "recipient_id": "RECIPIENT-UUID",
-        "cclass_id": "CLASS-UUID",
+        "class_id": "CLASS-UUID",
         "title": "{card title}",
         "content": "{card content}",
-        "isAnonymous": true (DEFAULT)
+        "is_anonymous": true (DEFAULT)
         }   
-     * If succesful, should return saved Kudo card response, status:CREATED
+     * If successful, should return saved Kudos card response, status:CREATED
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -196,8 +208,8 @@ public class KudoCardResource {
         }
         final String sql = """
         INSERT INTO KUDOS_CARDS
-            (sender_id, recipient_id, class_id, title, content, is_anonymous)
-        VALUES (?, ?, ?, ?, ?, ?)
+            (sender_id, recipient_id, class_id, title, content, is_anonymous, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
         RETURNING *
         """;
 
@@ -209,7 +221,7 @@ public class KudoCardResource {
             stmt.setString(4, req.getTitle());
             stmt.setString(5, req.getContent());
             stmt.setBoolean(6, Boolean.TRUE.equals(req.getIs_anonymous()));
-            
+            stmt.setTimestamp(7, Timestamp.from(Instant.now()));
             try  (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     Kudocard created = ResultSetToKudocard(rs);
@@ -230,7 +242,9 @@ public class KudoCardResource {
  * {
     "card_id":"X-X-X-X-X",
     "status":"PENDING|APPROVED|DENIED|RECEIVED",
-    "approvedBy":"Y-Y-Y-Y-Y"
+    "approvedBy":"Y-Y-Y-Y-Y",
+    "professor_note":"abcdefg123456"|null
+    *
     }
  * If successful, returns the request
  */
@@ -252,7 +266,7 @@ public class KudoCardResource {
         //Update the card status to approved
         final String sql = """
         UPDATE KUDOS_CARDS
-        SET status = ?, approved_by = ?
+        SET status = ?, approved_by = ?, professor_note = ?
         WHERE card_id = ?;
         """;
 
@@ -260,7 +274,8 @@ public class KudoCardResource {
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setObject(1, req.getStatus());
             stmt.setObject(2, req.getApproved_by());
-            stmt.setObject(3, req.getCard_id());
+            stmt.setObject(3, req.getProfessor_note());
+            stmt.setObject(4, req.getCard_id());
             try  (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return Response.status(Response.Status.CREATED).entity(req).build();
@@ -320,7 +335,9 @@ public class KudoCardResource {
                 rs.getBoolean("is_anonymous"),
                 Kudocard.Status.valueOf(rs.getString("status")),
                 rs.getString("approved_by")!=null ? //approved_by will be null if the card is not approved
-                        UUID.fromString(rs.getString("approved_by")) : null
+                        UUID.fromString(rs.getString("approved_by")) : null,
+                rs.getTimestamp("created_at"),
+                rs.getString("professor_note")
         );
     }
 

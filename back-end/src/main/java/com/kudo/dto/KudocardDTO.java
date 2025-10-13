@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import jakarta.json.bind.annotation.JsonbProperty;
 import com.kudo.model.Kudocard.Status;
+
+import java.sql.Timestamp;
 import java.util.UUID;
 
 public class KudocardDTO {
@@ -106,14 +108,18 @@ public class KudocardDTO {
         //optional;  required if approving/denying by instructor
         private UUID approved_by;
 
+        private String professor_note;
+
         public UpdateStatusRequest() {}
 
         public UpdateStatusRequest(@NotNull UUID card_id,
                                    @NotBlank @Pattern(regexp = "PENDING|APPROVED|DENIED|RECEIVED", message = "invalid status") String status,
-                                   UUID approved_by) {
+                                   UUID approved_by,
+                                   String professor_note) {
             this.card_id = card_id;
             this.status = status;
             this.approved_by = approved_by;
+            this.professor_note = professor_note;
         }
 
         public UUID getCard_id() {
@@ -139,6 +145,14 @@ public class KudocardDTO {
         public void setApproved_by(UUID approved_by) {
             this.approved_by = approved_by;
         }
+
+        public String getProfessor_note() {
+            return professor_note;
+        }
+
+        public void setProfessor_note(String professor_note) {
+            this.professor_note = professor_note;
+        }
     }
     public static class KudoCardResponse {
         private UUID card_id;
@@ -147,17 +161,21 @@ public class KudocardDTO {
         private UUID class_id;
         private String title;
         private String content;
-        
+
         @JsonbProperty("is_anonymous")
         private boolean is_anonymous;
 
         private Status status;
         private UUID approved_by;
 
+        private Timestamp created_at;
+        private String professor_note;
+
         public KudoCardResponse() {}
 
         public KudoCardResponse(UUID card_id, UUID sender_id, UUID recipient_id, UUID class_id, String title,
-                                String content, boolean is_anonymous, Status status, UUID approved_by) {
+                                String content, boolean is_anonymous, Status status, UUID approved_by,
+                                Timestamp created_at, String professor_note) {
             this.card_id = card_id;
             this.sender_id = sender_id;
             this.recipient_id = recipient_id;
@@ -167,6 +185,8 @@ public class KudocardDTO {
             this.is_anonymous = is_anonymous;
             this.status = status;
             this.approved_by = approved_by;
+            this.created_at = created_at;
+            this.professor_note = professor_note;
         }
 
         public UUID getCard_id() {
@@ -241,7 +261,21 @@ public class KudocardDTO {
             this.approved_by = approved_by;
         }
 
-        
+        public Timestamp getCreated_at() {
+            return created_at;
+        }
+
+        public void setCreated_at(Timestamp created_at) {
+            this.created_at = created_at;
+        }
+
+        public String getProfessor_note() {
+            return professor_note;
+        }
+
+        public void setProfessor_note(String professor_note) {
+            this.professor_note = professor_note;
+        }
     }
 
 }

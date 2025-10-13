@@ -1,6 +1,8 @@
 package com.kudo.model;
 import jakarta.json.bind.annotation.JsonbProperty;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.UUID;
 
 public class Kudocard {
@@ -31,6 +33,12 @@ public class Kudocard {
     @JsonbProperty("approved_by")
     private UUID approved_by;
 
+    @JsonbProperty("created_at")
+    private Timestamp created_at;
+
+    @JsonbProperty("professor_note")
+    private String professor_note;
+
     public enum Status {
         PENDING, APPROVED, DENIED, RECEIVED
     }
@@ -38,7 +46,7 @@ public class Kudocard {
     public Kudocard() {}
 
     public Kudocard(UUID card_id, UUID sender_id, UUID recipient_id, UUID class_id, String title, String content,
-                    boolean is_anonymous, Status status, UUID approved_by) {
+                    boolean is_anonymous, Status status, UUID approved_by, Timestamp created_at, String professor_note) {
         this.card_id = card_id;
         this.sender_id = sender_id;
         this.recipient_id = recipient_id;
@@ -48,6 +56,8 @@ public class Kudocard {
         this.is_anonymous = is_anonymous;
         this.status = status;
         this.approved_by = approved_by;
+        this.created_at = created_at;
+        this.professor_note = professor_note;
     }
 
     public UUID getCard_id() {
@@ -120,6 +130,22 @@ public class Kudocard {
 
     public void setApproved_by(UUID approved_by) {
         this.approved_by = approved_by;
+    }
+
+    public Timestamp getCreated_at() {
+        return created_at;
+    }
+
+    public void setCreated_at(Timestamp created_at) {
+        this.created_at = created_at;
+    }
+
+    public String getProfessor_note() {
+        return professor_note;
+    }
+
+    public void setProfessor_note(String professor_note) {
+        this.professor_note = professor_note;
     }
 
     @Override

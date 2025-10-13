@@ -151,7 +151,7 @@ public class UserResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateUser(@PathParam("user_id") String idStr, @Valid UserDTO.UserData userUpdateDTO) throws SQLException {
-        UUID userId = UUID.fromString(idStr);
+        UUID user_id = UUID.fromString(idStr);
 
         Optional<User> existingUser = userService.getUserById(user_id);
         if (existingUser.isEmpty()) {
