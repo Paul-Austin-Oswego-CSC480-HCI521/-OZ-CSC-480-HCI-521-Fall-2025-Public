@@ -31,7 +31,7 @@ curl "http://kudos-app:${APP_HTTP_PORT}/kudo-app/api/users?role=STUDENT&limit=25
 ```json
 [
   {
-    "userId": "12345678-1234-1234-1234-123456789abc",
+    "user_id": "12345678-1234-1234-1234-123456789abc",
     "email": "joker@gotham.com",
     "name": "The Joker",
     "role": "STUDENT"
@@ -39,11 +39,11 @@ curl "http://kudos-app:${APP_HTTP_PORT}/kudo-app/api/users?role=STUDENT&limit=25
 ]
 ```
 
-### `GET /api/users/{id}`
+### `GET /api/users/{user_id}`
 Get a specific user by UUID.
 
 **Parameters:**
-- `id` (path): User UUID
+- `user_id` (path): User UUID
 
 **Example:**
 ```bash
@@ -53,7 +53,7 @@ curl http://kudos-app:${APP_HTTP_PORT}/kudo-app/api/users/12345678-1234-1234-123
 **Response:**
 ```json
 {
-  "userId": "12345678-1234-1234-1234-123456789abc",
+  "user_id": "12345678-1234-1234-1234-123456789abc",
   "email": "penguin@gotham.com",
   "name": "The Penguin",
   "role": "STUDENT"
@@ -88,18 +88,18 @@ curl -X POST http://kudos-app:${APP_HTTP_PORT}/kudo-app/api/users \
 **Response:**
 ```json
 {
-  "userId": "12345678-1234-1234-1234-123456789abc",
+  "user_id": "12345678-1234-1234-1234-123456789abc",
   "email": "riddler@gotham.com",
   "name": "The Riddler",
   "role": "STUDENT"
 }
 ```
 
-### `PUT /api/users/{id}`
+### `PUT /api/users/{user_id}`
 Update an existing user.
 
 **Parameters:**
-- `id` (path): User UUID
+- `user_id` (path): User UUID
 
 **Request Body:**
 ```json
@@ -122,45 +122,26 @@ curl -X PUT http://kudos-app:${APP_HTTP_PORT}/kudo-app/api/users/12345678-1234-1
 **Response:**
 ```json
 {
-  "userId": "12345678-1234-1234-1234-123456789abc",
+  "user_id": "12345678-1234-1234-1234-123456789abc",
   "email": "twoface@gotham.com",
   "name": "Two-Face",
   "role": "INSTRUCTOR"
 }
 ```
 
-### `DELETE /api/users/{id}`
+### `DELETE /api/users/{user_id}`
 Delete a user.
 
 **Parameters:**
-- `id` (path): User UUID
+- `user_id` (path): User UUID
 
 **Example:**
 ```bash
 curl -X DELETE http://kudos-app:${APP_HTTP_PORT}/kudo-app/api/users/87654321-4321-4321-4321-987654321xyz
 ```
 
-
-### `GET /kudo-app/api/users/{user_id}/classes`
-Retrieve a list of all classes which the user is enrolled in.
-
-Call: GET http://localhost:9080/kudo-app/api/users/{user_id}/classes
-
-**Parameters:**
-- `user_id` (path): the UUID of the user who's enrolled classes are to be queried
-
-**Example:**
-```bash
-curl -X POST http://kudos-app:${APP_HTTP_PORT}/kudo-app/api/users/12345678-1234-1234-1234-123456789abc/classes \
-  -H "Content-Type: application/json" \
-```
-
-**Response:**
-```json
-{"class_id":["87654321-4321-4321-4321-987654321xyz"]}
-```
-
 ## Kudo Card API
+
 
 ### `GET /api/kudo-card/list/sent`
 Get list of card IDs sent by a user.
@@ -290,158 +271,4 @@ curl -X DELETE "http://kudos-app:${APP_HTTP_PORT}/kudo-app/api/kudo-card/abcd123
 **Response:**
 ```
 204 No Content
-```
-
-## Classes API
-
-### `POST /api/class`
-
-Create a new class.
-
-**Parameters:**
-
-- `class_name` (query): Name of the class
-
-**Example:**
-
-```bash
-curl -X POST "http://kudos-app:${APP_HTTP_PORT}/kudo-app/api/class?class_name=Teaching%20101"
-```
-
-**Response:**
-
-```json
-{
-  "class_id": "12345678-1234-1234-1234-123456789abc",
-  "class_name": "Teaching 101"
-}
-```
-
-### `PUT /api/class/{class_id}`
-
-Add students to a class.
-
-**Parameters:**
-
-- `class_id` (path): UUID of the class
-
-**Request Body:**
-
-```json
-{
-  "user_id": [
-    "12345678-1234-1234-1234-123456789abc",
-    "87654321-4321-4321-4321-987654321xyz"
-  ]
-}
-```
-
-**Example:**
-
-```bash
-curl -X PUT http://kudos-app:${APP_HTTP_PORT}/kudo-app/api/class/12345678-1234-1234-1234-123456789abc \
-  -H "Content-Type: application/json" \
-  -d '{
-    "user_id": [
-      "12345678-1234-1234-1234-123456789abc",
-      "87654321-4321-4321-4321-987654321xyz"
-    ]
-  }'
-```
-
-**Response:**
-
-```json
-{
-  "class_id": "12345678-1234-1234-1234-123456789abc"
-}
-```
-
-### `GET /api/class/classes`
-
-Retrieve a list of all classes.
-
-**Example:**
-
-```bash
-curl http://kudos-app:${APP_HTTP_PORT}/kudo-app/api/class/classes
-```
-
-**Response:**
-
-```json
-{
-  "class_id": [
-    "12345678-1234-1234-1234-123456789abc",
-    "87654321-4321-4321-4321-987654321xyz"
-  ]
-}
-```
-
-### `GET /api/class/{class_id}`
-
-Retrieve details of a specific class.
-
-**Parameters:**
-
-- `class_id` (path): UUID of the class
-
-**Example:**
-
-```bash
-curl http://kudos-app:${APP_HTTP_PORT}/kudo-app/api/class/12345678-1234-1234-1234-123456789abc
-```
-
-**Response:**
-
-```json
-{
-  "class": [
-    {
-      "class_id": "12345678-1234-1234-1234-123456789abc",
-      "class_name": "Grifting"
-    }
-  ]
-}
-```
-
-### `DELETE /api/class/{class_id}`
-
-Delete a class.
-
-**Parameters:**
-
-- `class_id` (path): UUID of the class to delete
-
-**Example:**
-
-```bash
-curl -X DELETE http://kudos-app:${APP_HTTP_PORT}/kudo-app/api/class/12345678-1234-1234-1234-123456789abc
-```
-
-**Response:**
-
-```
-200 OK
-```
-
-### `DELETE /api/class/{class_id}`
-
-Remove a user from a class.
-
-**Parameters:**
-
-- `class_id` (path): UUID of the class
-- `user_id` (query): UUID of user to delete
-
-**Example:**
-
-```bash
-curl -X DELETE "http://kudos-app:${APP_HTTP_PORT}/kudo-app/api/class/12345678-1234-1234-1234-123456789abc?user_id=87654321-4321-4321-4321-987654321xyz"
-```
-
-**Response:**
-
-```
-200 OK
 ```

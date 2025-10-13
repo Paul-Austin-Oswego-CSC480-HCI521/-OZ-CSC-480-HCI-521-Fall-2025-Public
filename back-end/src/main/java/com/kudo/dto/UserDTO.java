@@ -1,5 +1,6 @@
 package com.kudo.dto;
 
+import jakarta.json.bind.annotation.JsonbProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -74,6 +75,7 @@ public class UserDTO {
 
     //  DTO for both update requests and responses
     public static class UserData {
+        @JsonbProperty("user_id")
         private UUID userId;
         private String email;
 

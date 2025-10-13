@@ -35,6 +35,8 @@ CREATE TABLE KUDOS_CARDS (
     is_anonymous BOOLEAN DEFAULT TRUE,
     status VARCHAR(20) CHECK (status IN ('PENDING', 'APPROVED', 'DENIED', 'RECEIVED')) DEFAULT 'PENDING',
     approved_by UUID,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    professor_note TEXT,
     CONSTRAINT fk_cards_sender FOREIGN KEY (sender_id) REFERENCES USERS(user_id) ON DELETE CASCADE,
     CONSTRAINT fk_cards_recipient FOREIGN KEY (recipient_id) REFERENCES USERS(user_id) ON DELETE CASCADE,
     CONSTRAINT fk_cards_class FOREIGN KEY (class_id) REFERENCES CLASSES(class_id) ON DELETE CASCADE,

@@ -8,7 +8,7 @@ import com.kudo.adapter.UserRoleAdapter;
 
 // User entity model
 public class User {
-    @JsonbProperty("userId")
+    @JsonbProperty("user_id")
     private UUID userId;
     
     @JsonbProperty("email")
