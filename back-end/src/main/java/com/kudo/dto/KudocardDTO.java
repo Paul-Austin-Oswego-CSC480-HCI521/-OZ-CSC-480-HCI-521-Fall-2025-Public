@@ -12,13 +12,13 @@ public class KudocardDTO {
 
     public static class CreateKudoRequest {
         @NotNull
-        private UUID senderId;
+        private UUID sender_id;
 
         @NotNull
-        private UUID recipientId;
+        private UUID recipient_id;
 
         @NotNull
-        private UUID classId;
+        private UUID class_id;
 
         @NotBlank(message =  "title field cannot be empty")
         @Size(max = 200)
@@ -29,45 +29,45 @@ public class KudocardDTO {
         private String content;
 
         @NotNull
-        private Boolean isAnonymous;
+        private Boolean is_anonymous;
 
         public CreateKudoRequest() {} //default constr
 
         //full constructor
-        public CreateKudoRequest(@NotNull UUID senderId, @NotNull UUID recipientId, @NotNull UUID classId,
-                @NotBlank(message = "title field cannot be empty") @Size(max = 200) String title,
-                @NotBlank(message = "Content field cannot be empty") @Size(max = 1000) String content,
-                @NotNull Boolean isAnonymous) {
-            this.senderId = senderId;
-            this.recipientId = recipientId;
-            this.classId = classId;
+        public CreateKudoRequest(@NotNull UUID sender_id, @NotNull UUID recipient_id, @NotNull UUID class_id,
+                                 @NotBlank(message = "title field cannot be empty") @Size(max = 200) String title,
+                                 @NotBlank(message = "Content field cannot be empty") @Size(max = 1000) String content,
+                                 @NotNull Boolean is_anonymous) {
+            this.sender_id = sender_id;
+            this.recipient_id = recipient_id;
+            this.class_id = class_id;
             this.title = title;
             this.content = content;
-            this.isAnonymous = isAnonymous;
+            this.is_anonymous = is_anonymous;
         }
 
-        public UUID getSenderId() {
-            return senderId;
+        public UUID getSender_id() {
+            return sender_id;
         }
 
-        public void setSenderId(UUID senderId) {
-            this.senderId = senderId;
+        public void setSender_id(UUID sender_id) {
+            this.sender_id = sender_id;
         }
 
-        public UUID getRecipientId() {
-            return recipientId;
+        public UUID getRecipient_id() {
+            return recipient_id;
         }
 
-        public void setRecipientId(UUID recipientId) {
-            this.recipientId = recipientId;
+        public void setRecipient_id(UUID recipient_id) {
+            this.recipient_id = recipient_id;
         }
 
-        public UUID getClassId() {
-            return classId;
+        public UUID getClass_id() {
+            return class_id;
         }
 
-        public void setClassId(UUID classId) {
-            this.classId = classId;
+        public void setClass_id(UUID class_id) {
+            this.class_id = class_id;
         }
 
         public String getTitle() {
@@ -86,42 +86,42 @@ public class KudocardDTO {
             this.content = content != null ? content.trim() : null;
         }
 
-        public Boolean getIsAnonymous() {
-            return isAnonymous;
+        public Boolean getIs_anonymous() {
+            return is_anonymous;
         }
 
-        public void setIsAnonymous(Boolean isAnonymous) {
-            this.isAnonymous = isAnonymous;
+        public void setIs_anonymous(Boolean is_anonymous) {
+            this.is_anonymous = is_anonymous;
         }
     }
 
     public static class UpdateStatusRequest {
         @NotNull
-        private UUID cardId;
+        private UUID card_id;
 
         @NotBlank
         @Pattern(regexp = "PENDING|APPROVED|DENIED|RECEIVED", message = "invalid status")
         private String status;
 
         //optional;  required if approving/denying by instructor
-        private UUID approvedBy;
+        private UUID approved_by;
 
         public UpdateStatusRequest() {}
 
-        public UpdateStatusRequest(@NotNull UUID cardId,
-                @NotBlank @Pattern(regexp = "PENDING|APPROVED|DENIED|RECEIVED", message = "invalid status") String status,
-                UUID approvedBy, UUID classId) {
-            this.cardId = cardId;
+        public UpdateStatusRequest(@NotNull UUID card_id,
+                                   @NotBlank @Pattern(regexp = "PENDING|APPROVED|DENIED|RECEIVED", message = "invalid status") String status,
+                                   UUID approved_by) {
+            this.card_id = card_id;
             this.status = status;
-            this.approvedBy = approvedBy;
+            this.approved_by = approved_by;
         }
 
-        public UUID getCardId() {
-            return cardId;
+        public UUID getCard_id() {
+            return card_id;
         }
 
-        public void setCardId(UUID cardId) {
-            this.cardId = cardId;
+        public void setCard_id(UUID card_id) {
+            this.card_id = card_id;
         }
 
         public String getStatus() {
@@ -132,73 +132,73 @@ public class KudocardDTO {
             this.status = status;
         }
 
-        public UUID getApprovedBy() {
-            return approvedBy;
+        public UUID getApproved_by() {
+            return approved_by;
         }
 
-        public void setApprovedBy(UUID approvedBy) {
-            this.approvedBy = approvedBy;
+        public void setApproved_by(UUID approved_by) {
+            this.approved_by = approved_by;
         }
     }
     public static class KudoCardResponse {
-        private UUID cardId;
-        private UUID senderId;
-        private UUID recipientId;
-        private UUID classId;
+        private UUID card_id;
+        private UUID sender_id;
+        private UUID recipient_id;
+        private UUID class_id;
         private String title;
         private String content;
         
-        @JsonbProperty("isAnonymous")
-        private boolean isAnonymous;
+        @JsonbProperty("is_anonymous")
+        private boolean is_anonymous;
 
         private Status status;
-        private UUID approvedBy;
+        private UUID approved_by;
 
         public KudoCardResponse() {}
 
-        public KudoCardResponse(UUID cardId, UUID senderId, UUID recipientId, UUID classId, String title,
-                String content, boolean isAnonymous, Status status, UUID approvedBy) {
-            this.cardId = cardId;
-            this.senderId = senderId;
-            this.recipientId = recipientId;
-            this.classId = classId;
+        public KudoCardResponse(UUID card_id, UUID sender_id, UUID recipient_id, UUID class_id, String title,
+                                String content, boolean is_anonymous, Status status, UUID approved_by) {
+            this.card_id = card_id;
+            this.sender_id = sender_id;
+            this.recipient_id = recipient_id;
+            this.class_id = class_id;
             this.title = title;
             this.content = content;
-            this.isAnonymous = isAnonymous;
+            this.is_anonymous = is_anonymous;
             this.status = status;
-            this.approvedBy = approvedBy;
+            this.approved_by = approved_by;
         }
 
-        public UUID getCardId() {
-            return cardId;
+        public UUID getCard_id() {
+            return card_id;
         }
 
-        public void setCardId(UUID cardId) {
-            this.cardId = cardId;
+        public void setCard_id(UUID card_id) {
+            this.card_id = card_id;
         }
 
-        public UUID getSenderId() {
-            return senderId;
+        public UUID getSender_id() {
+            return sender_id;
         }
 
-        public void setSenderId(UUID senderId) {
-            this.senderId = senderId;
+        public void setSender_id(UUID sender_id) {
+            this.sender_id = sender_id;
         }
 
-        public UUID getRecipientId() {
-            return recipientId;
+        public UUID getRecipient_id() {
+            return recipient_id;
         }
 
-        public void setRecipientId(UUID recipientId) {
-            this.recipientId = recipientId;
+        public void setRecipient_id(UUID recipient_id) {
+            this.recipient_id = recipient_id;
         }
 
-        public UUID getClassId() {
-            return classId;
+        public UUID getClass_id() {
+            return class_id;
         }
 
-        public void setClassId(UUID classId) {
-            this.classId = classId;
+        public void setClass_id(UUID class_id) {
+            this.class_id = class_id;
         }
 
         public String getTitle() {
@@ -217,12 +217,12 @@ public class KudocardDTO {
             this.content = content;
         }
 
-        public boolean isAnonymous() {
-            return isAnonymous;
+        public boolean isIs_anonymous() {
+            return is_anonymous;
         }
 
-        public void setAnonymous(boolean isAnonymous) {
-            this.isAnonymous = isAnonymous;
+        public void setIs_anonymous(boolean isAnonymous) {
+            this.is_anonymous = isAnonymous;
         }
 
         public Status getStatus() {
@@ -233,12 +233,12 @@ public class KudocardDTO {
             this.status = status;
         }
 
-        public UUID getApprovedBy() {
-            return approvedBy;
+        public UUID getApproved_by() {
+            return approved_by;
         }
 
-        public void setApprovedBy(UUID approvedBy) {
-            this.approvedBy = approvedBy;
+        public void setApproved_by(UUID approved_by) {
+            this.approved_by = approved_by;
         }
 
         

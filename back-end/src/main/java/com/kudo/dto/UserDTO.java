@@ -74,7 +74,7 @@ public class UserDTO {
 
     //  DTO for both update requests and responses
     public static class UserData {
-        private UUID userId;
+        private UUID user_id;
         private String email;
 
         @NotBlank(message = "Name is required")
@@ -95,20 +95,20 @@ public class UserDTO {
         }
 
         // Full data constructor
-        public UserData(UUID userId, String email, String name, String role) {
-            this.userId = userId;
+        public UserData(UUID user_id, String email, String name, String role) {
+            this.user_id = user_id;
             this.email = sanitize(email);
             this.name = sanitize(name);
             this.role = sanitize(role);
         }
 
 
-        public UUID getUserId() {
-            return userId;
+        public UUID getUser_id() {
+            return user_id;
         }
 
-        public void setUserId(UUID userId) {
-            this.userId = userId;
+        public void setUser_id(UUID user_id) {
+            this.user_id = user_id;
         }
 
         public String getEmail() {

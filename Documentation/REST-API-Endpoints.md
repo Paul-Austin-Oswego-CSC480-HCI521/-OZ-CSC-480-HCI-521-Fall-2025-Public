@@ -31,7 +31,7 @@ curl "http://kudos-app:${APP_HTTP_PORT}/kudo-app/api/users?role=STUDENT&limit=25
 ```json
 [
   {
-    "userId": "12345678-1234-1234-1234-123456789abc",
+    "user_id": "12345678-1234-1234-1234-123456789abc",
     "email": "joker@gotham.com",
     "name": "The Joker",
     "role": "STUDENT"
@@ -39,11 +39,11 @@ curl "http://kudos-app:${APP_HTTP_PORT}/kudo-app/api/users?role=STUDENT&limit=25
 ]
 ```
 
-### `GET /api/users/{id}`
+### `GET /api/users/{user_id}`
 Get a specific user by UUID.
 
 **Parameters:**
-- `id` (path): User UUID
+- `user_id` (path): User UUID
 
 **Example:**
 ```bash
@@ -53,7 +53,7 @@ curl http://kudos-app:${APP_HTTP_PORT}/kudo-app/api/users/12345678-1234-1234-123
 **Response:**
 ```json
 {
-  "userId": "12345678-1234-1234-1234-123456789abc",
+  "user_id": "12345678-1234-1234-1234-123456789abc",
   "email": "penguin@gotham.com",
   "name": "The Penguin",
   "role": "STUDENT"
@@ -88,18 +88,18 @@ curl -X POST http://kudos-app:${APP_HTTP_PORT}/kudo-app/api/users \
 **Response:**
 ```json
 {
-  "userId": "12345678-1234-1234-1234-123456789abc",
+  "user_id": "12345678-1234-1234-1234-123456789abc",
   "email": "riddler@gotham.com",
   "name": "The Riddler",
   "role": "STUDENT"
 }
 ```
 
-### `PUT /api/users/{id}`
+### `PUT /api/users/{user_id}`
 Update an existing user.
 
 **Parameters:**
-- `id` (path): User UUID
+- `user_id` (path): User UUID
 
 **Request Body:**
 ```json
@@ -122,18 +122,18 @@ curl -X PUT http://kudos-app:${APP_HTTP_PORT}/kudo-app/api/users/12345678-1234-1
 **Response:**
 ```json
 {
-  "userId": "12345678-1234-1234-1234-123456789abc",
+  "user_id": "12345678-1234-1234-1234-123456789abc",
   "email": "twoface@gotham.com",
   "name": "Two-Face",
   "role": "INSTRUCTOR"
 }
 ```
 
-### `DELETE /api/users/{id}`
+### `DELETE /api/users/{user_id}`
 Delete a user.
 
 **Parameters:**
-- `id` (path): User UUID
+- `user_id` (path): User UUID
 
 **Example:**
 ```bash
@@ -225,9 +225,9 @@ curl "http://kudos-app:${APP_HTTP_PORT}/kudo-app/api/kudo-card/abcd1234-1234-123
   "class_id": "12345678-1234-1234-1234-123456789def",
   "title": "Great work!",
   "content": "You did an excellent job on the presentation.",
-  "isAnonymous": true,
+  "is_anonymous": true,
   "status": "PENDING",
-  "approvedBy": null
+  "approved_by": null
 }
 ```
 
@@ -237,12 +237,12 @@ Create a new kudo card.
 **Request Body:**
 ```json
 {
-  "senderId": "87654321-1234-1234-1234-123456789xyz",
-  "recipientId": "12345678-1234-1234-1234-123456789abc",
-  "classId": "12345678-1234-1234-1234-123456789def",
+  "sender_id": "87654321-1234-1234-1234-123456789xyz",
+  "recipient_id": "12345678-1234-1234-1234-123456789abc",
+  "class_id": "12345678-1234-1234-1234-123456789def",
   "title": "Great work!",
   "content": "You did an excellent job on the presentation.",
-  "isAnonymous": true
+  "is_anonymous": true
 }
 ```
 
@@ -251,12 +251,12 @@ Create a new kudo card.
 curl -X POST http://kudos-app:${APP_HTTP_PORT}/kudo-app/api/kudo-card \
   -H "Content-Type: application/json" \
   -d '{
-    "senderId": "87654321-1234-1234-1234-123456789xyz",
-    "recipientId": "12345678-1234-1234-1234-123456789abc",
-    "classId": "12345678-1234-1234-1234-123456789def",
+    "sender_id": "87654321-1234-1234-1234-123456789xyz",
+    "recipient_id": "12345678-1234-1234-1234-123456789abc",
+    "class_id": "12345678-1234-1234-1234-123456789def",
     "title": "Great work!",
     "content": "You did an excellent job on the presentation.",
-    "isAnonymous": true
+    "is_anonymous": true
   }'
 ```
 
@@ -269,9 +269,9 @@ curl -X POST http://kudos-app:${APP_HTTP_PORT}/kudo-app/api/kudo-card \
   "class_id": "12345678-1234-1234-1234-123456789def",
   "title": "Great work!",
   "content": "You did an excellent job on the presentation.",
-  "isAnonymous": true,
+  "is_anonymous": true,
   "status": "PENDING",
-  "approvedBy": null
+  "approved_by": null
 }
 ```
 
@@ -290,6 +290,38 @@ curl -X DELETE "http://kudos-app:${APP_HTTP_PORT}/kudo-app/api/kudo-card/abcd123
 **Response:**
 ```
 204 No Content
+```
+
+### `PATCH /kudo-app/api/kudo-card` 
+Update a kudos card to change it's status
+
+**Request Body:**
+```json
+{
+  "card_id":"12345678-1234-1234-1234-123456789abc",
+  "status":"PENDING|APPROVED|DENIED|RECEIVED",
+  "approved_by":"87654321-4321-4321-4321-987654321xyz"
+}
+```
+
+**Example:**
+```bash
+curl -X PATCH http://kudos-app:${APP_HTTP_PORT}/kudo-app/api/kudo-card \
+  -H "Content-Type: application/json" \
+  -d '{
+    "card_id":"12345678-1234-1234-1234-123456789abc",
+    "status":"PENDING|APPROVED|DENIED|RECEIVED",
+    "approved_by":"87654321-4321-4321-4321-987654321xyz"
+  }'
+```
+
+**Response:**
+```json
+{
+  "card_id":"12345678-1234-1234-1234-123456789abc",
+  "status":"PENDING|APPROVED|DENIED|RECEIVED",
+  "approved_by":"87654321-4321-4321-4321-987654321xyz"
+}
 ```
 
 ## Classes API

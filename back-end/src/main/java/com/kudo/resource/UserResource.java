@@ -53,7 +53,7 @@ public class UserResource {
      * Returns: 500 Internal Server Error for database issues
      *
      * Example response:
-     * [{"userId":"uuid","email":"john.doe@example.com","name":"John Doe","role":"STUDENT"}]
+     * [{"user_id":"uuid","email":"john.doe@example.com","name":"John Doe","role":"STUDENT"}]
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -85,14 +85,14 @@ public class UserResource {
      * Returns: 500 Internal Server Error for database issues
      *
      * Example response:
-     * {"userId":"36f6b7db-63c2-4d4a-aeac-0bf909295f7f","email":"john.doe@example.com","name":"John Doe","role":"STUDENT"}
+     * {"user_id":"36f6b7db-63c2-4d4a-aeac-0bf909295f7f","email":"john.doe@example.com","name":"John Doe","role":"STUDENT"}
      */
     @GET
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUserById(@PathParam("id") String idStr) throws SQLException {
-        UUID userId = UUID.fromString(idStr);
-        Optional<User> user = userService.getUserById(userId);
+        UUID user_id = UUID.fromString(idStr);
+        Optional<User> user = userService.getUserById(user_id);
 
         if (user.isEmpty()) {
             throw new SQLException("User not found");
@@ -114,7 +114,7 @@ public class UserResource {
      * Returns: 500 Internal Server Error for database issues
      *
      * Example response:
-     * {"userId":"36f6b7db-63c2-4d4a-aeac-0bf909295f7f","email":"john.doe@example.com","name":"John Doe","role":"STUDENT"}
+     * {"user_id":"36f6b7db-63c2-4d4a-aeac-0bf909295f7f","email":"john.doe@example.com","name":"John Doe","role":"STUDENT"}
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -144,23 +144,23 @@ public class UserResource {
      * Returns: 500 Internal Server Error for database issues
      *
      * Example response:
-     * {"userId":"36f6b7db-63c2-4d4a-aeac-0bf909295f7f","email":"john.doe@example.com","name":"John Updated Doe","role":"INSTRUCTOR"}
+     * {"user_id":"36f6b7db-63c2-4d4a-aeac-0bf909295f7f","email":"john.doe@example.com","name":"John Updated Doe","role":"INSTRUCTOR"}
      */
     @PUT
     @Path("{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateUser(@PathParam("id") String idStr, @Valid UserDTO.UserData userUpdateDTO) throws SQLException {
-        UUID userId = UUID.fromString(idStr);
+        UUID user_id = UUID.fromString(idStr);
 
-        Optional<User> existingUser = userService.getUserById(userId);
+        Optional<User> existingUser = userService.getUserById(user_id);
         if (existingUser.isEmpty()) {
             throw new SQLException("User not found");
         }
 
         User user = existingUser.get();
         userService.updateUserFromUserData(user, userUpdateDTO);
-        User updatedUser = userService.updateUser(userId, user);
+        User updatedUser = userService.updateUser(user_id, user);
 
         return Response.ok(updatedUser).build();
     }
@@ -180,8 +180,8 @@ public class UserResource {
     @DELETE
     @Path("{id}")
     public Response deleteUser(@PathParam("id") String idStr) throws SQLException {
-        UUID userId = UUID.fromString(idStr);
-        boolean deleted = userService.deleteUser(userId);
+        UUID user_id = UUID.fromString(idStr);
+        boolean deleted = userService.deleteUser(user_id);
 
         if (!deleted) {
             throw new SQLException("User not found");

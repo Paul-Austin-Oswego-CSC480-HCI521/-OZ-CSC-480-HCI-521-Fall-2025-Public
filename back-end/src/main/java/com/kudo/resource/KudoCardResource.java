@@ -2,21 +2,16 @@ package com.kudo.resource;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
+
 import com.kudo.dto.KudocardDTO;
 import com.kudo.dto.KudocardDTO.CreateKudoRequest;
 import com.kudo.model.CardIdList;
 import com.kudo.model.Kudocard;
 import jakarta.annotation.Resource;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-import jakarta.json.Json;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
-import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.NoContentException;
 import jakarta.ws.rs.core.Response;
 import javax.sql.DataSource;
 import java.sql.*;
@@ -150,18 +145,18 @@ public class KudoCardResource {
                 //Check if the user is the recipient
                 //(assume that the user is not their professor if they are the recipient)
                 //Putting the most likely case first
-                if(user_id.equals(kudocard.getRecipientId())) {
-                    if(kudocard.isAnonymous()) { //hide the sender if the card is anonymous
-                        kudocard.setSenderId(null);
+                if(user_id.equals(kudocard.getRecipient_id())) {
+                    if(kudocard.isIs_anonymous()) { //hide the sender if the card is anonymous
+                        kudocard.setSender_id(null);
                     }
                     return kudocard;
                 }
                 //Check if the user is the sender
-                else if(user_id.equals(kudocard.getSenderId())) {
+                else if(user_id.equals(kudocard.getSender_id())) {
                     return kudocard;
                 } else {
                     //Check if the user is the professor of the sender
-                   if(isInstructorOf(user_id, kudocard.getSenderId())) {
+                   if(isInstructorOf(user_id, kudocard.getSender_id())) {
                        return kudocard;
                    } else {
                        throw new NotFoundException();
@@ -183,8 +178,8 @@ public class KudoCardResource {
      * Request Body: 
      * {
         "senderId": "SENDER-UUID",
-        "recipientId": "RECIPIENT-UUID",
-        "classId": "CLASS-UUID",
+        "recipient_id": "RECIPIENT-UUID",
+        "cclass_id": "CLASS-UUID",
         "title": "{card title}",
         "content": "{card content}",
         "isAnonymous": true (DEFAULT)
@@ -196,7 +191,7 @@ public class KudoCardResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response createKudo(@Valid CreateKudoRequest req) {
         //quick check: sender !== recipient
-        if (req.getSenderId().equals(req.getRecipientId())) {
+        if (req.getSender_id().equals(req.getRecipient_id())) {
             throw new BadRequestException("sender and recip. UUID must be different");
         }
         final String sql = """
@@ -208,12 +203,12 @@ public class KudoCardResource {
 
         try (Connection conn = dataSource.getConnection();
         PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setObject(1, req.getSenderId());
-            stmt.setObject(2, req.getRecipientId());
-            stmt.setObject(3, req.getClassId());
+            stmt.setObject(1, req.getSender_id());
+            stmt.setObject(2, req.getRecipient_id());
+            stmt.setObject(3, req.getClass_id());
             stmt.setString(4, req.getTitle());
             stmt.setString(5, req.getContent());
-            stmt.setBoolean(6, Boolean.TRUE.equals(req.getIsAnonymous()));
+            stmt.setBoolean(6, Boolean.TRUE.equals(req.getIs_anonymous()));
             
             try  (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -229,11 +224,11 @@ public class KudoCardResource {
     }
 
     /*
- * PATCH /kudo-app/api/kudo-card - create new kudo card
+ * PATCH /kudo-app/api/kudo-card - update a kudos card to change its status
  * Content-type: JSON
  * Request Body:
  * {
-    "cardId":"X-X-X-X-X",
+    "card_id":"X-X-X-X-X",
     "status":"PENDING|APPROVED|DENIED|RECEIVED",
     "approvedBy":"Y-Y-Y-Y-Y"
     }
@@ -245,12 +240,12 @@ public class KudoCardResource {
     public Response updateKudoStatus(@Valid KudocardDTO.UpdateStatusRequest req) {
 
         //get the user_id of the card sender
-       Kudocard kudocard = getCard(req.getCardId(), req.getApprovedBy());
+       Kudocard kudocard = getCard(req.getCard_id(), req.getApproved_by());
 
-       UUID sender_id = kudocard.getSenderId();
+       UUID sender_id = kudocard.getSender_id();
 
        //Check if the approvedBy is the professor of the user
-        if(!isInstructorOf(req.getApprovedBy(), sender_id)) {
+        if(!isInstructorOf(req.getApproved_by(), sender_id)) {
             throw new NotFoundException();
         }
 
@@ -264,8 +259,8 @@ public class KudoCardResource {
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setObject(1, req.getStatus());
-            stmt.setObject(2, req.getApprovedBy());
-            stmt.setObject(3, req.getCardId());
+            stmt.setObject(2, req.getApproved_by());
+            stmt.setObject(3, req.getCard_id());
             try  (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return Response.status(Response.Status.CREATED).entity(req).build();
