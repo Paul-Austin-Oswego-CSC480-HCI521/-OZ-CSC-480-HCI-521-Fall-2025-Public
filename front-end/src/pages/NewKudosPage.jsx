@@ -140,7 +140,6 @@ function NewKudosPage({ onSubmit }) {
                                 disabled={isAnonymous}
                                 required={!isAnonymous}
                             />
-
                             <label style={{ marginTop: '8px', display: 'block' }}>
                                 <input
                                     type="checkbox"
@@ -161,7 +160,7 @@ function NewKudosPage({ onSubmit }) {
                                 onChange={handleChange}
                                 required
                             >
-                                <option value=""></option>
+                                <option value=""> -- Select a recipient -- </option>
                                 {students.map((student) => (
                                     <option key={student.user_id} value={student.user_id}>
                                         {student.name}
@@ -193,18 +192,8 @@ function NewKudosPage({ onSubmit }) {
                     </div>
 
                     {/* 🖼️ Message + image container */}
-                    <div
-                        className="message-image-container"
-                        style={{
-                            display: 'flex',
-                            alignItems: 'flex-start',
-                            justifyContent: 'space-between',
-                            gap: '20px',
-                            flexWrap: 'nowrap'
-                        }}
-                    >
-                        {/* Message box on the left */}
-                        <div style={{ flex: 1, minWidth: '60%' }}>
+                    <div className="message-image-container">
+                        <div className="message-box">
                             <label htmlFor="message">Your Message</label>
                             <textarea
                                 id="message"
@@ -214,53 +203,17 @@ function NewKudosPage({ onSubmit }) {
                                 onChange={handleChange}
                                 onPaste={handlePaste}
                                 placeholder="Please enter a message"
-                                rows={5}
+                                rows={6}
                                 minLength={10}
                                 maxLength={500}
                                 required
-                                style={{ width: '100%' }}
                             />
-                            <div
-                                className="char-count"
-                                style={{
-                                    textAlign: 'right',
-                                    fontSize: '0.9em',
-                                    color:
-                                        formData.message.length < 10 ||
-                                        formData.message.length > 500
-                                            ? 'red'
-                                            : '#555'
-                                }}
-                            >
-                                {formData.message.length}/500
-                            </div>
+                            <div className="char-count">{formData.message.length}/500</div>
                         </div>
 
-                        {/* Image preview to the right */}
                         {selectedImage && (
-                            <div
-                                style={{
-                                    width: '200px',
-                                    height: '200px',
-                                    borderRadius: '12px',
-                                    overflow: 'hidden',
-                                    boxShadow: '0 0 8px rgba(0,0,0,0.2)',
-                                    backgroundColor: '#f9f9f9',
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    flexShrink: 0
-                                }}
-                            >
-                                <img
-                                    src={selectedImage}
-                                    alt={formData.title}
-                                    style={{
-                                        width: '100%',
-                                        height: '100%',
-                                        objectFit: 'contain'
-                                    }}
-                                />
+                            <div className="image-preview">
+                                <img src={selectedImage} alt={formData.title} />
                             </div>
                         )}
                     </div>
