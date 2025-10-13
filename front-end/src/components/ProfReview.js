@@ -1,38 +1,36 @@
-import React, {useState} from "react";
-import { useUser } from "./UserContext";
+// src/components/ProfReview.jsx
+import React, { useState } from "react";
+import { useUser } from "../components/UserContext";
+import { useNavigate } from "react-router-dom";
 
-function ProfReview({ onClose, onSubmit, initialData, readOnly = false }) {
+function ProfReview({ initialData }) {
     const [formData, setFormData] = useState({
-        sender_id: initialData?.sender_id || '',
-        recipient_id: initialData?.recipient_id || '',
-        title: initialData?.title || '',
-        message: initialData?.message || initialData?.content || '',
-        note: initialData?.note || '',
+        sender_id: initialData?.sender_id || "",
+        recipient_id: initialData?.recipient_id || "",
+        title: initialData?.title || "",
+        message: initialData?.message || initialData?.content || "",
+        note: initialData?.note || "",
     });
 
     const [selectedStatus, setSelectedStatus] = useState(null);
     const { user } = useUser();
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleStatusChange = (status) => {
-        if (readOnly) return;
-        setSelectedStatus(status);
-    };
+    const handleStatusChange = (status) => setSelectedStatus(status);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (readOnly) return;
 
-         if (!selectedStatus) {
+        if (!selectedStatus) {
             alert("Please choose to approve or reject before submitting.");
             return;
         }
-
-        if (selectedStatus === 'REJECTED' && formData.note.trim() === '') {
+        if (selectedStatus === "REJECTED" && formData.note.trim() === "") {
             alert("Please provide a reason for rejection.");
             return;
         }
@@ -40,130 +38,117 @@ function ProfReview({ onClose, onSubmit, initialData, readOnly = false }) {
         try {
             const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-            const updatedCard = {
-                status: selectedStatus,
-                note: formData.note,
-            };
+            const updatedCard = { status: selectedStatus, note: formData.note };
 
             const res = await fetch(
                 `${BASE_URL}/kudo-card/${initialData.card_id}?user_id=${user.user_id}`,
                 {
                     method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(updatedCard),
                 }
             );
 
-            if (!res.ok)
-                throw new Error("Failed to update card.");
+            if (!res.ok) throw new Error("Failed to update card.");
 
-            const data = await res.json();
-            onSubmit(data);
-            onClose();
-
-        } catch(error){
+            alert("Review submitted successfully!");
+            navigate(-1); // go back to the previous page
+        } catch (error) {
             console.error("Error updating card:", error);
             alert("There was an error saving the card. Please try again");
         }
     };
 
     return (
-        <div className="modal-overlay">
-            <div className="modal-content">
-                <form onSubmit={handleSubmit}>
-                    <div className="form-row">
+        <div className="review-page">
+            <h2>Review Kudo Card</h2>
+            <div className="button-row">
+            <form onSubmit={handleSubmit}>
+                <div className="form-row">
+                    <div className="form-row horizontal-row">
                         <div className="form-group">
-                            <label htmlFor="sender">Sender</label>
+                            <label>Sender</label>
                             <input
-                                id="sender"
-                                className={"to-from-title"}
+                                className="to-from-title"
                                 name="sender_id"
                                 value={formData.sender_id}
-                                onChange={handleChange}
-                                placeholder="Sender"
-                                required
-                                readOnly={true} // disables editing
+                                readOnly
                             />
                         </div>
                         <div className="form-group">
-                            <label htmlFor="recipient">Recipient</label>
+                            <label>Recipient</label>
                             <input
-                                id="recipient"
-                                className={"to-from-title"}
+                                className="to-from-title"
                                 name="recipient_id"
                                 value={formData.recipient_id}
-                                onChange={handleChange}
-                                placeholder="Recipient"
-                                required
-                                readOnly={true}
+                                readOnly
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label>Title</label>
+                            <input
+                                className="to-from-title"
+                                name="title"
+                                value={formData.title}
+                                readOnly
                             />
                         </div>
                     </div>
+                </div>
 
-                    <div className="form-group">
-                        <label htmlFor="title">Title</label>
-                        <input
-                            id="title"
-                            className={"to-from-title"}
-                            name="title"
-                            value={formData.title}
-                            onChange={handleChange}
-                            placeholder="Title"
-                            required
-                            readOnly={true}
-                        />
-                    </div>
+                <div className="form-group">
+                    <label>Message</label>
+                    <textarea
+                        className="textBox"
+                        name="message"
+                        value={formData.message}
+                        readOnly
+                        rows={4}
+                    />
+                </div>
 
-                    <div className="form-group">
-                        <label htmlFor="message">Message</label>
-                        <textarea
-                            id="message"
-                            className={"textBox"}
-                            name="message"
-                            value={formData.message || formData.content}
-                            onChange={handleChange}
-                            placeholder="Message"
-                            rows={5}
-                            required
-                            readOnly={true}
-                        />
-                    </div>
-                    <div className={"button-row"}>
-                        <button 
-                            className={`approve-reject ${selectedStatus === 'APPROVED' ? 'selected' : ''}`} 
-                            type = "button"
-                            onClick = {() => handleStatusChange('APPROVED')}
-                            >Approve
-                        </button>
-                        <button 
-                            className={`approve-reject ${selectedStatus === 'REJECTED' ? 'selected' : ''}`} 
-                            type = "button"
-                            onClick = {() => handleStatusChange('REJECTED')}
-                            >Reject
-                        </button>
-                    </div>
+                <div className="button-row">
+                    <button
+                        type="button"
+                        className={`approve-reject ${
+                            selectedStatus === "APPROVED" ? "selected" : ""
+                        }`}
+                        onClick={() => handleStatusChange("APPROVED")}
+                    >
+                        Approve
+                    </button>
+                    <button
+                        type="button"
+                        className={`approve-reject ${
+                            selectedStatus === "REJECTED" ? "selected" : ""
+                        }`}
+                        onClick={() => handleStatusChange("REJECTED")}
+                    >
+                        Reject
+                    </button>
+                </div>
 
-                    <div className="form-group">
-                        <label htmlFor={"note"}>Note to Sender:</label>
-                        <textarea
-                            id={"note"}
-                            className={"textBox"}
-                            name = "note"
-                            value = {formData.note}
-                            onChange = {handleChange}
-                            placeholder = "Message to sender"
-                            rows = {3}
-                        />
-                    </div>
-
-                    <div className="button-row">
-                        <button type = "button" className="close-btn" onClick={onClose}>✖</button>
-                        <button className="submit-btn" type = "submit">
-                            Submit
-                        </button>
-                    </div>
+                <div className="form-group">
+                    <label>Reason for Rejection:</label>
+                    <textarea
+                        className="textBox"
+                        name="note"
+                        value={formData.note}
+                        onChange={handleChange}
+                        placeholder="Message to sender"
+                        rows={1}
+                    />
+                </div>
+                    <button type="submit" className="submit-btn">
+                        Submit
+                    </button>
+                    <button
+                        type="button"
+                        className="submit-btn"
+                        onClick={() => navigate(-1)}
+                    >
+                        Exit
+                    </button>
                 </form>
             </div>
         </div>

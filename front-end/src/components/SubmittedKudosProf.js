@@ -1,77 +1,102 @@
 import React, { useState, useEffect } from "react";
-import ProfReview from "./ProfReview";
 import { useUser } from "./UserContext";
+import { useNavigate } from "react-router-dom";
 
-function SubmittedKudosProf({ onReview }) {
-    const [submitted, setSubmitted] = useState([]);
-    const [selectedRow, setSelectedRow] = useState(null);
-    const [activeRow, setActiveRow] = useState([]);
-    const { user } = useUser();
-    const safeSubmittedKudos = Array.isArray(submitted) ? submitted : [];
-    const BASE_URL = process.env.REACT_APP_API_BASE_URL;
-
-    const handleReviewSubmit = async (updatedCard) => {
-        try {
-            const updatedData = {
-            ...updatedCard,
-            status: updatedCard.status,
-            approvedBy: user.user_id
-            // shouldn't need to update recipientType because user.role stores the type,
-            // and new logic means students will only see kudos with themselves as the recipient that have been approved, 
-            // or themselves as the sender
-        };
-
-        await fetch (`${BASE_URL}/kudo-app/api/kudo-card/${updatedCard.card_id}`, {
-        method: "PUT",
-        headers: {
-            "Content-Type" : "application/json"
-            },
-            body: JSON.stringify(updatedData)
-        });
-
-        setSubmitted((prev) => prev.filter((card) => card.card_id !== updatedCard.card_id));
-        if (onReview) onReview(updatedCard);
-        setSelectedRow(null);
-        } catch (error) {
-            console.error("Error updating kudos:", error);
+function SubmittedKudosProf() {
+    const [submitted, setSubmitted] = useState([
+        {
+            card_id: 101,
+            sender_id: "student001",
+            recipient_id: "profA",
+            title: "Great Lecture",
+            message: "Thanks for making class engaging and fun!",
+            date: "2025-10-05",
+            status: "SUBMITTED",
+            class_id: 101
+        },
+        {
+            card_id: 102,
+            sender_id: "student002",
+            recipient_id: "profA",
+            title: "Helpful Office Hours",
+            message: "I really appreciated your time after class last week.",
+            date: "2025-10-07",
+            status: "SUBMITTED",
+            class_id: 101
+        },
+        {
+            card_id: 103,
+            sender_id: "student003",
+            recipient_id: "profB",
+            title: "Awesome Feedback",
+            message: "Your project feedback really helped me improve!",
+            date: "2025-10-09",
+            status: "SUBMITTED",
+            class_id: 202
+        },
+        {
+            card_id: 104,
+            sender_id: "student004",
+            recipient_id: "profC",
+            title: "Supportive Guidance",
+            message: "Thanks for helping me understand the project requirements!",
+            date: "2025-10-10",
+            status: "SUBMITTED",
+            class_id: 303
+        },
+        {
+            card_id: 105,
+            sender_id: "student005",
+            recipient_id: "profA",
+            title: "Excellent Examples",
+            message: "The examples in class really helped me grasp the concepts.",
+            date: "2025-10-11",
+            status: "SUBMITTED",
+            class_id: 101
         }
-    };
+    ]);
+    const { user } = useUser();
+    const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+    const navigate = useNavigate();
 
+    // Fetch submitted kudos from API
     useEffect(() => {
         if (!user) return;
 
         async function fetchSubmittedKudos() {
             try {
                 const res = await fetch(
-                    `${BASE_URL}/kudo-app/api/kudo-card/list/received?user_id=${user.user_id}`);
+                    `${BASE_URL}/kudo-app/api/kudo-card/list/received?user_id=${user.user_id}`
+                );
 
-                    if (!res.ok) throw new Error("Failed to fetch submitted kudos");
+                if (!res.ok) throw new Error("Failed to fetch submitted kudos");
 
-                    const data = await res.json();
-                    const submittedOnly = data.filter(
-                        (card) => card.status === "SUBMITTED" && 
+                const data = await res.json();
+                const submittedOnly = data.filter(
+                    (card) =>
+                        card.status === "SUBMITTED" &&
                         Array.isArray(user.classes) &&
                         user.classes.map(cls => cls.class_id).includes(card.class_id)
-                        // && card.recipient_id === user.userId
-                        );
-                    setSubmitted(submittedOnly);
+                );
+                setSubmitted(submittedOnly);
             } catch (err) {
                 console.error("Error fetching submitted kudos:", err);
             }
         }
-        
+
         fetchSubmittedKudos();
     }, [user, BASE_URL]);
 
-    // if (!user) {
-    //     return <p>Loading user data...</p>;
-    // }
+    // Navigate to review page when a row is clicked
+    const handleRowClick = (kudos) => {
+        navigate("/review", { state: { selectedKudos: kudos } });
+    };
 
     return (
         <section className="received-kudos">
             <h2>Submitted Kudos</h2>
 
-            {safeSubmittedKudos.length === 0 ? (
+            {submitted.length === 0 ? (
                 <p style={{ padding: "1rem", fontStyle: "italic" }}>No submitted Kudos yet.</p>
             ) : (
                 <table className="k-table">
@@ -85,26 +110,16 @@ function SubmittedKudosProf({ onReview }) {
                     </tr>
                     </thead>
                     <tbody>
-                    {submitted.map((k, i) => (
+                    {submitted.map((k) => (
                         <tr
-                            key={k.card_id || i}
-                            className={`row-click ${activeRow.includes(k.card_id) ? "selected-row" : ""}`}
+                            key={k.card_id}
+                            className="row-click"
                             role="button"
                             tabIndex={0}
-                            onClick={() => {
-                                 setActiveRow((prev) =>
-                                     prev.includes(k.card_id) ? prev : [...prev, k.card_id]
-                                );
-
-                                setSelectedRow(k);
-                            }}
+                            onClick={() => handleRowClick(k)}
                             onKeyDown={(e) => {
                                 if (e.key === "Enter" || e.key === " ") {
-                                    setActiveRow((prev) =>
-                                        prev.includes(k.card_id) ? prev : [...prev, k.card_id]
-                                    );
-
-                                    setSelectedRow(k);
+                                    handleRowClick(k);
                                 }
                             }}
                         >
@@ -114,18 +129,9 @@ function SubmittedKudosProf({ onReview }) {
                             <td className="default-kudos-table-data">{k.message || k.content}</td>
                             <td className="default-kudos-table-data">{k.date || "-"}</td>
                         </tr>
-                        ))}
+                    ))}
                     </tbody>
                 </table>
-            )}
-
-            {selectedRow && (
-                <ProfReview
-                    initialData={selectedRow}
-                    readOnly={false}
-                    onClose={() => setSelectedRow(null)}
-                    onSubmit={handleReviewSubmit}
-                />
             )}
         </section>
     );

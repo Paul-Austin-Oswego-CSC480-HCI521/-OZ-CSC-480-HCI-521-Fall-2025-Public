@@ -5,6 +5,7 @@ import StudentView from "./pages/StudentView";
 import ProfessorView from "./pages/ProfessorView";
 import NewKudosPage from "./pages/NewKudosPage";
 import HomePage from "./pages/HomePage";
+import ReviewPage from "./pages/ReviewPage";
 
 
 function App(){
@@ -22,6 +23,7 @@ function App(){
                 <Route path = "/professorView" element={<ProfessorView />} />
                 <Route path = "/studentView/new-kudos" element={<NewKudosPage/>}/>
                 <Route path = "/professorView/new-kudos" element={<NewKudosPage/>}/>
+                <Route path = "/review" element={<ReviewPage />} />
             </Routes>
         </BrowserRouter>
     );
