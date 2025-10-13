@@ -62,6 +62,8 @@
 * “Discard” discards the card entirely, then redirects the user to their homepage.
 * “Edit” returns the user to the card-creation page with their previously chosen card options entered into each selection field.
 * The confirmation menu shall provide users with text that clearly explains the function of each of the provided options (“Confirm”, “Discard”, “Edit” ).
+*  _When an Instructor creates a new Kudos and selects “Confirm,” the card will be added to the instructor’s sent list and the recipient’s received list automatically. Instructor-created cards do not require approval._
+
 
 #### 7. Card Usability Requirements:
 #### The templates shall be offered in a variety of visual styles and colors, and will have a standardized image size and font type.

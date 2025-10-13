@@ -26,6 +26,7 @@
    * The system displays the card title, a preview of the text, and the status of each request.
    * When the status of any of the user’s card requests changes, the new status is shown without needing to refresh manually.
    * When a user submits a new card request, it is displayed on the user’s home page with the status “Pending Approval”.
+   * _Cards that were rejected will display a rejection reason, with the full text being displayed in a clickable overlay_. 
 
 
 #### 4. The Navigation Menu shall be available at the top of all pages, and will allow the user to navigate to any page available to that user. (Home Page and Generate Kudos, Sign-in / Sign-out, Instructor Statistics Page). *Pages not finalized*
@@ -44,6 +45,10 @@
 
 #### 6. The instructor(s) shall be provided access to approve or reject a pending card from their home page.
    * **Acceptance Criteria:**
+   *  _When “Reject” is selected, the rejection section becomes available. There will be a field for the Instructor to specify a Rejection Reason._ 
+   *  _The reason for rejection section shall include: A drop-down menu with predefined reasons + a comment text box (with a limit of 250 characters) for additional notes._ 
+   *  _If “Other” is selected from the dropdown, the comment text box becomes required before submission._ 
+   
    * When the Instructor selects a Kudos Card, the options to “Approve” or “Reject” are listed.
    * There will be a field for the Instructor to specify a Rejection Reason.
    * **Future Acceptance Criteria:**
