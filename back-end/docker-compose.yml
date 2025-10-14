@@ -36,6 +36,8 @@ services:
       - DB_NAME=${POSTGRES_DB}
       - DB_USER=${POSTGRES_USER}
       - DB_PASSWORD=${POSTGRES_PASSWORD}
+      - APP_HTTP_PORT=${APP_HTTP_PORT}
+      - APP_HTTPS_PORT=${APP_HTTPS_PORT}
 
 volumes:
   postgres_data:
