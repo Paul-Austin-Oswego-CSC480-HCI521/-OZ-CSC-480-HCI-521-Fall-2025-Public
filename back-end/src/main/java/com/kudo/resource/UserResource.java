@@ -151,16 +151,16 @@ public class UserResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateUser(@PathParam("user_id") String idStr, @Valid UserDTO.UserData userUpdateDTO) throws SQLException {
-        UUID userId = UUID.fromString(idStr);
+        UUID user_id = UUID.fromString(idStr);
 
-        Optional<User> existingUser = userService.getUserById(userId);
+        Optional<User> existingUser = userService.getUserById(user_id);
         if (existingUser.isEmpty()) {
             throw new SQLException("User not found");
         }
 
         User user = existingUser.get();
         userService.updateUserFromUserData(user, userUpdateDTO);
-        User updatedUser = userService.updateUser(userId, user);
+        User updatedUser = userService.updateUser(user_id, user);
 
         return Response.ok(updatedUser).build();
     }

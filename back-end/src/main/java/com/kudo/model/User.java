@@ -9,8 +9,8 @@ import com.kudo.adapter.UserRoleAdapter;
 // User entity model
 public class User {
     @JsonbProperty("user_id")
-    private UUID userId;
-    
+    private UUID user_id;
+
     @JsonbProperty("email")
     private String email;
     
@@ -18,7 +18,7 @@ public class User {
     private String name;
     
     @JsonbTransient
-    private String passwordHash;
+    private String password_hash;
     
     @JsonbProperty("role")
     @JsonbTypeAdapter(UserRoleAdapter.class)
@@ -33,28 +33,28 @@ public class User {
     public User() {}
 
     // Constructor for new users
-    public User(String email, String name, String passwordHash, Role role) {
+    public User(String email, String name, String password_hash, Role role) {
         this.email = email;
         this.name = name;
-        this.passwordHash = passwordHash;
+        this.password_hash = password_hash;
         this.role = role;
     }
 
     // Constructor with UUID
-    public User(UUID userId, String email, String name, String passwordHash, Role role) {
-        this.userId = userId;
+    public User(UUID user_id, String email, String name, String password_hash, Role role) {
+        this.user_id = user_id;
         this.email = email;
         this.name = name;
-        this.passwordHash = passwordHash;
+        this.password_hash = password_hash;
         this.role = role;
     }
 
-    public UUID getUserId() {
-        return userId;
+    public UUID getUser_id() {
+        return user_id;
     }
 
-    public void setUserId(UUID userId) {
-        this.userId = userId;
+    public void setUser_id(UUID user_id) {
+        this.user_id = user_id;
     }
 
     public String getEmail() {
@@ -73,12 +73,12 @@ public class User {
         this.name = name;
     }
 
-    public String getPasswordHash() {
-        return passwordHash;
+    public String getPassword_hash() {
+        return password_hash;
     }
 
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
+    public void setPassword_hash(String password_hash) {
+        this.password_hash = password_hash;
     }
 
     public Role getRole() {
@@ -92,7 +92,7 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "userId=" + userId +
+                "userId=" + user_id +
                 ", email='" + email + '\'' +
                 ", name='" + name + '\'' +
                 ", role=" + role +

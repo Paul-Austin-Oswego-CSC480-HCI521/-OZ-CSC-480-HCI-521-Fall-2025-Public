@@ -1,20 +1,22 @@
 package com.kudo.model;
 import jakarta.json.bind.annotation.JsonbProperty;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.UUID;
 
 public class Kudocard {
     @JsonbProperty("card_id")
-    private UUID cardId;
+    private UUID card_id;
 
     @JsonbProperty("sender_id")
-    private UUID senderId;
+    private UUID sender_id;
 
     @JsonbProperty("recipient_id")
-    private UUID recipientId;
+    private UUID recipient_id;
 
     @JsonbProperty("class_id")
-    private UUID classId;
+    private UUID class_id;
 
     @JsonbProperty("title")
     private String title;
@@ -22,14 +24,20 @@ public class Kudocard {
     @JsonbProperty("content")
     private String content;
 
-    @JsonbProperty("isAnonymous")
-    private boolean isAnonymous = true; //default true
+    @JsonbProperty("is_anonymous")
+    private boolean is_anonymous = true; //default true
 
     @JsonbProperty("status")
     private Status status = Status.PENDING; //default pending
 
-    @JsonbProperty("approvedBy")
-    private UUID approvedBy;
+    @JsonbProperty("approved_by")
+    private UUID approved_by;
+
+    @JsonbProperty("created_at")
+    private Timestamp created_at;
+
+    @JsonbProperty("professor_note")
+    private String professor_note;
 
     public enum Status {
         PENDING, APPROVED, DENIED, RECEIVED
@@ -37,49 +45,51 @@ public class Kudocard {
 
     public Kudocard() {}
 
-    public Kudocard(UUID cardId, UUID senderId, UUID recipientId, UUID classId, String title, String content,
-            boolean isAnonymous, Status status, UUID approvedBy) {
-        this.cardId = cardId;
-        this.senderId = senderId;
-        this.recipientId = recipientId;
-        this.classId = classId;
+    public Kudocard(UUID card_id, UUID sender_id, UUID recipient_id, UUID class_id, String title, String content,
+                    boolean is_anonymous, Status status, UUID approved_by, Timestamp created_at, String professor_note) {
+        this.card_id = card_id;
+        this.sender_id = sender_id;
+        this.recipient_id = recipient_id;
+        this.class_id = class_id;
         this.title = title;
         this.content = content;
-        this.isAnonymous = isAnonymous;
+        this.is_anonymous = is_anonymous;
         this.status = status;
-        this.approvedBy = approvedBy;
+        this.approved_by = approved_by;
+        this.created_at = created_at;
+        this.professor_note = professor_note;
     }
 
-    public UUID getCardId() {
-        return cardId;
+    public UUID getCard_id() {
+        return card_id;
     }
 
-    public void setCardId(UUID cardId) {
-        this.cardId = cardId;
+    public void setCard_id(UUID card_id) {
+        this.card_id = card_id;
     }
 
-    public UUID getSenderId() {
-        return senderId;
+    public UUID getSender_id() {
+        return sender_id;
     }
 
-    public void setSenderId(UUID senderId) {
-        this.senderId = senderId;
+    public void setSender_id(UUID sender_id) {
+        this.sender_id = sender_id;
     }
 
-    public UUID getRecipientId() {
-        return recipientId;
+    public UUID getRecipient_id() {
+        return recipient_id;
     }
 
-    public void setRecipientId(UUID recipientId) {
-        this.recipientId = recipientId;
+    public void setRecipient_id(UUID recipient_id) {
+        this.recipient_id = recipient_id;
     }
 
-    public UUID getClassId() {
-        return classId;
+    public UUID getClass_id() {
+        return class_id;
     }
 
-    public void setClassId(UUID classId) {
-        this.classId = classId;
+    public void setClass_id(UUID class_id) {
+        this.class_id = class_id;
     }
 
     public String getTitle() {
@@ -98,12 +108,12 @@ public class Kudocard {
         this.content = content;
     }
 
-    public boolean isAnonymous() {
-        return isAnonymous;
+    public boolean isIs_anonymous() {
+        return is_anonymous;
     }
 
-    public void setAnonymous(boolean isAnonymous) {
-        this.isAnonymous = isAnonymous;
+    public void setIs_anonymous(boolean isAnonymous) {
+        this.is_anonymous = isAnonymous;
     }
 
     public Status getStatus() {
@@ -114,25 +124,41 @@ public class Kudocard {
         this.status = status;
     }
 
-    public UUID getApprovedBy() {
-        return approvedBy;
+    public UUID getApproved_by() {
+        return approved_by;
     }
 
-    public void setApprovedBy(UUID approvedBy) {
-        this.approvedBy = approvedBy;
+    public void setApproved_by(UUID approved_by) {
+        this.approved_by = approved_by;
+    }
+
+    public Timestamp getCreated_at() {
+        return created_at;
+    }
+
+    public void setCreated_at(Timestamp created_at) {
+        this.created_at = created_at;
+    }
+
+    public String getProfessor_note() {
+        return professor_note;
+    }
+
+    public void setProfessor_note(String professor_note) {
+        this.professor_note = professor_note;
     }
 
     @Override
     public String toString() {
         return "Kudocard{" +
-                "cardId=" + cardId +
-                ", senderId=" + senderId +
-                ", recipientId=" + recipientId +
-                ", classId=" + classId +
+                "cardId=" + card_id +
+                ", senderId=" + sender_id +
+                ", recipientId=" + recipient_id +
+                ", classId=" + class_id +
                 ", title='" + title + '\'' +
-                ", isAnonymous=" + isAnonymous +
+                ", isAnonymous=" + is_anonymous +
                 ", status=" + status +
-                ", approvedBy=" + approvedBy +
+                ", approvedBy=" + approved_by +
                 '}';
     }
 

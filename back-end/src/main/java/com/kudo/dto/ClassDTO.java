@@ -16,21 +16,21 @@ public class ClassDTO {
 
     public static class ClassId {
         @JsonbProperty("class_id")
-        private String classId;
+        private String class_id;
 
         public ClassId( String class_id) {
-            this.classId = class_id;
+            this.class_id = class_id;
         }
 
-        public String getClassId() {
-            return classId;
+        public String getClass_id() {
+            return class_id;
         }
 
         @Override
         public String toString() {
             String res =  "classIdsList{" +
                     "classIds=";
-                res+=classId;
+                res+= class_id;
             return res + '}';
         }
     }
@@ -38,21 +38,21 @@ public class ClassDTO {
     //Wrapper for list of kudos class IDs to allow automatic JSON binding
     public static class ClassIdList {
         @JsonbProperty("class_id")
-        private List<String> classIds;
+        private List<String> class_id;
 
         public ClassIdList(List<String> class_id) {
-            this.classIds = class_id;
+            this.class_id = class_id;
         }
 
-        public List<String> getClassIds() {
-            return classIds;
+        public List<String> getClass_id() {
+            return class_id;
         }
 
         @Override
         public String toString() {
             String res =  "classIdsList{" +
                     "classIds=";
-            for(String str : classIds)
+            for(String str : class_id)
                 res+=str;
             return res + '}';
         }

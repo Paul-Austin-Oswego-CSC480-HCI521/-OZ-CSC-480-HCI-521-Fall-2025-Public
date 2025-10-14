@@ -32,12 +32,12 @@ public class UserService {
             
             stmt.setString(1, user.getEmail());
             stmt.setString(2, user.getName());
-            stmt.setString(3, user.getPasswordHash());
+            stmt.setString(3, user.getPassword_hash());
             stmt.setString(4, user.getRole().name());
             
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                user.setUserId((UUID) rs.getObject("user_id"));
+                user.setUser_id((UUID) rs.getObject("user_id"));
                 return user;
             }
             
