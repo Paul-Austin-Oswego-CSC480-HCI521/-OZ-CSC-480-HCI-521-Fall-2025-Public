@@ -12,7 +12,7 @@ function Header({ onCreateNew, showNav = true }) {
 
   return (
       <header className="header">
-        <img src="/logo.gif" alt="Animated Logo" className="logo" />
+        <img src="/updatedLogo.png" alt="Animated Logo" className="logo"/>
 
         {showNav && (
             <nav className="nav-buttons">

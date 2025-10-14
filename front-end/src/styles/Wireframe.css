@@ -47,7 +47,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 40px;
+    padding: 10px 40px;
     background-color: white;
     color: white;
     font-family: 'Merriweather', serif;
@@ -78,7 +78,7 @@
 
 /* kudos logo */
 .logo {
-    height: 50px;
+    height: 120px;
     width: auto;
 }
 
