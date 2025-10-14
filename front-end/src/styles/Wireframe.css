@@ -189,6 +189,25 @@
     }
 }
 
+.message-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+}
+
+.anonymous-label {
+    display: flex;
+    align-items: center;
+    font-size: 0.95em;
+    gap: 6px;
+}
+
+.char-count {
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
 /* general table formatting */
 table {
     width: 100%;
@@ -412,6 +431,14 @@ tr.selected-row td.default-kudos-table-data {
     font-weight: bold;
     color: #093b3b;
     font-size: 18px;
+}
+
+#recipient.to-from-title {
+    background-color: #ffffff;
+    color: #000000;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 8px;
 }
 
 .to-from-title {

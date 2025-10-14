@@ -130,28 +130,28 @@ function NewKudosPage({ onSubmit }) {
                 <h1>Create a Kudo Card</h1>
                 <form onSubmit={handleSubmit} className="kudos-form">
                     <div className="form-row">
-                        <div className="form-group">
-                            <label htmlFor="sender">Sender</label>
-                            <input
+                        {/* <div className="form-group"> */}
+                            {/* <label htmlFor="sender">Sender</label> */}
+                            {/* <input
                                 id="sender_id"
                                 className="to-from-title"
                                 type="text"
                                 value={user?.user_id || ''}
                                 disabled={isAnonymous}
-                                required={!isAnonymous}
-                            />
-                            <label style={{ marginTop: '8px', display: 'block' }}>
+                                required={!isAnonymous} */}
+                            {/* /> */}
+                            {/* <label style={{ marginTop: '8px', display: 'block' }}>
                                 <input
                                     type="checkbox"
                                     checked={isAnonymous}
                                     onChange={(e) => setIsAnonymous(e.target.checked)}
                                 />
                                 Send Anonymously
-                            </label>
-                        </div>
+                            </label> */}
+                        {/* </div> */}
 
                         <div className="form-group">
-                            <label htmlFor="recipient">Who do you want to send a Kudo to?</label>
+                            <label htmlFor="recipient">Recipient</label>
                             <select
                                 id="recipient"
                                 className="to-from-title"
@@ -208,18 +208,28 @@ function NewKudosPage({ onSubmit }) {
                                 maxLength={500}
                                 required
                             />
-                            <div
-                                className="char-count"
-                                style={{
-                                    textAlign: 'right',
-                                    fontSize: '0.9em',
-                                    color:
-                                        formData.message.length < 10 || formData.message.length > 500
-                                            ? 'red'
-                                            : '#555',
-                                }}
-                            >
-                                {formData.message.length}/500
+                            <div className = "message-footer">
+                                <label style={{ marginTop: '8px', display: 'block' }}>
+                                    <input
+                                        type="checkbox"
+                                        checked={isAnonymous}
+                                        onChange={(e) => setIsAnonymous(e.target.checked)}
+                                    />
+                                    Send Anonymously
+                                </label>
+                                <span
+                                    className="char-count"
+                                    style={{
+                                        textAlign: 'right',
+                                        fontSize: '0.9em',
+                                        color:
+                                            formData.message.length < 10 || formData.message.length > 500
+                                                ? 'red'
+                                                : '#555',
+                                    }}
+                                >
+                                    {formData.message.length}/500
+                                </span>
                             </div>
                         </div>
 
