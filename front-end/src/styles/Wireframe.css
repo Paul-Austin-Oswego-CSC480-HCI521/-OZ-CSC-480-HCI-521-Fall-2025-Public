@@ -55,6 +55,12 @@
     position: relative;
 }
 
+.header-row {
+    display: flex;
+    align-items: center; /* vertically centers the icon and text */
+    gap: 8px;            /* space between the button and heading */
+}
+
 /* header formatted */
 .kudos-list-header {
     display: flex;

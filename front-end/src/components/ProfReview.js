@@ -61,12 +61,22 @@ function ProfReview({ initialData }) {
 
     return (
         <div className="review-page">
-            <h2>Review Kudo Card</h2>
-            <div className="button-row">
-            <form onSubmit={handleSubmit}>
-                <div className="form-row">
-                    <div className="form-row horizontal-row">
-                        <div className="form-group">
+            <div className = "header-row">
+                    <button onClick={() => navigate(-1)} className='icon-btn'>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                             className="lucide lucide-arrow-left-icon lucide-arrow-left">
+                            <path d="m12 19-7-7 7-7"/>
+                            <path d="M19 12H5"/>
+                        </svg>
+                    </button>
+                <h2>Review Kudo Card</h2>
+            </div>
+    <div className="button-row">
+        <form onSubmit={handleSubmit}>
+            <div className="form-row">
+                <div className="form-row horizontal-row">
+                    <div className="form-group">
                             <label>Sender</label>
                             <input
                                 className="to-from-title"
@@ -141,13 +151,6 @@ function ProfReview({ initialData }) {
                 </div>
                     <button type="submit" className="submit-btn">
                         Submit
-                    </button>
-                    <button
-                        type="button"
-                        className="submit-btn"
-                        onClick={() => navigate(-1)}
-                    >
-                        Exit
                     </button>
                 </form>
             </div>
