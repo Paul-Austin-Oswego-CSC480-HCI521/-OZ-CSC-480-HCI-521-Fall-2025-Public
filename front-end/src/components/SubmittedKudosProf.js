@@ -3,58 +3,7 @@ import { useUser } from "./UserContext";
 import { useNavigate } from "react-router-dom";
 
 function SubmittedKudosProf() {
-    const [submitted, setSubmitted] = useState([
-        {
-            card_id: 101,
-            sender_id: "student001",
-            recipient_id: "profA",
-            title: "Great Lecture",
-            message: "Thanks for making class engaging and fun!",
-            date: "2025-10-05",
-            status: "SUBMITTED",
-            class_id: 101
-        },
-        {
-            card_id: 102,
-            sender_id: "student002",
-            recipient_id: "profA",
-            title: "Helpful Office Hours",
-            message: "I really appreciated your time after class last week.",
-            date: "2025-10-07",
-            status: "SUBMITTED",
-            class_id: 101
-        },
-        {
-            card_id: 103,
-            sender_id: "student003",
-            recipient_id: "profB",
-            title: "Awesome Feedback",
-            message: "Your project feedback really helped me improve!",
-            date: "2025-10-09",
-            status: "SUBMITTED",
-            class_id: 202
-        },
-        {
-            card_id: 104,
-            sender_id: "student004",
-            recipient_id: "profC",
-            title: "Supportive Guidance",
-            message: "Thanks for helping me understand the project requirements!",
-            date: "2025-10-10",
-            status: "SUBMITTED",
-            class_id: 303
-        },
-        {
-            card_id: 105,
-            sender_id: "student005",
-            recipient_id: "profA",
-            title: "Excellent Examples",
-            message: "The examples in class really helped me grasp the concepts.",
-            date: "2025-10-11",
-            status: "SUBMITTED",
-            class_id: 101
-        }
-    ]);
+    const [submitted, setSubmitted] = useState([]);
     const { user } = useUser();
     const BASE_URL = process.env.REACT_APP_API_BASE_URL;
     const navigate = useNavigate();
