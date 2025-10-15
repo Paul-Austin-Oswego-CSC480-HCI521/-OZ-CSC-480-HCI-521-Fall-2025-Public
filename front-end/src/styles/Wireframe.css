@@ -95,34 +95,48 @@
     background: none;
     border: none;
     cursor: pointer;
+    padding: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .icon-btn {
-    padding: 4px;
     display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.icon-btn img {
-    width: 50px;
-    height: 50px;
-    object-fit: contain;
-}
-
-.notif-btn img {
-    width: 80px;
-    height: 85px;
-    object-fit: contain;
-    display: flex;
+    flex-direction: column; /* stack icon and text vertically */
     align-items: center;
     justify-content: center;
     background: none;
-    border: 1px solid white;
+    border: none;
     cursor: pointer;
+    padding: 8px;
+    width: 70px;   /* make it wider for text */
+    height: 70px;  /* adjust as needed */
+    border-radius: 8px;
+    color: #555;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.icon-label {
+    font-weight:bold;
+    font-family: 'Poppins', sans-serif;
+    font-size: 12px;
+    margin-top:2px;
+}
+
+.icon-btn svg {
+    width: 50px;
+    height: 50px;
+}
+
+.icon-btn:hover {
+    background: #EBEBEB;
+    color: black;
+}
+
+.icon-btn.selected {
+    background: #B1D2D3;
+    color: black;
 }
 
 .nav-buttons button:not(.icon-btn) {
