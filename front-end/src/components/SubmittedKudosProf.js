@@ -3,14 +3,7 @@ import { useUser } from "./UserContext";
 import { useNavigate } from "react-router-dom";
 
 function SubmittedKudosProf() {
-    const [submitted, setSubmitted] = useState([
-        {"id": 17,
-            "recipient_id": "Jamie Brooks",
-            "sender_id": "Alex Rivera",
-            "message": "Jamie went above and beyond helping debug the front-end API connection — super patient and detailed!",
-            "title": "Collaboration",
-            "date": "2025-10-15T14:32:00Z",}
-    ]);
+    const [submitted, setSubmitted] = useState([]);
     const { user } = useUser();
     const BASE_URL = process.env.REACT_APP_API_BASE_URL;
     const navigate = useNavigate();
