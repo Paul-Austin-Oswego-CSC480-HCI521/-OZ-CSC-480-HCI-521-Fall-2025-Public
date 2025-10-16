@@ -1,0 +1,13 @@
+node_modules
+npm-debug.log
+Documentation
+test
+readme.md
+target/
+!target/*.war
+!target/liberty/wlp/usr/shared/resources/*
+Dockerfile
+.dockerignore
+.git
+.gitignore
+changes-due-to-integration.txt
