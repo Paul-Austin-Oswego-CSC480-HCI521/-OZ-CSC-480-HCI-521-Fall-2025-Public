@@ -49,7 +49,7 @@ function ReceivedKudosStudent() {
            };
 
            fetchReceivedKudos();
-       }, [user]);
+       }, [user, BASE_URL]);
 
     return (
         <section className="received-kudos">

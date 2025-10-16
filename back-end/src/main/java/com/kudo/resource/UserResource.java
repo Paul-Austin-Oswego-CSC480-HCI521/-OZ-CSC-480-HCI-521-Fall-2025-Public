@@ -31,9 +31,6 @@ public class UserResource {
     @Inject
     private UserService userService;
 
-    @Resource(lookup = "jdbc/kudosdb")
-    private DataSource dataSource;
-
     /**
      * GET /kudo-app/api/users - Retrieve all users with optional filtering and pagination
      *
@@ -209,20 +206,7 @@ public class UserResource {
     @Path("{user_id}/classes")
     @Produces(MediaType.APPLICATION_JSON)
     public ClassDTO.ClassIdList getUserClasses(@PathParam("user_id") UUID user_id) {
-        try (Connection conn = dataSource.getConnection(); //establish database connection
-             PreparedStatement stmt = conn.prepareStatement("SELECT class_id FROM USER_CLASSES WHERE user_id = ?;");){//Static elements of query
-            stmt.setObject(1,user_id); //form the query
-            ResultSet rs = stmt.executeQuery(); //execute query to obtain list of IDs
-            List<String> classIds = new ArrayList<>(); //List which will be filled with card_ids from the result set
-            while (rs.next()) {
-                classIds.add(rs.getString("class_id")); //add ids to list
-            }
-
-            return new ClassDTO.ClassIdList(classIds);
-
-        } catch (SQLException e) {
-            throw new InternalServerErrorException("Database error");
-        }
+        return userService.getUserClasses(user_id);
     }
 
     // Password hashing placeholder

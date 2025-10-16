@@ -1,0 +1,68 @@
+services:
+  postgres: #database service
+    image: postgres:16
+    container_name: kudos-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "${POSTGRES_PORT}:5432" #maps the db port number on localhost to port 5432 in the container 
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./src/main/resources/db/migration:/docker-entrypoint-initdb.d:ro
+    networks:
+      - kudos-db-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+  backend: #backend service
+    build: 
+      context: ./back-end
+      dockerfile: Dockerfile
+    container_name: kudos-back-end-app
+    ports:
+      - "${BACKEND_HTTP_PORT}:9080" #maps the http port number on localhost to port 9080 in the container
+      - "${BACKEND_HTTPS_PORT}:9443" #maps the https port number on localhost to port 9443 in the container
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - kudos-db-network
+      - kudos-backend-network
+    environment:
+      - DB_HOST=${POSTGRES_HOST}
+      - DB_PORT=${POSTGRES_PORT}
+      - DB_NAME=${POSTGRES_DB}
+      - DB_USER=${POSTGRES_USER}
+      - DB_PASSWORD=${POSTGRES_PASSWORD}
+      - BACKEND_HTTP_PORT=${BACKEND_HTTP_PORT}
+      - BACKEND_HTTPS_PORT=${BACKEND_HTTPS_PORT}
+  frontend: #frontend service
+    build: 
+      context: ./front-end
+      dockerfile: Dockerfile
+    container_name: kudos-front-end-app
+    ports:
+      - "${FRONTEND_HTTP_PORT}:3000" #maps the http port number on local host to post 3000 in the container
+    depends_on:
+      - backend
+    networks:
+      - kudos-backend-network
+    environment:
+      - FRONTEND_HTTP_PORT=${FRONTEND_HTTP_PORT} 
+      - NODE_ENV="development"
+    stdin_open: true
+    tty: true
+    
+
+volumes:
+  postgres_data:
+
+networks:
+  kudos-backend-network:
+    driver: bridge
+  kudos-db-network:
+    driver: bridge
