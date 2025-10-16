@@ -31,7 +31,7 @@ function Notification({ open, onClose }) {
             document.removeEventListener('keydown', onKey);
             document.body.style.overflow = prev;
         };
-    }, [open, onClose, user]);
+    }, [open, onClose, user, BASE_URL]);
 
     if (!open) return null;
 

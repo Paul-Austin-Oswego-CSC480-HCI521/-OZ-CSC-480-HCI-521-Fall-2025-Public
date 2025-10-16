@@ -72,7 +72,7 @@ function StudentView() {
         } finally {
             setLoading(false);
         }
-    }, [user?.user_id]);
+    }, [user?.user_id, BASE_URL, getCard]);
 
     useEffect(() => {
         getKudos();
