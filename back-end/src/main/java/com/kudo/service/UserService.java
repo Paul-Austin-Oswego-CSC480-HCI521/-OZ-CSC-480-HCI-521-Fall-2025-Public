@@ -1,9 +1,12 @@
 package com.kudo.service;
 
+import com.kudo.dto.ClassDTO;
+import com.kudo.model.Classes;
 import com.kudo.model.User;
 import com.kudo.dto.UserDTO;
 import jakarta.annotation.Resource;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.ws.rs.InternalServerErrorException;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -194,6 +197,23 @@ public class UserService {
 
         if (userData.getRole() != null) {
             existingUser.setRole(parseRole(userData.getRole()));
+        }
+    }
+
+    public ClassDTO.ClassIdList getUserClasses(UUID user_id) {
+        try (Connection conn = dataSource.getConnection(); //establish database connection
+             PreparedStatement stmt = conn.prepareStatement("SELECT class_id FROM USER_CLASSES WHERE user_id = ?;");){//Static elements of query
+            stmt.setObject(1,user_id); //form the query
+            ResultSet rs = stmt.executeQuery(); //execute query to obtain list of IDs
+            List<String> classIds = new ArrayList<>(); //List which will be filled with card_ids from the result set
+            while (rs.next()) {
+                classIds.add(rs.getString("class_id")); //add ids to list
+            }
+
+            return new ClassDTO.ClassIdList(classIds);
+
+        } catch (SQLException e) {
+            throw new InternalServerErrorException("Database error");
         }
     }
 
