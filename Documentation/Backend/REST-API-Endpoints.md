@@ -2,13 +2,13 @@
 
 ## Base URL
 
-**Internal microservice**: `http://kudos-app:${APP_HTTP_PORT}/kudo-app/api`
+**Internal microservice**: `http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api`
 
 ## Quick Test
 
 **Test the API:**
 ```bash
-curl http://kudos-app:${APP_HTTP_PORT}/kudo-app/api/kudo-card/test
+curl http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api/kudo-card/test
 # Expected: Hello World!
 ```
 
@@ -24,7 +24,7 @@ Get all users with optional filtering and pagination.
 
 **Example:**
 ```bash
-curl "http://kudos-app:${APP_HTTP_PORT}/kudo-app/api/users?role=STUDENT&limit=25"
+curl "http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api/users?role=STUDENT&limit=25"
 ```
 
 **Response:**
@@ -47,7 +47,7 @@ Get a specific user by UUID.
 
 **Example:**
 ```bash
-curl http://kudos-app:${APP_HTTP_PORT}/kudo-app/api/users/12345678-1234-1234-1234-123456789abc
+curl http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api/users/12345678-1234-1234-1234-123456789abc
 ```
 
 **Response:**
@@ -75,7 +75,7 @@ Create a new user.
 
 **Example:**
 ```bash
-curl -X POST http://kudos-app:${APP_HTTP_PORT}/kudo-app/api/users \
+curl -X POST http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api/users \
   -H "Content-Type: application/json" \
   -d '{
     "email": "riddler@gotham.com",
@@ -111,7 +111,7 @@ Update an existing user.
 
 **Example:**
 ```bash
-curl -X PUT http://kudos-app:${APP_HTTP_PORT}/kudo-app/api/users/12345678-1234-1234-1234-123456789abc \
+curl -X PUT http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api/users/12345678-1234-1234-1234-123456789abc \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Two-Face",
@@ -137,21 +137,21 @@ Delete a user.
 
 **Example:**
 ```bash
-curl -X DELETE http://kudos-app:${APP_HTTP_PORT}/kudo-app/api/users/87654321-4321-4321-4321-987654321xyz
+curl -X DELETE http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api/users/87654321-4321-4321-4321-987654321xyz
 ```
 
 
 ### `GET /kudo-app/api/users/{user_id}/classes`
 Retrieve a list of all classes which the user is enrolled in.
 
-Call: GET http://localhost:9080/kudo-app/api/users/{user_id}/classes
+Call: GET http://kudos-backend-network:9080/kudo-app/api/users/{user_id}/classes
 
 **Parameters:**
 - `user_id` (path): the UUID of the user who's enrolled classes are to be queried
 
 **Example:**
 ```bash
-curl -X POST http://kudos-app:${APP_HTTP_PORT}/kudo-app/api/users/12345678-1234-1234-1234-123456789abc/classes \
+curl -X POST http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api/users/12345678-1234-1234-1234-123456789abc/classes \
   -H "Content-Type: application/json" \
 ```
 
@@ -170,7 +170,7 @@ Get list of card IDs sent by a user.
 
 **Example:**
 ```bash
-curl "http://kudos-app:${APP_HTTP_PORT}/kudo-app/api/kudo-card/list/sent?user_id=12345678-1234-1234-1234-123456789abc"
+curl "http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api/kudo-card/list/sent?user_id=12345678-1234-1234-1234-123456789abc"
 ```
 
 **Response:**
@@ -191,7 +191,7 @@ Get list of card IDs received by a user.
 
 **Example:**
 ```bash
-curl "http://kudos-app:${APP_HTTP_PORT}/kudo-app/api/kudo-card/list/received?user_id=12345678-1234-1234-1234-123456789abc"
+curl "http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api/kudo-card/list/received?user_id=12345678-1234-1234-1234-123456789abc"
 ```
 
 **Response:**
@@ -213,7 +213,7 @@ Get a specific kudo card.
 
 **Example:**
 ```bash
-curl "http://kudos-app:${APP_HTTP_PORT}/kudo-app/api/kudo-card/abcd1234-1234-1234-1234-123456789def?user_id=12345678-1234-1234-1234-123456789abc"
+curl "http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api/kudo-card/abcd1234-1234-1234-1234-123456789def?user_id=12345678-1234-1234-1234-123456789abc"
 ```
 
 **Response (recipient view, anonymous):**
@@ -248,7 +248,7 @@ Create a new kudo card.
 
 **Example:**
 ```bash
-curl -X POST http://kudos-app:${APP_HTTP_PORT}/kudo-app/api/kudo-card \
+curl -X POST http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api/kudo-card \
   -H "Content-Type: application/json" \
   -d '{
     "sender_id": "87654321-1234-1234-1234-123456789xyz",
@@ -284,7 +284,7 @@ Delete a kudo card.
 
 **Example:**
 ```bash
-curl -X DELETE "http://kudos-app:${APP_HTTP_PORT}/kudo-app/api/kudo-card/abcd1234-1234-1234-1234-123456789def?user_id=12345678-1234-1234-1234-123456789abc"
+curl -X DELETE "http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api/kudo-card/abcd1234-1234-1234-1234-123456789def?user_id=12345678-1234-1234-1234-123456789abc"
 ```
 
 **Response:**
@@ -306,7 +306,7 @@ Update a kudos card to change it's status
 
 **Example:**
 ```bash
-curl -X PATCH http://kudos-app:${APP_HTTP_PORT}/kudo-app/api/kudo-card \
+curl -X PATCH http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api/kudo-card \
   -H "Content-Type: application/json" \
   -d '{
     "card_id":"12345678-1234-1234-1234-123456789abc",
@@ -337,7 +337,7 @@ Create a new class.
 **Example:**
 
 ```bash
-curl -X POST "http://kudos-app:${APP_HTTP_PORT}/kudo-app/api/class?class_name=Teaching%20101"
+curl -X POST "http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api/class?class_name=Teaching%20101"
 ```
 
 **Response:**
@@ -371,7 +371,7 @@ Add students to a class.
 **Example:**
 
 ```bash
-curl -X PUT http://kudos-app:${APP_HTTP_PORT}/kudo-app/api/class/12345678-1234-1234-1234-123456789abc \
+curl -X PUT http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api/class/12345678-1234-1234-1234-123456789abc \
   -H "Content-Type: application/json" \
   -d '{
     "user_id": [
@@ -396,7 +396,7 @@ Retrieve a list of all classes.
 **Example:**
 
 ```bash
-curl http://kudos-app:${APP_HTTP_PORT}/kudo-app/api/class/classes
+curl http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api/class/classes
 ```
 
 **Response:**
@@ -421,7 +421,7 @@ Retrieve details of a specific class.
 **Example:**
 
 ```bash
-curl http://kudos-app:${APP_HTTP_PORT}/kudo-app/api/class/12345678-1234-1234-1234-123456789abc
+curl http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api/class/12345678-1234-1234-1234-123456789abc
 ```
 
 **Response:**
@@ -448,7 +448,7 @@ Delete a class.
 **Example:**
 
 ```bash
-curl -X DELETE http://kudos-app:${APP_HTTP_PORT}/kudo-app/api/class/12345678-1234-1234-1234-123456789abc
+curl -X DELETE http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api/class/12345678-1234-1234-1234-123456789abc
 ```
 
 **Response:**
@@ -469,7 +469,7 @@ Remove a user from a class.
 **Example:**
 
 ```bash
-curl -X DELETE "http://kudos-app:${APP_HTTP_PORT}/kudo-app/api/class/12345678-1234-1234-1234-123456789abc?user_id=87654321-4321-4321-4321-987654321xyz"
+curl -X DELETE "http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api/class/12345678-1234-1234-1234-123456789abc?user_id=87654321-4321-4321-4321-987654321xyz"
 ```
 
 **Response:**
