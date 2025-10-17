@@ -10,7 +10,7 @@ services:
       - "${POSTGRES_PORT}:5432" #maps the db port number on localhost to port 5432 in the container 
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./src/main/resources/db/migration:/docker-entrypoint-initdb.d:ro
+      - ./back-end/src/main/resources/db/migration:/docker-entrypoint-initdb.d:ro
     networks:
       - kudos-db-network
     healthcheck:
