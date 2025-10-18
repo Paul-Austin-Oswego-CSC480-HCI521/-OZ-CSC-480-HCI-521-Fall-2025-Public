@@ -30,22 +30,22 @@ public class KudocardDTO {
         @Size(max = 1000)
         private String content;
 
-        @NotNull
-        private Boolean is_anonymous;
+        // @NotNull
+        // private Boolean is_anonymous;
 
         public CreateKudoRequest() {} //default constr
 
         //full constructor
         public CreateKudoRequest(@NotNull UUID sender_id, @NotNull UUID recipient_id, @NotNull UUID class_id,
                                  @NotBlank(message = "title field cannot be empty") @Size(max = 200) String title,
-                                 @NotBlank(message = "Content field cannot be empty") @Size(max = 1000) String content,
-                                 @NotNull Boolean is_anonymous) {
+                                 @NotBlank(message = "Content field cannot be empty") @Size(max = 1000) String content)
+                                {
             this.sender_id = sender_id;
             this.recipient_id = recipient_id;
             this.class_id = class_id;
             this.title = title;
             this.content = content;
-            this.is_anonymous = is_anonymous;
+            // this.is_anonymous = is_anonymous;
         }
 
         public UUID getSender_id() {
@@ -88,13 +88,13 @@ public class KudocardDTO {
             this.content = content != null ? content.trim() : null;
         }
 
-        public Boolean getIs_anonymous() {
-            return is_anonymous;
-        }
+        // public Boolean getIs_anonymous() {
+            // return is_anonymous;
+        // }
 
-        public void setIs_anonymous(Boolean is_anonymous) {
-            this.is_anonymous = is_anonymous;
-        }
+        // public void setIs_anonymous(Boolean is_anonymous) {
+            // this.is_anonymous = is_anonymous;
+        // }
     }
 
     public static class UpdateStatusRequest {
@@ -162,8 +162,8 @@ public class KudocardDTO {
         private String title;
         private String content;
 
-        @JsonbProperty("is_anonymous")
-        private boolean is_anonymous;
+        // @JsonbProperty("is_anonymous")
+        // private boolean is_anonymous;
 
         private Status status;
         private UUID approved_by;
@@ -174,7 +174,7 @@ public class KudocardDTO {
         public KudoCardResponse() {}
 
         public KudoCardResponse(UUID card_id, UUID sender_id, UUID recipient_id, UUID class_id, String title,
-                                String content, boolean is_anonymous, Status status, UUID approved_by,
+                                String content, Status status, UUID approved_by,
                                 Timestamp created_at, String professor_note) {
             this.card_id = card_id;
             this.sender_id = sender_id;
@@ -182,7 +182,7 @@ public class KudocardDTO {
             this.class_id = class_id;
             this.title = title;
             this.content = content;
-            this.is_anonymous = is_anonymous;
+            // this.is_anonymous = is_anonymous;
             this.status = status;
             this.approved_by = approved_by;
             this.created_at = created_at;
@@ -237,13 +237,13 @@ public class KudocardDTO {
             this.content = content;
         }
 
-        public boolean isIs_anonymous() {
-            return is_anonymous;
-        }
+        // public boolean isIs_anonymous() {
+            // return is_anonymous;
+        // }
 
-        public void setIs_anonymous(boolean isAnonymous) {
-            this.is_anonymous = isAnonymous;
-        }
+        // public void setIs_anonymous(boolean isAnonymous) {
+            // this.is_anonymous = isAnonymous;
+        // }
 
         public Status getStatus() {
             return status;

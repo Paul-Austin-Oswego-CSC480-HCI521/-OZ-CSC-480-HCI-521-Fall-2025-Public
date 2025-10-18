@@ -70,6 +70,32 @@ public class UserResource {
         return Response.ok(pagedUsers).build();
     }
 
+    /**
+ * GET /kudo-app/api/users/by-email?email=...
+ * Retrieve a user by email
+ *
+ * Example:
+ * GET http://localhost:9080/kudo-app/api/users/by-email?email=test@example.com
+ */
+@GET
+@Path("by-email")
+@Produces(MediaType.APPLICATION_JSON)
+public Response getUserByEmail(@QueryParam("email") String email) throws SQLException {
+    if (email == null || email.isBlank()) {
+        return Response.status(Response.Status.BAD_REQUEST)
+                .entity("Email query parameter is required").build();
+    }
+
+    Optional<User> userOpt = userService.getUserByEmail(email.trim());
+
+    if (userOpt.isEmpty()) {
+        return Response.status(Response.Status.NOT_FOUND)
+                .entity("User not found").build();
+    }
+
+    return Response.ok(userOpt.get()).build();
+}
+
 
     /**
      * GET /kudo-app/api/users/{user_id} - Retrieve a specific user by UUID

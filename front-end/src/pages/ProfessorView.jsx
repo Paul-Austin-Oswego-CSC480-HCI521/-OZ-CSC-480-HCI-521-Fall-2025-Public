@@ -7,40 +7,65 @@ import { useUser } from "../components/UserContext";
 import ReviewedKudosProf from "../components/ReviewedKudosProf";
 import SubmittedKudosProf from "../components/SubmittedKudosProf";
 
-const BASE_URL = process.env.REACT_APP_API_BASE_URL;
-
 function ProfessorView() {
+    const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+    const { user } = useUser();
+    const navigate = useNavigate();
     const [reviewedKudos, setReviewedKudos] = useState([]);
     const [submittedKudos, setSubmittedKudos] = useState([]);
-    const navigate = useNavigate();
-    const { user } = useUser();
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
-    const fetchReviewedKudos = useCallback(() => {
-        if (!user?.user_id) return Promise.resolve();
+    const fetchReviewedKudos = useCallback(async () => {
+        if (!user?.user_id) return;
 
-        return fetch(`${BASE_URL}/kudo-card/list/reviewed?reviewer_id=${user.user_id}`)
-            .then((res) => {
-                if (!res.ok) throw new Error("Failed to fetch reviewed kudos");
-                return res.json();
-            })
-            .then((data) => {
-                setReviewedKudos(Array.isArray(data) ? data : []);
-                return true;
-            });
+        setLoading(true);
+        setError(null);
+
+        try {
+            const res = await fetch(`${BASE_URL}/kudo-card/list/reviewed?professor_id=${user.user_id}`);
+            if (!res.ok) throw new Error("Failed to fetch reviewed kudos");
+            const data = await res.json();
+            
+            const cards = await Promise.all(
+                (data.card_id || []).map(id =>
+                    fetch(`${BASE_URL}/kudo-card/${id}?user_id=${user.user_id}`).then(r => r.json())
+                )
+            );
+
+            setReviewedKudos(cards);
+        } catch (err) {
+            console.error(err);
+            setError("Failed to load kudos. Please try again.");
+        } finally {
+            setLoading(false);
+        }
     }, [user?.user_id]);
 
-    const fetchSubmittedKudos = useCallback(() => {
-        if (!user?.user_id) return Promise.resolve();
+    const fetchSubmittedKudos = useCallback(async () => {
+        if (!user?.user_id) return;
 
-        return fetch(`${BASE_URL}/kudo-card/list/submitted?reviewer_id=${user.user_id}`)
-            .then((res) => {
-                if (!res.ok) throw new Error("Failed to fetch submitted kudos");
-                return res.json();
-            })
-            .then((data) => {
-                setSubmittedKudos(Array.isArray(data) ? data : []);
-                return true;
-            });
+        setLoading(true);
+        setError(null);
+
+        try {
+            const res = await fetch(`${BASE_URL}/kudo-card/list/submitted?professor_id=${user.user_id}`);
+            if (!res.ok) throw new Error("Failed to fetch submitted kudos");
+            const data = await res.json();
+
+            const cards = await Promise.all(
+                (data.card_id || []).map(id =>
+                    fetch(`${BASE_URL}/kudo-card/${id}?user_id=${user.user_id}`).then(r => r.json())
+                )
+            );
+
+            setSubmittedKudos(cards);
+        } catch (err) {
+            console.error(err);
+            setError("Failed to load kudos. Please try again.");
+        } finally {
+            setLoading(false);
+        }
     }, [user?.user_id]);
 
     useEffect(() => {
@@ -53,7 +78,6 @@ function ProfessorView() {
         navigate('/professorView/new-kudos');
     };
 
-    // **Updated:** navigate to /review instead of rendering modal
     const handleSelectKudos = (kudos) => {
         navigate("/review", { state: { initialData: kudos } });
     };

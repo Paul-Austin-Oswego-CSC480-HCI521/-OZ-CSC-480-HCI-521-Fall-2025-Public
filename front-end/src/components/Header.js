@@ -2,13 +2,22 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Notification from './Notification';
 import '../styles/Wireframe.css';
+import { useUser } from './UserContext';
 
 function Header({ onCreateNew, showNav = true }) {
   const navigate = useNavigate();
   const [showNotif, setShowNotif] = useState(false);
+  const { setUser } = useUser();
 
-  const handleGoHome = () => navigate('/');
+  const handleGoHome = () => navigate('/home');
   const handleNotif = () => setShowNotif((v) => !v);
+  const handleLogOut = () => {
+    setUser(null);
+    localStorage.removeItem('user');
+    setTimeout(() => {
+        navigate('/home');
+    }, 0);
+  }
 
   return (
       <header className="header">
@@ -46,7 +55,7 @@ function Header({ onCreateNew, showNav = true }) {
                     </svg>
                     <span className="icon-label">Create</span>
                 </button>
-                <button onClick className="icon-btn">
+                <button onClick={handleLogOut} className="icon-btn">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                          className="lucide lucide-grip-icon lucide-grip">
@@ -60,7 +69,7 @@ function Header({ onCreateNew, showNav = true }) {
                         <circle cx="19" cy="19" r="1"/>
                         <circle cx="5" cy="19" r="1"/>
                     </svg>
-                    <span className="icon-label">More</span>
+                    <span className="icon-label">Log Out</span>
                 </button>
             </nav>
         )}

@@ -24,8 +24,8 @@ public class Kudocard {
     @JsonbProperty("content")
     private String content;
 
-    @JsonbProperty("is_anonymous")
-    private boolean is_anonymous = true; //default true
+    // @JsonbProperty("is_anonymous")
+    // private boolean is_anonymous = true; //default true
 
     @JsonbProperty("status")
     private Status status = Status.PENDING; //default pending
@@ -46,14 +46,14 @@ public class Kudocard {
     public Kudocard() {}
 
     public Kudocard(UUID card_id, UUID sender_id, UUID recipient_id, UUID class_id, String title, String content,
-                    boolean is_anonymous, Status status, UUID approved_by, Timestamp created_at, String professor_note) {
+                    Status status, UUID approved_by, Timestamp created_at, String professor_note) {
         this.card_id = card_id;
         this.sender_id = sender_id;
         this.recipient_id = recipient_id;
         this.class_id = class_id;
         this.title = title;
         this.content = content;
-        this.is_anonymous = is_anonymous;
+        // this.is_anonymous = is_anonymous;
         this.status = status;
         this.approved_by = approved_by;
         this.created_at = created_at;
@@ -108,13 +108,13 @@ public class Kudocard {
         this.content = content;
     }
 
-    public boolean isIs_anonymous() {
-        return is_anonymous;
-    }
+    // public boolean isIs_anonymous() {
+        // return is_anonymous;
+    // }
 
-    public void setIs_anonymous(boolean isAnonymous) {
-        this.is_anonymous = isAnonymous;
-    }
+    // public void setIs_anonymous(boolean isAnonymous) {
+        // this.is_anonymous = isAnonymous;
+    // }
 
     public Status getStatus() {
         return status;
@@ -156,7 +156,7 @@ public class Kudocard {
                 ", recipientId=" + recipient_id +
                 ", classId=" + class_id +
                 ", title='" + title + '\'' +
-                ", isAnonymous=" + is_anonymous +
+                // ", isAnonymous=" + is_anonymous +
                 ", status=" + status +
                 ", approvedBy=" + approved_by +
                 '}';

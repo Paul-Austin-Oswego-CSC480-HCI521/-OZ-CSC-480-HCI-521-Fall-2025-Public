@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 
-const UserContext = createContext(null);
+const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
     const [user, setUser] = useState(null);
@@ -11,6 +11,15 @@ export const UserProvider = ({ children }) => {
     // const exampleUserId = "12345678-1234-1234-1234-123456789abc";
 
   useEffect(() => {
+    const savedUser = localStorage.getItem('user');
+    if (!savedUser) {
+        setLoading(false);
+        return;
+    }
+
+    const parsedUser = JSON.parse(savedUser);
+    setUser(parsedUser);
+
     const fetchUser = async () => {
         try {
             const res = await fetch(`${BASE_URL}/users/${user.user_id}`);
@@ -28,14 +37,27 @@ export const UserProvider = ({ children }) => {
         } catch (error) {
             console.error("Error loading user:", error);
             setError("Failed to load user");
+            setUser(null);
+            localStorage.removeItem('user');
         } finally {
             setLoading(false);
         }
-    }
+    };
       fetchUser();
-  }, [user?.user_id, BASE_URL]);
+  }, [BASE_URL]);
 
-  return <UserContext.Provider value={{ user, setUser, loading, error }}>{children}</UserContext.Provider>;
+  const saveUser = (userData) => {
+    setUser(userData);
+    if (userData) {
+        localStorage.setItem('user', JSON.stringify(userData));
+    } else {
+        localStorage.removeItem('user');
+    }
+  };
+
+  return (<UserContext.Provider value={{ user, setUser, loading, error }}>
+    {children}
+    </UserContext.Provider>);
 };
 
 export const useUser = () => useContext(UserContext);

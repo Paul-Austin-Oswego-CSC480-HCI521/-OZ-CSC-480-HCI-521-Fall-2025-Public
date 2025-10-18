@@ -14,7 +14,6 @@ function NewKudosPage({ onSubmit }) {
     const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
     const [students, setStudents] = useState([]);
-    const [isAnonymous, setIsAnonymous] = useState(true);
     const [selectedImage, setSelectedImage] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -88,12 +87,11 @@ function NewKudosPage({ onSubmit }) {
 
         const newCard = {
             card_id: uuidv4(),
-            sender_id: isAnonymous ? null : user?.user_id,
+            sender_id: user.user_id,
             recipient_id: formData.recipient,
             class_id: PLACEHOLDER_CLASS_ID,
             title: formData.title,
             content: formData.message,
-            isAnonymous: isAnonymous,
             status: "PENDING",
             approvedBy: null
         };
@@ -109,7 +107,7 @@ function NewKudosPage({ onSubmit }) {
             })
             .then(data => {
                 console.log("Kudos submitted:", data);
-                navigate(-1);
+                navigate('/home');
             })
             .catch(err => console.error("Submission failed:", err));
 
@@ -130,26 +128,6 @@ function NewKudosPage({ onSubmit }) {
                 <h1>Create a Kudo Card</h1>
                 <form onSubmit={handleSubmit} className="kudos-form">
                     <div className="form-row">
-                        {/* <div className="form-group"> */}
-                            {/* <label htmlFor="sender">Sender</label> */}
-                            {/* <input
-                                id="sender_id"
-                                className="to-from-title"
-                                type="text"
-                                value={user?.user_id || ''}
-                                disabled={isAnonymous}
-                                required={!isAnonymous} */}
-                            {/* /> */}
-                            {/* <label style={{ marginTop: '8px', display: 'block' }}>
-                                <input
-                                    type="checkbox"
-                                    checked={isAnonymous}
-                                    onChange={(e) => setIsAnonymous(e.target.checked)}
-                                />
-                                Send Anonymously
-                            </label> */}
-                        {/* </div> */}
-
                         <div className="form-group">
                             <label htmlFor="recipient">Recipient</label>
                             <select
@@ -209,14 +187,6 @@ function NewKudosPage({ onSubmit }) {
                                 required
                             />
                             <div className = "message-footer">
-                                <label style={{ marginTop: '8px', display: 'block' }}>
-                                    <input
-                                        type="checkbox"
-                                        checked={isAnonymous}
-                                        onChange={(e) => setIsAnonymous(e.target.checked)}
-                                    />
-                                    Send Anonymously
-                                </label>
                                 <span
                                     className="char-count"
                                     style={{

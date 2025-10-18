@@ -85,7 +85,7 @@ setTimeout(() => {
 
   return (
     <div className="app-container">
-      <Header showNav={false} />
+      <Header showNav={true} />
 
       <div className="home-content">
         <h1>Register New User</h1>

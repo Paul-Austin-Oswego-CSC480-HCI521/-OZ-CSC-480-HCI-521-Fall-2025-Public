@@ -151,6 +151,29 @@ public class UserService {
         }
     }
 
+    // Get user by email
+    public Optional<User> getUserByEmail(String email) throws SQLException {
+        if (email == null || email.isBlank()) {
+            return Optional.empty();
+        }
+
+        String sql = "SELECT user_id, email, name, password_hash, role FROM USERS WHERE email = ?";
+
+        try (Connection conn = dataSource.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, email.trim());
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                User user = mapResultSetToUser(rs);
+                return Optional.of(user);
+            }
+            return Optional.empty();
+        }
+    }
+
+
     // Check if email exists
     public boolean existsByEmail(String email) throws SQLException {
         if (email == null || email.isEmpty()) {

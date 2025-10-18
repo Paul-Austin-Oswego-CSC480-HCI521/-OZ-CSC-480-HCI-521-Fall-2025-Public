@@ -59,6 +59,57 @@ public class KudoService {
         }
     }
 
+    // Get all submitted kudos for a professor (status = PENDING)
+    public CardIdList getSubmittedCards(UUID professor_id) {
+        try (Connection conn = dataSource.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(
+                """
+                SELECT c.card_id
+                FROM KUDOS_CARDS c
+                JOIN USERS u ON c.sender_id = u.user_id
+                JOIN USER_CLASSES uc ON u.user_id = uc.user_id
+                WHERE uc.class_id IN (
+                    SELECT class_id FROM USER_CLASSES WHERE user_id = ?
+                )
+                AND c.status = 'PENDING';
+                """
+            )) {
+            stmt.setObject(1, professor_id);
+            ResultSet rs = stmt.executeQuery();
+            List<String> ids = new ArrayList<>();
+            while (rs.next()) ids.add(rs.getString("card_id"));
+            return new CardIdList(ids);
+        } catch (SQLException e) {
+            throw new InternalServerErrorException("Database error");
+        }
+    }
+
+    // Get all reviewed kudos for a professor (status != PENDING)
+    public CardIdList getReviewedCards(UUID professor_id) {
+        try (Connection conn = dataSource.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(
+                """
+                SELECT c.card_id
+                FROM KUDOS_CARDS c
+                JOIN USERS u ON c.sender_id = u.user_id
+                JOIN USER_CLASSES uc ON u.user_id = uc.user_id
+                WHERE uc.class_id IN (
+                    SELECT class_id FROM USER_CLASSES WHERE user_id = ?
+                )
+                AND c.status != 'PENDING';
+                """
+            )) {
+            stmt.setObject(1, professor_id);
+            ResultSet rs = stmt.executeQuery();
+            List<String> ids = new ArrayList<>();
+            while (rs.next()) ids.add(rs.getString("card_id"));
+            return new CardIdList(ids);
+        } catch (SQLException e) {
+            throw new InternalServerErrorException("Database error");
+        }
+    }
+
+
     public Kudocard getCard(UUID card_id,  UUID user_id) {
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmtCard = conn.prepareStatement("SELECT * FROM KUDOS_CARDS WHERE card_id = ?;");){ //establish database connection
@@ -70,14 +121,14 @@ public class KudoService {
                 //Check if the user is the recipient
                 //(assume that the user is not their professor if they are the recipient)
                 //Putting the most likely case first
-                if(user_id.equals(kudocard.getRecipient_id())) {
-                    if(kudocard.isIs_anonymous()) { //hide the sender if the card is anonymous
-                        kudocard.setSender_id(null);
-                    }
-                    return kudocard;
-                }
+                // if(user_id.equals(kudocard.getRecipient_id())) {
+                //     if(kudocard.isIs_anonymous()) { //hide the sender if the card is anonymous
+                //         kudocard.setSender_id(null);
+                //     }
+                //     return kudocard;
+                // }
                 //Check if the user is the sender
-                else if(user_id.equals(kudocard.getSender_id())) {
+                if(user_id.equals(kudocard.getSender_id())) {
                     return kudocard;
                 } else {
                     //Check if the user is the professor of the sender
@@ -100,7 +151,7 @@ public class KudoService {
     public Kudocard createCard(KudocardDTO.CreateKudoRequest req) throws SQLException {
         final String sql = """
         INSERT INTO KUDOS_CARDS
-            (sender_id, recipient_id, class_id, title, content, is_anonymous, created_at)
+            (sender_id, recipient_id, class_id, title, content, created_at)
         VALUES (?, ?, ?, ?, ?, ?, ?)
         RETURNING *
         """;
@@ -112,7 +163,7 @@ public class KudoService {
             stmt.setObject(3, req.getClass_id());
             stmt.setString(4, req.getTitle());
             stmt.setString(5, req.getContent());
-            stmt.setBoolean(6, Boolean.TRUE.equals(req.getIs_anonymous()));
+            // stmt.setBoolean(6, Boolean.TRUE.equals(req.getIs_anonymous()));
             stmt.setTimestamp(7, Timestamp.from(Instant.now()));
             try  (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -174,7 +225,7 @@ public class KudoService {
                 UUID.fromString(rs.getString("class_id")),
                 rs.getString("title"),
                 rs.getString("content"),
-                rs.getBoolean("is_anonymous"),
+                // rs.getBoolean("is_anonymous"),
                 Kudocard.Status.valueOf(rs.getString("status")),
                 rs.getString("approved_by")!=null ? //approved_by will be null if the card is not approved
                         UUID.fromString(rs.getString("approved_by")) : null,

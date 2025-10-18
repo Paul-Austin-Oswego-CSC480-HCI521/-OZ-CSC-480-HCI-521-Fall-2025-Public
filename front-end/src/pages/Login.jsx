@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
+import Footer from '../components/Footer';
 import { useUser } from '../components/UserContext';
 import '../styles/Wireframe.css';
 
@@ -18,7 +19,7 @@ function Login() {
     setLoading(true);
 
     try {
-      const res = await fetch(`${BASE_URL}/user?email=${encodeURIComponent(email)}`);
+      const res = await fetch(`${BASE_URL}/users/by-email?email=${encodeURIComponent(email)}`);
       if (!res.ok) {
         throw new Error('User not found');
       }
@@ -28,7 +29,7 @@ function Login() {
       setUser(data);
 
       // Redirect based on role
-      const targetRoute = data.role === 'teacher' ? '/professorView' : '/studentView';
+      const targetRoute = data.role === 'INSTRUCTOR' ? '/professorView' : '/studentView';
       navigate(targetRoute);
     } catch (error) {
       setErrorMessage('Invalid email or user not found');
@@ -39,7 +40,7 @@ function Login() {
 
   return (
     <div className="app-container">
-      <Header showNav={false} />
+      <Header showNav={true} />
 
       <div className="home-content">
         <h1>Login</h1>

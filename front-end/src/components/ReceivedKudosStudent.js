@@ -35,7 +35,7 @@ function ReceivedKudosStudent() {
                    );
 
                    const formatted = approvedCards.map((card) => ({
-                       sender_id: card.sender_id || "Anonymous",
+                       sender_id: card.sender_id,
                        title: card.title,
                        message: card.content,
                        date: card.dateSent || "-",

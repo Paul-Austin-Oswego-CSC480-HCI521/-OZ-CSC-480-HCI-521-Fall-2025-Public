@@ -36,6 +36,19 @@ public class KudoCardResource {
         return "Hello World!";
     }
 
+    @GET
+    @Path("/kudo-card/list/submitted")
+    public CardIdList getSubmittedKudos(@QueryParam("professor_id") UUID professorId) {
+        return kudoService.getSubmittedCards(professorId);
+    }
+
+    @GET
+    @Path("/kudo-card/list/reviewed")
+    public CardIdList getReviewedKudos(@QueryParam("professor_id") UUID professorId) {
+        return kudoService.getReviewedCards(professorId);
+    }
+
+
      /**
      * GET /kudo-app/kudo-card/list/sent - Retrieve all card_ids which correspond to cards sent by a given user
      *

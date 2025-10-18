@@ -9,7 +9,6 @@ import { useUser } from "../components/UserContext";
 import { v4 as uuidv4} from 'uuid';
 
 // const PLACEHOLDER_CLASS_ID = "12345678-1234-1234-1234-123456789def"; 
-// const TEACHER_RECIPIENT_ID = "";
 
 function StudentView() {
     const BASE_URL = process.env.REACT_APP_API_BASE_URL;
@@ -40,11 +39,16 @@ function StudentView() {
             const receivedRes = await fetch(`${BASE_URL}/kudo-card/list/received?user_id=${user.user_id}`);
             const receivedList = await receivedRes.json();
 
-            const sentCardIds = sentList.map(card => card.card_id);
-            const receivedCardIds = receivedList.map(card => card.card_id);
+            if (!sentRes.ok || !receivedRes.ok) {
+                throw new Error('Failed to fetch card lists');
+            }
+
+            const sentCardIds = sentList.card_id || [];
+            const receivedCardIds = receivedList.card_id || [];
 
             const allCardsIds = [...new Set([...sentCardIds, ...receivedCardIds])];
-            const cardDetails = await Promise.all(allCardsIds.map(getCard));
+            const cardDetails = await Promise.all(allCardsIds.map(cardId => 
+                getCard(cardId)));
 
             const formatKudo = (kudo) => ({
                 id: kudo.card_id,
@@ -66,13 +70,14 @@ function StudentView() {
 
             setSentKudos(sent);
             setReceivedKudos(received);
+
         } catch (err) {
             console.error('Error fetching kudos:', err);
             setError('Failed to load kudos. Please try again.');
         } finally {
             setLoading(false);
         }
-    }, [user?.user_id, BASE_URL, getCard]);
+    }, [user?.user_id, BASE_URL]);
 
     useEffect(() => {
         getKudos();
@@ -83,13 +88,12 @@ function StudentView() {
         
         const kudos = {
             // ...newKudos,
-            card_id: uuidv4(),
+            // card_id: uuidv4(),
             sender_id: user.user_id,
             recipient_id: newKudos.recipient_id,
             class_id: newKudos.class_id,
             title: newKudos.title,
             content: newKudos.message,
-            isAnonymous: newKudos.isAnonymous || false,
             status: "PENDING",
             approvedBy: null
         };
@@ -106,6 +110,8 @@ function StudentView() {
             const data = await res.json();
             console.log("New kudos submitted:", data);
             getKudos();
+
+            navigate('/studentView');
         } catch(err) {
             console.error("Error saving new kudos:", err);
             setError('Failed to submit kudos. Please try again.');
