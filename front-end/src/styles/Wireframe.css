@@ -349,6 +349,33 @@ tr.selected-row td.default-kudos-table-data {
     font-weight: normal !important;
 }
 
+.role-selection {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 1rem;
+}
+
+.role-selection label {
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.login-form label {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  width: 250px;
+}
+
+.login-form input[type="text"],
+.login-form input[type="email"] {
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
 .home-content {
     display: flex;
     flex-direction: column;
@@ -452,6 +479,21 @@ tr.selected-row td.default-kudos-table-data {
     color: #093b3b;
     font-size: 18px;
 }
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.login-form input {
+  padding: 0.5rem;
+  font-size: 1rem;
+  width: 250px;
+}
+
 
 #recipient.to-from-title {
     background-color: #ffffff;

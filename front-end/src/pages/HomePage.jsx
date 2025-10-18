@@ -10,13 +10,13 @@ function HomePage() {
       <Header showNav={false} />
 
       <div className="home-content">
-        <h1>I am a...</h1>
+        <h1>Welcome!</h1>
         <div className="home-buttons">
-          <Link to="/studentView">
-            <button className="home-button">Student</button>
+          <Link to="/login">
+            <button className="home-button">Login</button>
           </Link>
-          <Link to="/professorView">
-            <button className="home-button">Professor</button>
+          <Link to="/create-user">
+            <button className="home-button">Register</button>
           </Link>
         </div>
       </div>

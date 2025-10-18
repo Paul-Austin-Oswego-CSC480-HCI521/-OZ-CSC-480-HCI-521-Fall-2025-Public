@@ -8,12 +8,12 @@ export const UserProvider = ({ children }) => {
     const [error, setError] = useState(null);
 
     const BASE_URL = process.env.REACT_APP_API_BASE_URL;
-    const exampleUserId = "12345678-1234-1234-1234-123456789abc";
+    // const exampleUserId = "12345678-1234-1234-1234-123456789abc";
 
   useEffect(() => {
     const fetchUser = async () => {
         try {
-            const res = await fetch(`${BASE_URL}/kudo-app/api/users/${exampleUserId}`);
+            const res = await fetch(`${BASE_URL}/users/${user.user_id}`);
             if (!res.ok) throw new Error("Failed to fetch user");
             
             const data = await res.json();

@@ -9,7 +9,7 @@ import { useUser } from "../components/UserContext";
 import { v4 as uuidv4} from 'uuid';
 
 // const PLACEHOLDER_CLASS_ID = "12345678-1234-1234-1234-123456789def"; 
-// const TEACHER_RECIPIENT_ID = "12345678-1234-1234-1234-123456789abc";
+// const TEACHER_RECIPIENT_ID = "";
 
 function StudentView() {
     const BASE_URL = process.env.REACT_APP_API_BASE_URL;
