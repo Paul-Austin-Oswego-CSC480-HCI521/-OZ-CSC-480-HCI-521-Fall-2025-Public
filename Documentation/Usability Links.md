@@ -7,5 +7,13 @@ are any questions regarding any of these prototypes please reach out to the Usab
 https://www.figma.com/proto/84nAYzurWI8gqjmff26JQo/swd_home_wireframe_v8?page-id=0%3A1&node-id=1-18&viewport=-309%2C-888%2C0.43&t=4nT38XMNBr0FOD88-1&scaling=scale-down-width&content-scaling=fixed&starting-point-node-id=1%3A18&show-proto-sidebar=1
 
 **Notes from RQ / US:**
-   * The "More" button and menu on the navigation bar will be replaced with a "logout" button for simplicity. Profile and settings menus will not be necessary for this product.  
-   * To fulfill requirements HP.1, and HP.3, the instructor's homepage must have a "Received Kudos" and "Sent Kudos" section (similar to the student homepage).   
+   * The navigation bar will be updated as new pages are requirements are added. 
+   * To fulfill requirements HP.1, and HP.3, the instructor's homepage will have a "Received Kudos" and "Sent Kudos" section, this prototype is currently in development.      
+
+### Wireframe V9: ###
+https://www.figma.com/design/Uiz6Hkb62TL0ywL9l6AFZF/swd_home_wireframe_v9?node-id=0-1&p=f&t=oL8ywZ8D35VHGR8Q-0
+
+**Notes from RQ / US:**
+   * File contains the current version of the style guide.
+   * The blank card png files have been downloaded into gitHub at /front-end/public/images, they are also shown in this file.  
+   * Designs for the login and account creation process are not finalized.  
