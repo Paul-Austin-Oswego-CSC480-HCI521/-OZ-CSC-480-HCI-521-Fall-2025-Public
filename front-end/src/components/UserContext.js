@@ -33,7 +33,7 @@ export const UserProvider = ({ children }) => {
         }
     }
       fetchUser();
-  }, [BASE_URL]);
+  }, [user?.user_id, BASE_URL]);
 
   return <UserContext.Provider value={{ user, setUser, loading, error }}>{children}</UserContext.Provider>;
 };

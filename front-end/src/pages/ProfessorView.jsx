@@ -27,7 +27,7 @@ function ProfessorView() {
                 setReviewedKudos(Array.isArray(data) ? data : []);
                 return true;
             });
-    }, [user?.user_id, BASE_URL]);
+    }, [user?.user_id]);
 
     const fetchSubmittedKudos = useCallback(() => {
         if (!user?.user_id) return Promise.resolve();
@@ -41,7 +41,7 @@ function ProfessorView() {
                 setSubmittedKudos(Array.isArray(data) ? data : []);
                 return true;
             });
-    }, [user?.user_id, BASE_URL]);
+    }, [user?.user_id]);
 
     useEffect(() => {
         if (!user?.user_id) return;

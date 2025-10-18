@@ -41,8 +41,8 @@
     </library>
     
     <!-- Default PostgreSQL DataSource  -->
-    <dataSource id="DefaultDataSource" jndiName="jdbc/kudosdb">
-        <jdbcDriver libraryRef="postgresqlLib"/>
+    <dataSource id="DefaultDataSource" jndiName="jdbc/kudosdb" type="javax.sql.DataSource">
+        <jdbcDriver libraryRef="postgresqlLib" javax.sql.DataSource="org.postgresql.ds.PGSimpleDataSource"/>
         <properties.postgresql 
             serverName="${env.DB_HOST}"
             portNumber="${env.DB_PORT}"
@@ -53,5 +53,6 @@
             applicationName="KudosCardSystem"/>
         <connectionManager maxPoolSize="20" minPoolSize="5" connectionTimeout="30s"/>
     </dataSource>
+
     
 </server>
