@@ -88,6 +88,7 @@ setTimeout(() => {
       <Header showNav={true} />
 
       <div className="home-content">
+      <main>
         <h1>Register New User</h1>
 
         <form className="login-form" onSubmit={handleSubmit}>
@@ -156,6 +157,7 @@ setTimeout(() => {
             {submitting ? "Creating..." : "Create User"}
           </button>
         </form>
+      </main>
 
         {successMessage && <p style={{ color: "green", marginTop: "1rem" }}>{successMessage}</p>}
         {errorMessage && <p style={{ color: "red", marginTop: "1rem" }}>{errorMessage}</p>}

@@ -6,9 +6,9 @@ import '../styles/Wireframe.css'; // make sure this is correct
 function HomePage() {
   return (
     <div className="app-container">
-      {/* ✅ Tell Header not to show nav buttons */}
+      {/* Tell Header not to show nav buttons */}
       <Header showNav={false} />
-
+    <main>
       <div className="home-content">
         <h1>Welcome!</h1>
         <div className="home-buttons">
@@ -20,6 +20,7 @@ function HomePage() {
           </Link>
         </div>
       </div>
+      </main>
     </div>
   );
 }

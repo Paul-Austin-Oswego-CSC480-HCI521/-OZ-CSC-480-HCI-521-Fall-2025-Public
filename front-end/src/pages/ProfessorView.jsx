@@ -85,14 +85,15 @@ function ProfessorView() {
     return (
         <div className="app-container">
             <Header onCreateNew={handleNewKudos} />
-
-            <div className="main-content">
+            <main>
+                <h1>Professor Kudos Dashboard</h1>
+                <div className="main-content">
                 <>
                     <SubmittedKudosProf messages={submittedKudos} onSelect={handleSelectKudos} />
                     <ReviewedKudosProf reviewedKudos={reviewedKudos} />
                 </>
                 {/* )} */}
-            </div>
+            </div></main>
             <Footer />
         </div>
     );
