@@ -4,7 +4,7 @@
 
 #### General Page Requirements:
 * The Kudo creation process must take place within a dedicated page.
-* The system shall only provide input fields for: Message, Recipient, Card Design, and an Anonymous checkbox. No other input fields are needed at this time. 
+* The system shall only provide input fields for: Message, Recipient, and Card Design. No other input fields are needed at this time. 
 * Created Kudo cards should not be stored as image files; the system shall reconstruct each card from the information in the database when needed.
 * The system must store all cards in the database indefinitely.
 * The page must have a button to return to the homepage, which discards the user’s selections when pressed.
@@ -38,14 +38,12 @@
 #### 3. Recipient Input Field: The system shall provide a dropdown menu to select recipients from all users in the active class, including all instructors.
 * **Acceptance Criteria:**
 * The dropdown lists all available users (first and last name)
-* Users can check a box to mark the card as non-anonymous; by default, each card is sent anonymously.
 * Users can not select more than one recipient per card.
 
 
 #### 4. Card Preview Requirements: The system shall generate and display a preview of the Kudos card on the card creation page before the submission step.
 * **Acceptance Criteria:**
 * The preview displays a fully readable image of the card as it will be seen by the recipient. It displays the full message body which is then overlayed onto the selected card design.
-* The preview clearly shows if the card is anonymous (optional).
 * The preview updates dynamically when users change the card's design, or message body.
 * The text will automatically reformat to fit properly on the card, ensuring it is readable and each word fits entirely on one line.
 
@@ -83,3 +81,8 @@
 * Templates must be able to fit the maximum message body length (a 500-character limit is subject to change and requires testing) on the ruled lines without leaving unused space.
 * Text should be wrapped across lines so that each word entirely fits onto one line.  
 
+#### 8.The system must allow users to edit the message of cards that were rejected.
+* **Acceptance Criteria:**
+* The system will send edited cards to the instructor for approval; the cards' status is set to “Pending Approval”.
+* The system must update the card’s message, status, and time sent in the database.
+* The system must not allow non-rejected cards to be edited. 
