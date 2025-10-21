@@ -42,7 +42,7 @@ function SentKudosStudent( {messages = []} ) {
                                 }
                             }}
                         >
-                            <td className={'default-kudos-table-data'}>{k.recipient_id}</td>
+                            <td className={'default-kudos-table-data'}>{k.recipient}</td>
                             <td className={'default-kudos-table-data'}>{k.title}</td>
                             <td className={'default-kudos-table-data'}>{k.status}</td>
                             <td className={'default-kudos-table-data'}>{k.date}</td>
