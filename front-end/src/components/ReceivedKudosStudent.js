@@ -40,7 +40,7 @@ function ReceivedKudosStudent( { received }) {
                         }}
                         className={selectedRows.includes(i) ? "selected-row" : ""}
                     >
-                        <td className={'default-kudos-table-data'}>{k.sender_id}</td>
+                        <td className={'default-kudos-table-data'}>{k.sender}</td>
                         <td className={'default-kudos-table-data'}>{k.title}</td>
                         <td className={'default-kudos-table-data'}>{k.message}</td>
                         <td className={'default-kudos-table-data'}>{k.date}</td>

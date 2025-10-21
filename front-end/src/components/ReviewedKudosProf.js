@@ -43,8 +43,8 @@ function ReviewedKudosProf( {reviewedKudos = []} ) {
                             }
                         }}
                     >
-                        <td className={'default-kudos-table-data'}>{k.sender_id}</td>
-                        <td className={'default-kudos-table-data'}>{k.recipient_id}</td>
+                        <td className={'default-kudos-table-data'}>{k.sender}</td>
+                        <td className={'default-kudos-table-data'}>{k.recipient}</td>
                         <td className={'default-kudos-table-data'}>{k.title}</td>
                         <td className={'default-kudos-table-data'}>{k.status}</td>
                         <td className={'default-kudos-table-data'}>{k.date}</td>

@@ -39,11 +39,11 @@ function SubmittedKudosProf({ submitted, onSelect }) {
                                 }
                             }}
                         >
-                            <td className="default-kudos-table-data">{k.sender_id}</td>
-                            <td className="default-kudos-table-data">{k.recipient_id}</td>
+                            <td className="default-kudos-table-data">{k.sender}</td>
+                            <td className="default-kudos-table-data">{k.recipient}</td>
                             <td className="default-kudos-table-data">{k.title}</td>
                             <td className="default-kudos-table-data">{k.message || k.content}</td>
-                            <td className="default-kudos-table-data">{k.date || "-"}</td>
+                            <td className="default-kudos-table-data">{k.date}</td>
                         </tr>
                     ))}
                     </tbody>

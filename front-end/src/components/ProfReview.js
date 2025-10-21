@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import { useUser } from "../components/UserContext";
 import { useNavigate } from "react-router-dom";
 
+const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 function ProfReview({ initialData }) {
     const [formData, setFormData] = useState({
         sender_id: initialData?.sender_id || "",
@@ -25,7 +27,6 @@ function ProfReview({ initialData }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         if (!selectedStatus) {
             alert("Please choose to approve or reject before submitting.");
             return;
@@ -35,27 +36,29 @@ function ProfReview({ initialData }) {
             return;
         }
 
+        // update status in db
         try {
-            const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+            console.log(initialData);
 
-            const updatedCard = { status: selectedStatus, note: formData.note };
+            const updatedCard = {card_id: initialData.id,
+                                 approved_by: user.user_id,
+                                 status: selectedStatus,
+                                 professor_note: formData.note,
+                                };
 
-            const res = await fetch(
-                `${BASE_URL}/kudo-card/${initialData.card_id}?user_id=${user.user_id}`,
-                {
-                    method: "PUT",
+            console.log(updatedCard);
+
+            const res = await fetch( `${BASE_URL}/kudo-card`,{
+                    method: "PATCH",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(updatedCard),
                 }
             );
 
             if (!res.ok) throw new Error("Failed to update card.");
-
-            alert("Review submitted successfully!");
             navigate(-1); // go back to the previous page
         } catch (error) {
             console.error("Error updating card:", error);
-            alert("There was an error saving the card. Please try again");
         }
     };
 

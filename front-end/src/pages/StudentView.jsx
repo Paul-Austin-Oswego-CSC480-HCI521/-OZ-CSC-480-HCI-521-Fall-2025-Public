@@ -108,7 +108,8 @@ function StudentView() {
                     title: kudo.title,
                     status: kudo.status,
                     date: formattedDate || "-",
-                    imageUrl: kudo.imageUrl || null 
+                    imageUrl: kudo.imageUrl || null,
+                    message: kudo.content 
                 };
             };
 

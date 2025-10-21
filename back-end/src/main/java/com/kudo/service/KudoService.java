@@ -185,19 +185,13 @@ public class KudoService {
         SET status = ?, approved_by = ?, professor_note = ?
         WHERE card_id = ?;
         """;
-
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setObject(1, req.getStatus());
             stmt.setObject(2, req.getApproved_by());
             stmt.setObject(3, req.getProfessor_note());
             stmt.setObject(4, req.getCard_id());
-            try  (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return;
-                }
-            }
-            throw new InternalServerErrorException("Failed to update Kudocard");
+            stmt.executeUpdate();
         } catch  (SQLException e) {
             throw new InternalServerErrorException("Database error");
         }

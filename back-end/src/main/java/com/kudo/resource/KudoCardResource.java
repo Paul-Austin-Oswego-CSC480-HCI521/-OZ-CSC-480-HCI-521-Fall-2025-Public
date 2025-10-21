@@ -190,17 +190,15 @@ public class KudoCardResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateKudoStatus(@Valid KudocardDTO.UpdateStatusRequest req) {
-
         //get the user_id of the card sender
-       Kudocard kudocard = getCard(req.getCard_id(), req.getApproved_by());
+        Kudocard kudocard = getCard(req.getCard_id(), req.getApproved_by());
 
-       //Check if the approvedBy is the professor of the user
+        //Check if the approvedBy is the professor of the user
         if(!kudoService.isInstructorOf(req.getApproved_by(), kudocard.getSender_id())) {
             throw new NotFoundException();
         }
-
         kudoService.updateCard(req);
-        return Response.status(Response.Status.CREATED).entity(req).build();
+        return Response.status(Response.Status.OK).entity(req).build();
     }
 
 
