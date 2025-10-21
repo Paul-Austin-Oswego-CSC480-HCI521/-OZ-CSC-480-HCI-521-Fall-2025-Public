@@ -37,13 +37,15 @@ public class KudoCardResource {
     }
 
     @GET
-    @Path("/kudo-card/list/submitted")
+    @Path("list/submitted")
+    @Produces(MediaType.APPLICATION_JSON)
     public CardIdList getSubmittedKudos(@QueryParam("professor_id") UUID professorId) {
         return kudoService.getSubmittedCards(professorId);
     }
 
     @GET
-    @Path("/kudo-card/list/reviewed")
+    @Path("list/reviewed")
+    @Produces(MediaType.APPLICATION_JSON)
     public CardIdList getReviewedKudos(@QueryParam("professor_id") UUID professorId) {
         return kudoService.getReviewedCards(professorId);
     }
@@ -152,6 +154,7 @@ public class KudoCardResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response createKudo(@Valid CreateKudoRequest req) {
+
         //quick check: sender !== recipient
         if (req.getSender_id().equals(req.getRecipient_id())) {
             throw new BadRequestException("sender and recip. UUID must be different");

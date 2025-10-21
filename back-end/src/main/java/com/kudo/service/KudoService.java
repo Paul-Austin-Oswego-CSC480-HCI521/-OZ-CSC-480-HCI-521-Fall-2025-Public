@@ -127,8 +127,9 @@ public class KudoService {
                 //     }
                 //     return kudocard;
                 // }
-                //Check if the user is the sender
-                if(user_id.equals(kudocard.getSender_id())) {
+                // Check if the user is the sender or recipient 
+                // only the sender, recipient and professor are given access
+                if( user_id.equals(kudocard.getSender_id()) || user_id.equals(kudocard.getRecipient_id())) {
                     return kudocard;
                 } else {
                     //Check if the user is the professor of the sender
@@ -151,8 +152,8 @@ public class KudoService {
     public Kudocard createCard(KudocardDTO.CreateKudoRequest req) throws SQLException {
         final String sql = """
         INSERT INTO KUDOS_CARDS
-            (sender_id, recipient_id, class_id, title, content, created_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+            (sender_id, recipient_id, class_id, title, content)
+        VALUES (?, ?, ?, ?, ?)
         RETURNING *
         """;
 
@@ -164,7 +165,7 @@ public class KudoService {
             stmt.setString(4, req.getTitle());
             stmt.setString(5, req.getContent());
             // stmt.setBoolean(6, Boolean.TRUE.equals(req.getIs_anonymous()));
-            stmt.setTimestamp(7, Timestamp.from(Instant.now()));
+            //stmt.setTimestamp(7, Timestamp.from(Instant.now()));
             try  (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return ResultSetToKudocard(rs);

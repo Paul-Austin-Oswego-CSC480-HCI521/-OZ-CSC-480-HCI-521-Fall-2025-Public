@@ -85,22 +85,44 @@ function NewKudosPage({ onSubmit }) {
             return;
         }
 
-        const newCard = {
-            card_id: uuidv4(),
-            sender_id: user.user_id,
-            recipient_id: formData.recipient,
-            class_id: PLACEHOLDER_CLASS_ID,
-            title: formData.title,
-            content: formData.message,
-            status: "PENDING",
-            approvedBy: null
-        };
+        // find the class the card should be sent in
+        Promise.all([
+            fetch(`${BASE_URL}/users/${user.user_id}/classes`).then(res => res.json()),
+            fetch(`${BASE_URL}/users/${formData.recipient}/classes`).then(res => res.json())
+        ])
+            .then(([senderClasses, recipientClasses]) => {
 
-        fetch(`${BASE_URL}/kudo-card`, {
-            method: "POST",
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(newCard)
-        })
+                // find a common class 
+                const senderClassIds = senderClasses.class_id || [];
+                const recipientClassIds = recipientClasses.class_id || [];
+                const commonClass = senderClassIds.find(classId =>
+                    recipientClassIds.includes(classId)
+                );
+                if (!commonClass) {
+                    console.log("sender and recipient don't share a class in the db");
+                    console.log("[TEMP FIX] you must create a new class and add both users to it via curl commands");
+                    throw new Error("sender and recipient don't share a class");
+                }
+
+                // make card json
+                const newCard = {
+                    card_id: uuidv4(),
+                    sender_id: user.user_id,
+                    recipient_id: formData.recipient,
+                    class_id: commonClass ? commonClass : PLACEHOLDER_CLASS_ID, // use fetched classID when its non-null
+                    title: formData.title,
+                    content: formData.message,
+                    status: "PENDING",
+                    approvedBy: null
+                };
+
+                // send post request
+                return fetch(`${BASE_URL}/kudo-card`, {
+                    method: "POST",
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newCard)
+                });
+            })
             .then(res => {
                 if (!res.ok) throw new Error("Failed to submit");
                 return res.json();
@@ -108,14 +130,14 @@ function NewKudosPage({ onSubmit }) {
             .then(data => {
                 console.log("Kudos submitted:", data);
                 navigate('/home');
+                setFormData({ // reset form
+                    recipient: '',
+                    title: titleOptions[0],
+                    message: ''
+                });
             })
             .catch(err => console.error("Submission failed:", err));
 
-        setFormData({
-            recipient: '',
-            title: titleOptions[0],
-            message: ''
-        });
     };
 
     if (loading) return <div className="app-container">Loading...</div>;

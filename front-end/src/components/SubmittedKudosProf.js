@@ -1,40 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { useUser } from "./UserContext";
 import { useNavigate } from "react-router-dom";
 
-function SubmittedKudosProf() {
-    const [submitted, setSubmitted] = useState([]);
-    const { user } = useUser();
-    const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+function SubmittedKudosProf({ submitted, onSelect }) {
     const navigate = useNavigate();
-
-    // Fetch submitted kudos from API
-    useEffect(() => {
-        if (!user) return;
-
-        async function fetchSubmittedKudos() {
-            try {
-                const res = await fetch(
-                    `${BASE_URL}/kudo-app/api/kudo-card/list/received?user_id=${user.user_id}`
-                );
-
-                if (!res.ok) throw new Error("Failed to fetch submitted kudos");
-
-                const data = await res.json();
-                const submittedOnly = data.filter(
-                    (card) =>
-                        card.status === "SUBMITTED" &&
-                        Array.isArray(user.classes) &&
-                        user.classes.map(cls => cls.class_id).includes(card.class_id)
-                );
-                setSubmitted(submittedOnly);
-            } catch (err) {
-                console.error("Error fetching submitted kudos:", err);
-            }
-        }
-
-        fetchSubmittedKudos();
-    }, [user, BASE_URL]);
 
     // Navigate to review page when a row is clicked
     const handleRowClick = (kudos) => {

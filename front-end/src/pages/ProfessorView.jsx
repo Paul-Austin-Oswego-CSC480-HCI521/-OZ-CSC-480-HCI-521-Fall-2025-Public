@@ -22,6 +22,7 @@ function ProfessorView() {
         setLoading(true);
         setError(null);
 
+
         try {
             const res = await fetch(`${BASE_URL}/kudo-card/list/reviewed?professor_id=${user.user_id}`);
             if (!res.ok) throw new Error("Failed to fetch reviewed kudos");
@@ -89,7 +90,7 @@ function ProfessorView() {
                 <h1>Professor Kudos Dashboard</h1>
                 <div className="main-content">
                 <>
-                    <SubmittedKudosProf messages={submittedKudos} onSelect={handleSelectKudos} />
+                    <SubmittedKudosProf submitted={submittedKudos} onSelect={handleSelectKudos} />
                     <ReviewedKudosProf reviewedKudos={reviewedKudos} />
                 </>
                 {/* )} */}

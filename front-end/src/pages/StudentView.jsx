@@ -65,7 +65,7 @@ function StudentView() {
                 .map(formatKudo);
 
             const received = cardDetails
-                .filter(kudo => kudo.recipient_id === user.user_id)
+                .filter(kudo => kudo.recipient_id === user.user_id && (kudo.status === "APPROVED" || kudo.status === "RECEIVED"))
                 .map(formatKudo);
 
             setSentKudos(sent);
@@ -128,7 +128,7 @@ function StudentView() {
 
                 {!loading && !error && (
                     <>
-                    <ReceivedKudosStudent messages = {receivedKudos} />
+                    <ReceivedKudosStudent received = {receivedKudos} />
                     <SentKudosStudent messages = {sentKudos} />
                     </>                 
                 )}
