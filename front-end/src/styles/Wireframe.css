@@ -115,33 +115,38 @@
     background: none;
     border: none;
     cursor: pointer;
-    padding: 8px;
-    width: 70px;   /* make it wider for text */
-    height: 70px;  /* adjust as needed */
+    padding: 2px;
+    width: auto;   /* make it wider for text */
+    height: 80px;  /* adjust as needed */
     border-radius: 8px;
-    color: #555;
+    color: black;
     transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .icon-label {
-    font-weight:bold;
     font-family: 'Poppins', sans-serif;
-    font-size: 12px;
+    font-size: 14px;
     margin-top:2px;
 }
 
 .icon-btn svg {
-    width: 50px;
-    height: 50px;
+    width: auto;
+    height: 60px;
 }
 
 .icon-btn:hover {
-    background: #EBEBEB;
-    color: black;
+    background: white;
+    color: #B1D2D3;
 }
 
 .icon-btn.selected {
-    background: #B1D2D3;
+    background: #E0F0F0;
+    color: black;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+}
+
+.icon-btn.notif-btn.selected {
+    background: white;
     color: black;
 }
 
@@ -432,7 +437,7 @@ tr.selected-row td.default-kudos-table-data {
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
-    background-color: #fafdf2;
+    background-color: white;
     min-height: 100vh;
     font-family: 'Poppins', sans-serif;
 }
@@ -506,7 +511,7 @@ tr.selected-row td.default-kudos-table-data {
 .to-from-title {
     padding: 6px 6px;
     border: none;
-    background-color: #fafdf2;
+    background-color: white;
     font-family: 'Poppins', sans-serif;
     font-size: 20px;
     font-weight: bold;
@@ -531,9 +536,9 @@ tr.selected-row td.default-kudos-table-data {
     padding: 6px 12px;
     border: 2px solid #093b3b;
     border-radius: 3px;
-    background-color: white;
+    background-color: #FAFDF2;
     font-family: 'Poppins', sans-serif;
-    color: black;
+    color: #093B3B;
     outline: none;
     font-size: 14px;
 }
@@ -604,8 +609,6 @@ tr.selected-row td.default-kudos-table-data {
 .approve-reject {
     position: relative;
     bottom: 6px;
-    background: #093b3b;
-    color: white;
     font-family: 'Poppins', sans-serif;
     border: 2px solid #093b3b;
     margin: 1px 1px;
@@ -614,6 +617,8 @@ tr.selected-row td.default-kudos-table-data {
     padding: 10px 95px;
     cursor: pointer;
     transition: background 0.3s ease;
+    background-color: #ebebeb;
+    color: #093b3b;
 }
 
 .notifButton {
@@ -624,17 +629,50 @@ tr.selected-row td.default-kudos-table-data {
 }
 
 .approve-reject:hover {
-    background-color: #ebebeb;
+    background-color: white;
     color: black;
 }
 
 .approve-reject.selected {
-    background-color: #ebebeb;
-    color: #093b3b;
+    background: #093b3b;
+    color: white;
+}
+
+select {
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 2px solid #093B3B;
+    background-color: white;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+}
+
+option {
+    background: white;
+    color:black;
+    font-family: 'Poppins', sans-serif;
+    border-bottom: #CCDDBE;
+    padding: 10px 95px;
+    font-size: 16px;
+}
+
+option:checked {
+    background: #CCDDBE;
+}
+
+option:hover {
+    background-color: #CCDDBE;
+}
+
+select:focus {
+    outline: none;
+    box-shadow: 0 0 4px rgba(0, 123, 255, 0.4);
 }
 
 .review-page .form-group {
     margin-bottom: 25px;
+    background-color: white;
 }
 
 .review-page .button-row {

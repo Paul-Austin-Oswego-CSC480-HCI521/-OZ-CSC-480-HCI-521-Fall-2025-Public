@@ -143,14 +143,15 @@ function ProfReview({ initialData }) {
 
                 <div className="form-group">
                     <label>Reason for Rejection:</label>
-                    <textarea
-                        className="textBox"
-                        name="note"
-                        value={formData.note}
-                        onChange={handleChange}
-                        placeholder="Message to sender"
-                        rows={1}
-                    />
+                    <select id ="rejectionReason" name="rejectionReason" className="textbox">
+                        <option value="default blank"></option>
+                        <option value="not relevant">Not relevant to the class or learning content.</option>
+                        <option value="inapropriate language">Inappropritae language. Please advise.</option>
+                        <option value="too short">Incomplete or too short to be meaningful.</option>
+                        <option value="duplicate">This Kudos duplicates a previous submissions.</option>
+                        <option value="wrong section">Submitted to the wrong section or group.</option>
+                        <option value="other">Other - please specify.</option>
+                    </select>
                 </div>
                     <button type="submit" className="submit-btn">
                         Submit

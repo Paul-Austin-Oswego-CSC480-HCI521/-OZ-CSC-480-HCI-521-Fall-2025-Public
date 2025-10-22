@@ -146,7 +146,6 @@ function ProfessorView() {
         <div className="app-container">
             <Header onCreateNew={handleNewKudos} />
             <main>
-                <h1>Professor Kudos Dashboard</h1>
                 <div className="main-content">
                 <>
                     <SubmittedKudosProf submitted={submittedKudos} onSelect={handleSelectKudos} />

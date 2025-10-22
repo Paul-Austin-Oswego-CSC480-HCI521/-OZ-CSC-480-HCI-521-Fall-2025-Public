@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Notification from './Notification';
 import '../styles/Wireframe.css';
 import { useUser } from './UserContext';
 
 function Header({ onCreateNew, showNav = true }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const [showNotif, setShowNotif] = useState(false);
   const { setUser } = useUser();
 
@@ -17,7 +18,19 @@ function Header({ onCreateNew, showNav = true }) {
     setTimeout(() => {
         navigate('/home');
     }, 0);
-  }
+    }
+    const isSelected = (path) => {
+        if (path ==='/home') {
+            return location.pathname === '/home' ||
+                location.pathname === '/studentView' ||
+                location.pathname === '/professorView';
+        }
+        if (path ==='/new-kudos') {
+            return location.pathname ==='/studentView/new-kudos' ||
+                location.pathname ==='/professorView/new-kudos';
+        }
+        return location.pathname === path;
+    };
 
   return (
       <header className="header">
@@ -25,7 +38,8 @@ function Header({ onCreateNew, showNav = true }) {
 
         {showNav && (
             <nav className="nav-buttons">
-              <button onClick={handleNotif} className="icon-btn">
+              <button onClick={handleNotif}
+                      className={`icon-btn notif-btn ${showNotif ? 'selected' : ''}`}>
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                        className="lucide lucide-bell-icon lucide-bell">
@@ -35,7 +49,8 @@ function Header({ onCreateNew, showNav = true }) {
                   </svg>
                   <span className="icon-label">Notifications</span>
               </button>
-                <button onClick={handleGoHome} className="icon-btn">
+                <button onClick={handleGoHome}
+                        className={`icon-btn ${isSelected('/home') ? 'selected' : ''}`}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                          className="lucide lucide-house-icon lucide-house">
@@ -45,7 +60,8 @@ function Header({ onCreateNew, showNav = true }) {
                     </svg>
                     <span className="icon-label">Home</span>
                 </button>
-                <button onClick={onCreateNew} className="icon-btn">
+                <button onClick={onCreateNew}
+                        className={`icon-btn ${isSelected('/new-kudos') ? 'selected' : ''}`}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                          className="lucide lucide-square-plus-icon lucide-square-plus">
@@ -55,7 +71,8 @@ function Header({ onCreateNew, showNav = true }) {
                     </svg>
                     <span className="icon-label">Create</span>
                 </button>
-                <button onClick={handleLogOut} className="icon-btn">
+                <button onClick={handleLogOut}
+                        className={`icon-btn ${isSelected('/logout') ? 'selected' : ''}`}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                          className="lucide lucide-grip-icon lucide-grip">
@@ -63,7 +80,7 @@ function Header({ onCreateNew, showNav = true }) {
                         <circle cx="19" cy="5" r="1"/>
                         <circle cx="5" cy="5" r="1"/>
                         <circle cx="12" cy="12" r="1"/>
-                        <circle cx="19" cy="12" r="1"/>
+                        <circle cx="19" cy="12" r="1"/>d
                         <circle cx="5" cy="12" r="1"/>
                         <circle cx="12" cy="19" r="1"/>
                         <circle cx="19" cy="19" r="1"/>
