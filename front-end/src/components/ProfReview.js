@@ -7,8 +7,8 @@ const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 function ProfReview({ initialData }) {
     const [formData, setFormData] = useState({
-        sender_id: initialData?.sender_id || "",
-        recipient_id: initialData?.recipient_id || "",
+        sender_id: initialData?.sender || "",
+        recipient_id: initialData?.recipient || "",
         title: initialData?.title || "",
         message: initialData?.message || initialData?.content || "",
         note: initialData?.note || "",

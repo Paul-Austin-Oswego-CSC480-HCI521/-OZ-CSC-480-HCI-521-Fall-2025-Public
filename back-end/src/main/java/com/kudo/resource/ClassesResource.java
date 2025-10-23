@@ -19,6 +19,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.HashMap;
+import java.util.Map;
 
 @Path("class")
 public class ClassesResource {
@@ -195,6 +197,32 @@ public class ClassesResource {
 
             return Response.status(Response.Status.CREATED).entity(Json.createObjectBuilder().add("class", arrayBuilder).build()).build();
 
+        } catch (SQLException e) {
+            throw new InternalServerErrorException("Database error");
+        }
+    }
+
+
+    @GET
+    @Path("{class_id}/users")
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<Map<String, String>> getClassRoster(@PathParam("class_id") UUID class_id) {
+    try (Connection conn = dataSource.getConnection();
+        PreparedStatement stmt = conn.prepareStatement("""
+        SELECT u.user_id, u.name
+        FROM USER_CLASSES uc
+        JOIN USERS u ON uc.user_id = u.user_id
+        WHERE uc.class_id = ?""")) {
+        stmt.setObject(1, class_id);
+        ResultSet rs = stmt.executeQuery(); 
+        List<Map<String, String>> users = new ArrayList<>();
+        while (rs.next()) {
+            Map<String, String> user = new HashMap<>();
+            user.put("id", rs.getString("user_id"));
+            user.put("name", rs.getString("name"));
+            users.add(user);
+        }
+        return users;
         } catch (SQLException e) {
             throw new InternalServerErrorException("Database error");
         }

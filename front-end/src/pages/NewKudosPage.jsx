@@ -13,37 +13,64 @@ function NewKudosPage({ onSubmit }) {
     const { user } = useUser();
     const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-    const [students, setStudents] = useState([]);
-    const [selectedImage, setSelectedImage] = useState(null);
-    const [loading, setLoading] = useState(true);
-
     const PLACEHOLDER_CLASS_ID = "12345678-1234-1234-1234-123456789def";
 
-    const titleOptions = ['Well Done!', 'Nice Job!', 'Great Work!', 'Thank you!'];
+    const [rosters, setRosters] = useState([]);
+    const [selectedImage, setSelectedImage] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [classes, setClasses] = useState([]);
+    const titleOptions = ['Well Done!', 'Nice Job!', 'Great Work!'];
     const imageMap = {
         'Well Done!': '/images/welldone.png',
         'Nice Job!': '/images/nicejob.png',
         'Great Work!': '/images/greatwork.png',
-        'Thank you!': '/images/thankyou.png'
     };
 
     const [formData, setFormData] = useState({
         recipient: '',
+        class: '',
         title: titleOptions[0],
         message: '',
     });
 
     useEffect(() => {
-        fetch(`${BASE_URL}/users?role=STUDENT`)
+        fetch(`${BASE_URL}/users/${user.user_id}/classes`)
             .then(res => res.json())
-            .then(data => {
-                setStudents(data);
+            .then(async (data) => {
+
+                // get list of class names and ids
+                const classProm = data.class_id.map(async (classId) => {
+                    const res = await fetch(`${BASE_URL}/class/${classId}`);
+                    const data = await res.json();
+                    return {id: classId, name: data.class[0].class_name}
+                });
+                const classList = await Promise.all(classProm);
+                setClasses(classList);
+
+                // if the user only has one class then auto select it 
+                if (classList.length === 1) {
+                setFormData(prev => ({ ...prev,
+                    class: classList[0].id
+                }));}
+                
+                // get a roster for each class 
+                const rostersProm = classList.map( async (c) => {
+                    const res = await fetch(`${BASE_URL}/class/${c.id}/users`);
+                    const data = await res.json();
+                    const roster = data.filter(student => student.id !== user.user_id);
+                    return {id: c.id, name: c.name, roster: roster};
+                }); 
+                const rosters = await Promise.all(rostersProm);
+                setRosters(rosters);
                 setLoading(false);
+                setSelectedImage(imageMap[0]);
+
             })
             .catch(err => {
-                console.error("Failed to load student users:", err);
+                console.error("Failed to load class and roster data:", err);
                 setLoading(false);
             });
+
     }, [BASE_URL]);
 
     const handleCreateNew = () => {
@@ -57,7 +84,8 @@ function NewKudosPage({ onSubmit }) {
         const { name, value } = e.target;
         setFormData(prev => ({
             ...prev,
-            [name]: value
+            [name]: value,
+            ...(name === 'class' ? { recipient: '' } : {})
         }));
     };
 
@@ -85,58 +113,38 @@ function NewKudosPage({ onSubmit }) {
             return;
         }
 
-        // find the class the card should be sent in
-        Promise.all([
-            fetch(`${BASE_URL}/users/${user.user_id}/classes`).then(res => res.json()),
-            fetch(`${BASE_URL}/users/${formData.recipient}/classes`).then(res => res.json())
-        ])
-            .then(([senderClasses, recipientClasses]) => {
+        // make card json
+        const newCard = {
+            card_id: uuidv4(),
+            sender_id: user.user_id,
+            recipient_id: formData.recipient,
+            class_id: formData.class,
+            title: formData.title,
+            content: formData.message,
+            status: "PENDING",
+            approvedBy: null
+        };
 
-                // find a common class 
-                const senderClassIds = senderClasses.class_id || [];
-                const recipientClassIds = recipientClasses.class_id || [];
-                const commonClass = senderClassIds.find(classId =>
-                    recipientClassIds.includes(classId)
-                );
-                if (!commonClass) {
-                    console.log("sender and recipient don't share a class in the db");
-                    console.log("[TEMP FIX] you must create a new class and add both users to it via curl commands");
-                    throw new Error("sender and recipient don't share a class");
-                }
-
-                // make card json
-                const newCard = {
-                    card_id: uuidv4(),
-                    sender_id: user.user_id,
-                    recipient_id: formData.recipient,
-                    class_id: commonClass ? commonClass : PLACEHOLDER_CLASS_ID, // use fetched classID when its non-null
-                    title: formData.title,
-                    content: formData.message,
-                    status: "PENDING",
-                    approvedBy: null
-                };
-
-                // send post request
-                return fetch(`${BASE_URL}/kudo-card`, {
-                    method: "POST",
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(newCard)
-                });
-            })
-            .then(res => {
-                if (!res.ok) throw new Error("Failed to submit");
-                return res.json();
-            })
-            .then(data => {
-                console.log("Kudos submitted:", data);
-                navigate('/home');
-                setFormData({ // reset form
-                    recipient: '',
-                    title: titleOptions[0],
-                    message: ''
-                });
-            })
-            .catch(err => console.error("Submission failed:", err));
+        // send post request
+        return fetch(`${BASE_URL}/kudo-card`, {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newCard)
+        })
+        .then(res => {
+            if (!res.ok) throw new Error("Failed to submit");
+            return res.json();
+        })
+        .then(data => {
+            console.log("Kudos submitted:", data);
+            navigate('/home');
+            setFormData({ // reset form
+                recipient: '',
+                title: titleOptions[0],
+                message: ''
+            });
+        })
+        .catch(err => console.error("Submission failed:", err));
 
     };
 
@@ -150,6 +158,26 @@ function NewKudosPage({ onSubmit }) {
                 <h1>Create a Kudo Card</h1>
                 <form onSubmit={handleSubmit} className="kudos-form">
                     <div className="form-row">
+
+                        <div className="form-group">
+                            <label htmlFor="class">Select a Class</label>
+                            <select
+                                id="class"
+                                className="to-from-title"
+                                name="class"
+                                value={formData.class}
+                                required
+                                onChange={handleChange}
+                            >
+                                <option value=""> -- Select a Class -- </option>
+                                {classes.map((c) => (
+                                    <option key={c.id} value={c.id}>
+                                        {c.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
                         <div className="form-group">
                             <label htmlFor="recipient">Recipient</label>
                             <select
@@ -159,13 +187,13 @@ function NewKudosPage({ onSubmit }) {
                                 value={formData.recipient}
                                 onChange={handleChange}
                                 required
+                                disabled={!formData.class}
                             >
                                 <option value=""> -- Select a recipient -- </option>
-                                {students.map((student) => (
-                                    <option key={student.user_id} value={student.user_id}>
-                                        {student.name}
-                                    </option>
-                                ))}
+                                {(rosters.find((r) => r.id === formData.class)?.roster || []).map( (s) => (
+                                    <option key={s.id} value={s.id}>
+                                        {s.name}
+                                    </option>))}
                             </select>
                         </div>
                     </div>
@@ -188,7 +216,6 @@ function NewKudosPage({ onSubmit }) {
                                 </button>
                             ))}
                         </div>
-                        <input type="hidden" name="title" value={formData.title} required />
                     </div>
 
                     {/* 🖼️ Message + image container */}
