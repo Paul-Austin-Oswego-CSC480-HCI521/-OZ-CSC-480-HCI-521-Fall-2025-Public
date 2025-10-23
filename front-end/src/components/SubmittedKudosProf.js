@@ -5,7 +5,7 @@ function SubmittedKudosProf({ submitted, onSelect }) {
 
     // Navigate to review page when a row is clicked
     const handleRowClick = (kudos) => {
-        navigate("/review", { state: { selectedKudos: kudos } });
+        onSelect(kudos);
     };
 
     return (

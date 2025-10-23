@@ -6,6 +6,7 @@ import Footer from "../components/Footer";
 import { useUser } from "../components/UserContext";
 import ReviewedKudosProf from "../components/ReviewedKudosProf";
 import SubmittedKudosProf from "../components/SubmittedKudosProf";
+import ProfReview from "../components/ProfReview";
 
 function ProfessorView() {
     const BASE_URL = process.env.REACT_APP_API_BASE_URL;
@@ -13,6 +14,7 @@ function ProfessorView() {
     const navigate = useNavigate();
     const [reviewedKudos, setReviewedKudos] = useState([]);
     const [submittedKudos, setSubmittedKudos] = useState([]);
+    const [selectedKudo, setSelectedKudo] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -139,7 +141,7 @@ function ProfessorView() {
     };
 
     const handleSelectKudos = (kudos) => {
-        navigate("/review", { state: { initialData: kudos } });
+        setSelectedKudo(kudos)
     };
 
     return (
@@ -153,6 +155,17 @@ function ProfessorView() {
                 </>
                 {/* )} */}
             </div></main>
+
+            {selectedKudo && (
+                <div className="modal-overlay-rev">
+                    <div className="review-modal">
+                        <ProfReview initialData={selectedKudo} onClose={() => {
+                            setSelectedKudo(null);
+                            getKudos();}} />
+                    </div>
+                </div>
+            )}
+
             <Footer />
         </div>
     );

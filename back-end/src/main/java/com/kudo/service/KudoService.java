@@ -150,13 +150,15 @@ public class KudoService {
     }
 
     public Kudocard createCard(KudocardDTO.CreateKudoRequest req) throws SQLException {
+        String outStatus = "PENDING";
+        if (isInstructorOf(req.getSender_id(), req.getRecipient_id()))
+            outStatus = "APPROVED";
         final String sql = """
         INSERT INTO KUDOS_CARDS
-            (sender_id, recipient_id, class_id, title, content)
-        VALUES (?, ?, ?, ?, ?)
+            (sender_id, recipient_id, class_id, title, content, status)
+        VALUES (?, ?, ?, ?, ?, ?)
         RETURNING *
         """;
-
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setObject(1, req.getSender_id());
@@ -164,6 +166,7 @@ public class KudoService {
             stmt.setObject(3, req.getClass_id());
             stmt.setString(4, req.getTitle());
             stmt.setString(5, req.getContent());
+            stmt.setString(6, outStatus);
             // stmt.setBoolean(6, Boolean.TRUE.equals(req.getIs_anonymous()));
             //stmt.setTimestamp(7, Timestamp.from(Instant.now()));
             try  (ResultSet rs = stmt.executeQuery()) {
