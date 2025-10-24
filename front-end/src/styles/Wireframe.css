@@ -767,6 +767,7 @@ select:focus {
     font-size: 1.5rem;
     padding: 16px 60px;
     border-radius: 8px;
+    margin-bottom: 25px;
 }
 
 .review-page .submit-btn .close-btn {

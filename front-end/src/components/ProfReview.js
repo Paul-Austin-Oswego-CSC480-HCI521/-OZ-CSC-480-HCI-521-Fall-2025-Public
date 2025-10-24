@@ -17,7 +17,6 @@ function ProfReview({ initialData, onClose }) {
     const [selectedStatus, setSelectedStatus] = useState("APPROVED");
     const [rejectReason, setRejectReason] = useState("");
     const { user } = useUser();
-    const navigate = useNavigate();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -28,28 +27,21 @@ function ProfReview({ initialData, onClose }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (formData.note !== ""){
-            setRejectReason(rejectReason + ": " + formData.note)
-        }
         // update status in db
         try {
-            console.log(initialData);
-
             const updatedCard = {card_id: initialData.id,
                                  approved_by: user.user_id,
                                  status: selectedStatus,
-                                 professor_note: rejectReason,
+                                 professor_note: rejectReason + formData.note.trim(),
                                 };
 
             console.log(updatedCard);
-
             const res = await fetch( `${BASE_URL}/kudo-card`,{
                     method: "PATCH",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(updatedCard),
                 }
             );
-
             if (!res.ok) throw new Error("Failed to update card.");
             onClose();
         } catch (error) {
@@ -151,13 +143,13 @@ function ProfReview({ initialData, onClose }) {
                             onChange={(e) => setRejectReason(e.target.value)}
                             required
                         >
-                            <option value=""></option>
-                            <option value="Not relevant to the class or learning content">Not relevant to the class or learning content</option>
-                            <option value="Inappropritae language">Inappropritae language</option>
-                            <option value="Incomplete or too short to be meaningful">Incomplete or too short to be meaningful</option>
-                            <option value="This Kudos duplicates a previous submissions">This Kudos duplicates a previous submissions</option>
-                            <option value="Submitted to the wrong section or group">Submitted to the wrong section or group</option>
-                            <option value="">Other</option>
+                            <option value=""> -- Select a reason -- </option>
+                            <option value="Not relevant to the class or learning content: ">Not relevant to the class or learning content</option>
+                            <option value="Inappropritae language: ">Inappropritae language</option>
+                            <option value="Incomplete or too short to be meaningful: ">Incomplete or too short to be meaningful</option>
+                            <option value="This Kudos duplicates a previous submissions: ">This Kudos duplicates a previous submissions</option>
+                            <option value="Submitted to the wrong section or group: ">Submitted to the wrong section or group</option>
+                            <option value="Other: ">Other</option>
                         </select>
                         </div>
                         <div className="form-group">

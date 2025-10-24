@@ -12,6 +12,7 @@
 * **Acceptance Criteria:**
 * The system must add a new user record to the database when a new account is successfully created.  
 * All unsubmitted data is discarded when a user exits the AC process.
+* The system allows users to set a display name different from the name associated with their Google account.
 
 #### AC.3: All users in the system should have a unique email address.
 * **Acceptance Criteria:**
