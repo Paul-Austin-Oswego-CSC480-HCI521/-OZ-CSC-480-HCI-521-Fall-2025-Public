@@ -263,7 +263,12 @@ function NewKudosPage({ onSubmit }) {
                         <button
                             type="button"
                             className="discard-btn"
-                            onClick={() => navigate(-1)}
+                            onClick={() => {
+                                const sure = window.confirm("Discard this Kudo? Your message will be lost.");
+                                if (sure) {
+                                    navigate(-1);
+                                }
+                            }}
                         >
                             Discard
                         </button>
