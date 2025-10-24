@@ -188,7 +188,7 @@
 }
 
 .title-button:hover:not(.selected) {
-    background-color: #e6f3f3;
+    background-color: white;
 }
 
 .title-button.selected {
@@ -219,13 +219,6 @@
     justify-content: space-between;
     align-items: center;
     margin-top: 8px;
-}
-
-.anonymous-label {
-    display: flex;
-    align-items: center;
-    font-size: 0.95em;
-    gap: 6px;
 }
 
 .char-count {
@@ -479,18 +472,9 @@ tr.selected-row td.default-kudos-table-data {
   width: 250px;
 }
 
-
-#recipient.to-from-title {
-    background-color: #ffffff;
-    color: #000000;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    padding: 8px;
-}
-
 .to-from-title {
     padding: 6px 6px;
-    border: none;
+    border: 1px solid black;
     background-color: white;
     font-family: 'Poppins', sans-serif;
     font-size: 20px;
@@ -508,7 +492,7 @@ tr.selected-row td.default-kudos-table-data {
     padding: 6px 12px;
     border: 2px solid #093b3b;
     border-radius: 3px;
-    background-color: #FAFDF2;
+    background-color: white;
     font-family: 'Poppins', sans-serif;
     color: #093B3B;
     outline: none;
@@ -517,6 +501,12 @@ tr.selected-row td.default-kudos-table-data {
 
 .textBox:focus {
     border-color: #093b3b;
+}
+
+.form-group label,
+.form-group select,
+.form-group textarea {
+    margin-bottom: 1rem;
 }
 
 .close-btn {
@@ -550,32 +540,53 @@ tr.selected-row td.default-kudos-table-data {
 
 .button-row {
     display: flex;
+    align-items: center;
     justify-content: center;
-    gap: 20px;
-    margin-top: 20px;
-    flex: 1;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
     flex-direction: row;
 }
 
-.submit-btn,
-.discard-btn {
+.button-row label{
+    display:flex;
+    align-items: center;
+    font-size:1rem;
+    cursor:pointer;
+}
+
+.button-row input[type="checkbox"]{
+    margin-right: 0.5rem;
+    transform: scale(1.2);
+}
+
+.submit-discard-btn {
     background: #ccddbe;
     color: #093b3b;
     font-family: 'Poppins', sans-serif;
     border: none;
     border-radius: 6px;
-    padding: 12px 50px;
+    padding: 14px 32px;
     cursor: pointer;
-    transition: background 0.3s ease;
+    transition: background 0.3s ease, transform 0.2s ease;
     font-weight: bold;
-    width: 50%;
-    display: block;
-    margin: 0 auto;
+    font-size: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* space between text and icon */
 }
 
-.submit-btn:hover,
-.discard-btn:hover {
-    background-color: #ebebeb;
+.submit-discard-btn:hover {
+    background-color: #093B3B;
+    color: #EAF141;
+    transform: scale(1.05);
+}
+
+.close-btn {
+    background: #FAFDF2;
+    color: black;
+    border: none;
+    outline: none;
+    cursor: pointer;
 }
 
 .approve-reject {
@@ -654,48 +665,45 @@ select:focus {
     }
 }
 
-
-/* 🧩 Message + image side-by-side layout */
 .message-image-container {
     display: flex;
-    align-items: flex-start;
-    justify-content: flex-start;
-    gap: 40px; /* increased spacing between textbox and image */
+    flex-direction: row;
+    width: 100%;
+    min-height: 400px;
+    gap: 40px;
     margin-top: 20px;
-    padding-right: 10px; /* adds breathing room */
+    padding-right: 10px;
     flex-wrap: nowrap;
 }
 
-.message-image-container > div {
+.message-image-container .left-column {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
 }
 
-/* Text area */
-.message-image-container .textBox {
+.message-image-container .left-column .textBox {
     width: 100%;
     resize: vertical;
 }
 
-/* Image preview box */
-.image-preview {
-    width: 200px;
-    height: 200px;
-    border-radius: 12px;
-    overflow: hidden;
-    background-color: #f9f9f9;
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+.message-image-container .right-column {
+    flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-shrink: 0;
-    margin-left: 10px; /* extra buffer from the textbox */
+    background-color: #f9f9f9;
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Image inside the preview */
-.image-preview img {
+.message-image-container .right-column img {
     width: 100%;
     height: 100%;
     object-fit: contain;
+    border-radius: 12px;
 }
 
 /* Responsive stacking for small screens */
