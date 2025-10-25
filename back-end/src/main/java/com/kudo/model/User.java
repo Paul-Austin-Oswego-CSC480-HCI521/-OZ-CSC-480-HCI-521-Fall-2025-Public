@@ -2,7 +2,6 @@ package com.kudo.model;
 
 import java.util.UUID;
 import jakarta.json.bind.annotation.JsonbProperty;
-import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.json.bind.annotation.JsonbTypeAdapter;
 import com.kudo.adapter.UserRoleAdapter;
 
@@ -13,13 +12,13 @@ public class User {
 
     @JsonbProperty("email")
     private String email;
-    
+
     @JsonbProperty("name")
     private String name;
-    
-    @JsonbTransient
-    private String password_hash;
-    
+
+    @JsonbProperty("google_id")
+    private String google_id;
+
     @JsonbProperty("role")
     @JsonbTypeAdapter(UserRoleAdapter.class)
     private Role role;
@@ -32,20 +31,20 @@ public class User {
     // Default constructor
     public User() {}
 
-    // Constructor for new users
-    public User(String email, String name, String password_hash, Role role) {
+    // Constructor for new OAuth users
+    public User(String email, String name, String google_id, Role role) {
         this.email = email;
         this.name = name;
-        this.password_hash = password_hash;
+        this.google_id = google_id;
         this.role = role;
     }
 
-    // Constructor with UUID
-    public User(UUID user_id, String email, String name, String password_hash, Role role) {
+    // Constructor with UUID (for database retrieval)
+    public User(UUID user_id, String email, String name, String google_id, Role role) {
         this.user_id = user_id;
         this.email = email;
         this.name = name;
-        this.password_hash = password_hash;
+        this.google_id = google_id;
         this.role = role;
     }
 
@@ -73,12 +72,12 @@ public class User {
         this.name = name;
     }
 
-    public String getPassword_hash() {
-        return password_hash;
+    public String getGoogle_id() {
+        return google_id;
     }
 
-    public void setPassword_hash(String password_hash) {
-        this.password_hash = password_hash;
+    public void setGoogle_id(String google_id) {
+        this.google_id = google_id;
     }
 
     public Role getRole() {

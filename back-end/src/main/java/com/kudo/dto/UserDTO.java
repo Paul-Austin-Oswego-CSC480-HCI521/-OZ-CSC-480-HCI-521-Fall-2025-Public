@@ -10,7 +10,7 @@ import java.util.UUID;
 // User DTOs
 public class UserDTO {
 
-    // Request DTO for creating new users
+    // Request DTO for creating new users (Admin only - OAuth is primary auth method)
     public static class CreateRequest {
         @NotBlank(message = "Email is required")
         @Email(message = "Email must be valid")
@@ -20,9 +20,8 @@ public class UserDTO {
         @Size(min = 2, max = 100, message = "Name must be between 2 and 100 characters")
         private String name;
 
-        @NotBlank(message = "Password is required")
-        @Size(min = 8, message = "Password must be at least 8 characters")
-        private String password;
+        @NotBlank(message = "Google ID is required")
+        private String google_id;
 
         @NotBlank(message = "Role is required")
         @Pattern(regexp = "STUDENT|INSTRUCTOR", message = "Role must be STUDENT or INSTRUCTOR")
@@ -32,10 +31,10 @@ public class UserDTO {
         public CreateRequest() {}
 
         // Full constructor
-        public CreateRequest(String email, String name, String password, String role) {
+        public CreateRequest(String email, String name, String google_id, String role) {
             this.email = sanitize(email);
             this.name = sanitize(name);
-            this.password = sanitize(password);
+            this.google_id = sanitize(google_id);
             this.role = sanitize(role);
         }
 
@@ -55,12 +54,12 @@ public class UserDTO {
             this.name = sanitize(name);
         }
 
-        public String getPassword() {
-            return password;
+        public String getGoogle_id() {
+            return google_id;
         }
 
-        public void setPassword(String password) {
-            this.password = sanitize(password);
+        public void setGoogle_id(String google_id) {
+            this.google_id = sanitize(google_id);
         }
 
         public String getRole() {

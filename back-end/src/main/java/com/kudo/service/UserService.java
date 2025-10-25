@@ -22,28 +22,28 @@ public class UserService {
     @Resource(lookup = "jdbc/kudosdb")
     private DataSource dataSource;
 
-    // Create user
-    public User createUser(User user) throws SQLException {
+    // Create OAuth user
+    public User createOAuthUser(User user) throws SQLException {
         if (user == null) {
             throw new IllegalArgumentException("User cannot be null");
         }
-        
-        String sql = "INSERT INTO USERS (email, name, password_hash, role) VALUES (?, ?, ?, ?) RETURNING user_id";
-        
+
+        String sql = "INSERT INTO USERS (email, name, google_id, role) VALUES (?, ?, ?, ?) RETURNING user_id";
+
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
+
             stmt.setString(1, user.getEmail());
             stmt.setString(2, user.getName());
-            stmt.setString(3, user.getPassword_hash());
+            stmt.setString(3, user.getGoogle_id());
             stmt.setString(4, user.getRole().name());
-            
+
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 user.setUser_id((UUID) rs.getObject("user_id"));
                 return user;
             }
-            
+
             throw new SQLException("Failed to create user, no ID returned");
         }
     }
@@ -53,19 +53,19 @@ public class UserService {
         if (userId == null) {
             return Optional.empty();
         }
-        
-        String sql = "SELECT user_id, email, name, password_hash, role FROM USERS WHERE user_id = ?";
-        
+
+        String sql = "SELECT user_id, email, name, google_id, role FROM USERS WHERE user_id = ?";
+
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
+
             stmt.setObject(1, userId);
             ResultSet rs = stmt.executeQuery();
-            
+
             if (rs.next()) {
                 return Optional.of(mapResultSetToUser(rs));
             }
-            
+
             return Optional.empty();
         }
     }
@@ -73,37 +73,37 @@ public class UserService {
 
     // Get all users
     public List<User> getAllUsers() throws SQLException {
-        String sql = "SELECT user_id, email, name, password_hash, role FROM USERS ORDER BY name";
-        
+        String sql = "SELECT user_id, email, name, google_id, role FROM USERS ORDER BY name";
+
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
+
             ResultSet rs = stmt.executeQuery();
             List<User> users = new ArrayList<>();
-            
+
             while (rs.next()) {
                 users.add(mapResultSetToUser(rs));
             }
-            
+
             return users;
         }
     }
 
     // Get users by role
     public List<User> getUsersByRole(User.Role role) throws SQLException {
-        String sql = "SELECT user_id, email, name, password_hash, role FROM USERS WHERE role = ? ORDER BY name";
-        
+        String sql = "SELECT user_id, email, name, google_id, role FROM USERS WHERE role = ? ORDER BY name";
+
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
+
             stmt.setString(1, role.name());
             ResultSet rs = stmt.executeQuery();
             List<User> users = new ArrayList<>();
-            
+
             while (rs.next()) {
                 users.add(mapResultSetToUser(rs));
             }
-            
+
             return users;
         }
     }
@@ -113,12 +113,12 @@ public class UserService {
         if (userId == null || updatedUser == null) {
             throw new IllegalArgumentException("UserId and updatedUser cannot be null");
         }
-        
+
         String sql = "UPDATE USERS SET name = ?, role = ? WHERE user_id = ?";
-        
+
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
+
             stmt.setString(1, updatedUser.getName());
             stmt.setString(2, updatedUser.getRole().name());
             stmt.setObject(3, userId);
@@ -157,7 +157,7 @@ public class UserService {
             return Optional.empty();
         }
 
-        String sql = "SELECT user_id, email, name, password_hash, role FROM USERS WHERE email = ?";
+        String sql = "SELECT user_id, email, name, google_id, role FROM USERS WHERE email = ?";
 
         try (Connection conn = dataSource.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -170,6 +170,52 @@ public class UserService {
                 return Optional.of(user);
             }
             return Optional.empty();
+        }
+    }
+
+    // Get user by Google ID
+    public Optional<User> getUserByGoogleId(String googleId) throws SQLException {
+        if (googleId == null || googleId.isBlank()) {
+            return Optional.empty();
+        }
+
+        String sql = "SELECT user_id, email, name, google_id, role FROM USERS WHERE google_id = ?";
+
+        try (Connection conn = dataSource.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, googleId.trim());
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                User user = mapResultSetToUser(rs);
+                return Optional.of(user);
+            }
+            return Optional.empty();
+        }
+    }
+
+    // Update user's Google ID (for linking existing accounts)
+    public User updateUserGoogleId(UUID userId, String googleId) throws SQLException {
+        if (userId == null || googleId == null) {
+            throw new IllegalArgumentException("UserId and googleId cannot be null");
+        }
+
+        String sql = "UPDATE USERS SET google_id = ? WHERE user_id = ?";
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, googleId);
+            stmt.setObject(2, userId);
+
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows == 0) {
+                throw new SQLException("User not found with ID: " + userId);
+            }
+
+            return getUserById(userId).orElseThrow(() ->
+                new SQLException("Failed to retrieve updated user"));
         }
     }
 
@@ -192,21 +238,6 @@ public class UserService {
         }
     }
 
-    // Convert DTO to User
-    public User createRequestToUser(UserDTO.CreateRequest request, String hashedPassword) {
-        if (request == null) {
-            throw new IllegalArgumentException("CreateRequest cannot be null");
-        }
-
-        User.Role role = parseRole(request.getRole());
-
-        return new User(
-            request.getEmail(),
-            request.getName(),
-            hashedPassword,
-            role
-        );
-    }
 
     // Update User from DTO
     public void updateUserFromUserData(User existingUser, UserDTO.UserData userData) {
@@ -259,7 +290,7 @@ public class UserService {
             (UUID) rs.getObject("user_id"),
             rs.getString("email"),
             rs.getString("name"),
-            rs.getString("password_hash"),
+            rs.getString("google_id"),
             User.Role.valueOf(rs.getString("role"))
         );
     }

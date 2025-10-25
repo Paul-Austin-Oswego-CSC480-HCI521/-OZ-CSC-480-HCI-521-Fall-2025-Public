@@ -40,8 +40,12 @@ services:
       - DB_PASSWORD=${POSTGRES_PASSWORD}
       - BACKEND_HTTP_PORT=${BACKEND_HTTP_PORT}
       - BACKEND_HTTPS_PORT=${BACKEND_HTTPS_PORT}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRATION_HOURS=${JWT_EXPIRATION_HOURS}
+      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
   frontend: #frontend service
-    build: 
+    build:
       context: ./front-end
       dockerfile: Dockerfile
     container_name: kudos-front-end-app
@@ -52,8 +56,10 @@ services:
     networks:
       - kudos-backend-network
     environment:
-      - FRONTEND_HTTP_PORT=${FRONTEND_HTTP_PORT} 
+      - FRONTEND_HTTP_PORT=${FRONTEND_HTTP_PORT}
       - NODE_ENV="development"
+      - REACT_APP_GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - REACT_APP_API_BASE_URL=${REACT_APP_API_BASE_URL}
     stdin_open: true
     tty: true
     

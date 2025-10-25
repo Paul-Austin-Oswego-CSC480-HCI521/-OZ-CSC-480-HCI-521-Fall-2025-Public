@@ -5,7 +5,6 @@ import com.kudo.dto.UserDTO;
 import com.kudo.model.User;
 import com.kudo.service.UserService;
 
-import jakarta.annotation.Resource;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -13,12 +12,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -125,19 +119,20 @@ public Response getUserByEmail(@QueryParam("email") String email) throws SQLExce
     }
 
     /**
-     * POST /kudo-app/api/users - Create a new user
+     * POST /kudo-app/api/users - Create a new user (Admin only - normally users are created via OAuth)
      *
      * Call: POST http://localhost:9080/kudo-app/api/users
      * Content-Type: application/json
-     * Body: {"email":"john.doe@example.com","name":"John Doe","password":"password123","role":"STUDENT"}
+     * Body: {"email":"john.doe@example.com","name":"John Doe","google_id":"1234567890","role":"STUDENT"}
      *
-     * Returns: 201 Created with user JSON object (excludes password, includes generated UUID)
+     *
+     * Returns: 201 Created with user JSON object (includes generated UUID)
      * Returns: 400 Bad Request if required fields missing or invalid role
      * Returns: 409 Conflict if email already exists
      * Returns: 500 Internal Server Error for database issues
      *
      * Example response:
-     * {"user_id":"36f6b7db-63c2-4d4a-aeac-0bf909295f7f","email":"john.doe@example.com","name":"John Doe","role":"STUDENT"}
+     * {"user_id":"36f6b7db-63c2-4d4a-aeac-0bf909295f7f","email":"john.doe@example.com","name":"John Doe","google_id":"1234567890","role":"STUDENT"}
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -147,9 +142,14 @@ public Response getUserByEmail(@QueryParam("email") String email) throws SQLExce
             throw new IllegalStateException("Email already exists");
         }
 
-        String hashedPassword = hashPassword(userCreateDTO.getPassword());
-        User user = userService.createRequestToUser(userCreateDTO, hashedPassword);
-        User createdUser = userService.createUser(user);
+        User.Role role = User.Role.valueOf(userCreateDTO.getRole().toUpperCase());
+        User user = new User(
+            userCreateDTO.getEmail(),
+            userCreateDTO.getName(),
+            userCreateDTO.getGoogle_id(),
+            role
+        );
+        User createdUser = userService.createOAuthUser(user);
 
         return Response.status(Response.Status.CREATED).entity(createdUser).build();
     }
@@ -235,8 +235,4 @@ public Response getUserByEmail(@QueryParam("email") String email) throws SQLExce
         return userService.getUserClasses(user_id);
     }
 
-    // Password hashing placeholder
-    private String hashPassword(String password) {
-        return password;
-    }
 }
