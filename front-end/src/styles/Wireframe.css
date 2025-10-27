@@ -16,6 +16,153 @@
     flex: 1;
 }
 
+.login-container {
+    display: flex;
+    flex-direction: row;
+    width: 100vw;   /* full width of screen */
+    height: 100vh;  /* full height of viewport */
+    margin: 0;
+    padding: 0;
+}
+
+.login-left-column {
+    flex: 1;
+    background-color: #093B3B;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.login-right-column {
+    flex: 1;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+}
+
+.login-right-column h2 {
+    font-size: 2rem;
+    color: #093B3B;
+    margin-bottom: 2rem;
+    font-weight: bold;
+    text-align: left;
+}
+
+@media (max-width: 768px) {
+    .login-container {
+        flex-direction: column; /* stack columns on mobile */
+    }
+    .login-left-column,
+    .login-right-column {
+        flex: none;
+        width: 100%;
+        height: auto;
+    }
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;       /* fills the right column */
+    padding: 2rem 3rem; /* smaller padding so inputs are proportional */
+    box-sizing: border-box;
+}
+
+.login-form h2 {
+    width: 100%;
+    text-align: left;
+    margin: 0 0 1rem 0;
+}
+
+.login-form label {
+    display: flex;
+    flex-direction: column;
+    text-align:left;
+    font-size: 1rem;
+    color: #333;
+    width: 100%;
+}
+
+.login-form input[type="email"],
+.login-form input[type="password"] {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+.login-form input[type="email"]:focus,
+.login-form input[type="password"]:focus {
+    border-color: #093B3B;
+    outline: none;
+}
+
+/* Buttons */
+.login-button {
+    width: 50%;
+    padding: 0.9rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-color: #CCDDBE;
+    color: #093B3B;
+    font: bold 1rem "Poppins", sans-serif;
+}
+
+.login-button:hover{
+    background-color: #093B3B;
+    color: white;
+}
+
+/* Create account link/button */
+.create-new-user {
+    background: none;
+    border: none;
+    color: black;
+    font-size: 0.95rem;
+    margin-top: 1rem;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 1.5rem;
+    flex-direction: column;
+    text-align:left;
+}
+
+.create-new-user:hover {
+    color: #0b4f4f;
+    cursor: pointer;
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    margin: 0;
+}
+
+.checkbox-group input[type="checkbox"] {
+    transform: scale(1.2);
+    accent-color: #093B3B; /* match your theme */
+    margin: 0;
+}
+
+.checkbox-group label {
+    font-size: 1rem;
+    color: #333;
+    margin: 0;
+    line-height:1;
+}
+
 /* received/sent kudos forms */
 .received-kudos,
 .sent-kudos {
@@ -362,18 +509,17 @@ tr.selected-row td.default-kudos-table-data {
   gap: 0.5rem;
 }
 
-.login-form label {
-  display: flex;
-  flex-direction: column;
-  text-align: left;
-  width: 250px;
-}
+/*.login-form label {*/
+/*  display: flex;*/
+/*  flex-direction: column;*/
+/*  text-align: left;*/
+/*}*/
 
-.login-form input[type="text"],
-.login-form input[type="email"] {
-  padding: 0.5rem;
-  font-size: 1rem;
-}
+/*.login-form input[type="text"],*/
+/*.login-form input[type="email"] {*/
+/*  padding: 0.5rem;*/
+/*  font-size: 1rem;*/
+/*}*/
 
 .home-content {
     display: flex;

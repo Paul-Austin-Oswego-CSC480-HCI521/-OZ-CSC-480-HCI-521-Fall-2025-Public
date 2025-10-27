@@ -19,9 +19,9 @@ function NewKudosPage({ onSubmit }) {
 
     const titleOptions = ['Well Done!', 'Nice Job!', 'Great Work!'];
     const imageMap = {
-        'Well Done!': '/images/welldone.png',
-        'Nice Job!': '/images/nicejob.png',
-        'Great Work!': '/images/greatwork.png',
+        'Well Done!': '/images/wellDoneP.png',
+        'Nice Job!': '/images/niceJobPreview.png',
+        'Great Work!': '/images/greatWorkPreview.png',
     };
     const [selectedImage, setSelectedImage] = useState(imageMap[titleOptions[0]]);
 
