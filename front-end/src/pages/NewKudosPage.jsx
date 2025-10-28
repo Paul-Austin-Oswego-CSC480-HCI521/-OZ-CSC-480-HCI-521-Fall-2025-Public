@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useUser } from '../components/UserContext';
+import { useUser, authFetch } from '../components/UserContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import '../styles/Wireframe.css';
 import { v4 as uuidv4 } from 'uuid';
@@ -36,13 +36,13 @@ function NewKudosPage({ onSubmit }) {
     });
 
     useEffect(() => {
-        fetch(`${BASE_URL}/users/${user.user_id}/classes`)
+        authFetch(`${BASE_URL}/users/${user.user_id}/classes`)
             .then(res => res.json())
             .then(async (data) => {
 
                 // get list of class names and ids
                 const classProm = data.class_id.map(async (classId) => {
-                    const res = await fetch(`${BASE_URL}/class/${classId}`);
+                    const res = await authFetch(`${BASE_URL}/class/${classId}`);
                     const data = await res.json();
                     return {id: classId, name: data.class[0].class_name}
                 });
@@ -59,7 +59,7 @@ function NewKudosPage({ onSubmit }) {
 
                 // get a roster for each class 
                 const rostersProm = classList.map(async (c) => {
-                    const res = await fetch(`${BASE_URL}/class/${c.id}/users`);
+                    const res = await authFetch(`${BASE_URL}/class/${c.id}/users`);
                     const data = await res.json();
                     const roster = data.filter(student => student.id !== user.user_id);
                     return {id: c.id, name: c.name, roster: roster};
@@ -128,7 +128,7 @@ function NewKudosPage({ onSubmit }) {
         };
 
         // send post request
-        return fetch(`${BASE_URL}/kudo-card`, {
+        return authFetch(`${BASE_URL}/kudo-card`, {
             method: "POST",
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(newCard)

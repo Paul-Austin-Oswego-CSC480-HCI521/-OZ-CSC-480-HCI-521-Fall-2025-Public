@@ -3,7 +3,7 @@ import '../styles/Wireframe.css';
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { useUser } from "../components/UserContext";
+import { useUser, authFetch } from "../components/UserContext";
 import ReviewedKudosProf from "../components/ReviewedKudosProf";
 import SubmittedKudosProf from "../components/SubmittedKudosProf";
 import ProfReview from "../components/ProfReview";
@@ -20,9 +20,9 @@ function ProfessorView() {
 
     // get cards details (same as StudentView.jsx)
     const getCard = async (cardId) => {
-        const response = await fetch(`${BASE_URL}/kudo-card/${cardId}?user_id=${user.user_id}`);
+        const response = await authFetch(`${BASE_URL}/kudo-card/${cardId}?user_id=${user.user_id}`);
         if (!response.ok) {
-            throw new Error(`Failed to fetch card ${cardId}`);
+            throw new Error(`Failed to authFetch card ${cardId}`);
         }
         return await response.json();
     };
@@ -30,9 +30,9 @@ function ProfessorView() {
     // get users info (name, email, role) from the id (same as StudentView.jsx)
     const getUserInfo = async (userId) => {
         try {
-            const response = await fetch(`${BASE_URL}/users/${userId}`);
+            const response = await authFetch(`${BASE_URL}/users/${userId}`);
             if (!response.ok) {
-                throw new Error(`Failed to fetch user ${userId}`);
+                throw new Error(`Failed to authFetch user ${userId}`);
             }
             const userData = await response.json();
             return userData.name;
@@ -50,12 +50,12 @@ function ProfessorView() {
         try {
 
             // get list of sent card ids and list of received card ids 
-            const subRes = await fetch(`${BASE_URL}/kudo-card/list/submitted?professor_id=${user.user_id}`);
+            const subRes = await authFetch(`${BASE_URL}/kudo-card/list/submitted?professor_id=${user.user_id}`);
             const subList = await subRes.json();
-            const revRes = await fetch(`${BASE_URL}/kudo-card/list/reviewed?professor_id=${user.user_id}`);
+            const revRes = await authFetch(`${BASE_URL}/kudo-card/list/reviewed?professor_id=${user.user_id}`);
             const revList = await revRes.json();
             if (!subRes.ok || !revRes.ok) {
-                throw new Error('Failed to fetch card lists');
+                throw new Error('Failed to authFetch card lists');
             }
 
             // gets card info

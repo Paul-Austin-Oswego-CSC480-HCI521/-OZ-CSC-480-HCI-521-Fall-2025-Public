@@ -961,3 +961,30 @@ select:focus {
     align-items: center;
     justify-content: center;
 }
+
+/* login page */
+
+.loginPage-button {
+    position: relative;
+    bottom: 6px;
+    font-family: 'Poppins', sans-serif;
+    border: 2px solid #FAFDF2;
+    margin: 1px 1px;
+    border-radius: 6px;
+    width: 30%;
+    padding: 10px 95px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    background-color: #ebebeb;
+    color: #093B3B;
+}
+
+.loginPage-button:hover {
+    background-color: white;
+    color: black;
+}
+
+.loginPage-button.selected {
+    background: #CCDDBE;
+    color: #093B3B;
+}
