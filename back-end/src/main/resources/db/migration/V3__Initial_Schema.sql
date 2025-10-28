@@ -1,5 +1,21 @@
 -- Initial database schema for Kudos Card System
 
+-- Function to generate a random, unique n digit code
+CREATE FUNCTION gen_unique_n_digit_code(n INT) RETURNS INTEGER AS $$
+DECLARE
+    new_code INTEGER;
+BEGIN
+    LOOP
+        -- Generate a random number between 100000... and 999999...
+        new_code := floor(random() * 9*(POWER(10,(n-1))) + 1*(POWER(10,(n-1))));
+        -- Check if the number already exists; exit the loop if it's unique
+        IF NOT EXISTS (SELECT 1 FROM CLASSES WHERE class_code = new_code) THEN
+            RETURN new_code;
+        END IF;
+    END LOOP;
+END;
+$$ LANGUAGE plpgsql;
+
 -- Create USERS table
 CREATE TABLE USERS (
     user_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -12,7 +28,10 @@ CREATE TABLE USERS (
 -- Create CLASSES table
 CREATE TABLE CLASSES (
     class_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    class_name VARCHAR(100) NOT NULL
+    class_name VARCHAR(100) NOT NULL,
+    class_code INT DEFAULT gen_unique_n_digit_code(6),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    closed_at TIMESTAMP
 );
 
 -- Create USER_CLASSES junction table

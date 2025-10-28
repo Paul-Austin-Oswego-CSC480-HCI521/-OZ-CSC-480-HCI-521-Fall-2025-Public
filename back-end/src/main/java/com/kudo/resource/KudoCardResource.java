@@ -1,25 +1,21 @@
 package com.kudo.resource;
 
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+
+import com.kudo.dto.FlexibleDTO;
 import com.kudo.service.KudoService;
 
 import com.kudo.dto.KudocardDTO;
 import com.kudo.dto.KudocardDTO.CreateKudoRequest;
-import com.kudo.model.CardIdList;
 import com.kudo.model.Kudocard;
-import com.kudo.service.UserService;
-import jakarta.annotation.Resource;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import javax.sql.DataSource;
+
 import java.sql.*;
-import java.util.UUID;
 
 @ApplicationScoped
 @Path("kudo-card")
@@ -39,17 +35,28 @@ public class KudoCardResource {
     @GET
     @Path("list/submitted")
     @Produces(MediaType.APPLICATION_JSON)
-    public CardIdList getSubmittedKudos(@QueryParam("professor_id") UUID professorId) {
+    public Object getSubmittedKudos(@QueryParam("professor_id") UUID professorId
+                                    /*@QueryParam("values") Optional<ArrayList<String>> values*/) {
+//        return kudoService.getSubmittedCards(professorId, values.orElseGet(ArrayList::new)).stream()
+//                .map(FlexibleDTO::getFields)
+//                .toList();
+
         return kudoService.getSubmittedCards(professorId);
     }
 
     @GET
     @Path("list/reviewed")
     @Produces(MediaType.APPLICATION_JSON)
-    public CardIdList getReviewedKudos(@QueryParam("professor_id") UUID professorId) {
+    public Object getReviewedKudos(@QueryParam("professor_id") UUID professorId
+                                       /*@QueryParam("values") Optional<ArrayList<String>> values*/) {
+
+
+//        return kudoService.getReviewedCards(professorId, values.orElseGet(ArrayList::new)).stream()
+//                .map(FlexibleDTO::getFields)
+//                .toList();
+
         return kudoService.getReviewedCards(professorId);
     }
-
 
      /**
      * GET /kudo-app/kudo-card/list/sent - Retrieve all card_ids which correspond to cards sent by a given user
@@ -58,19 +65,26 @@ public class KudoCardResource {
      *
      * Query Parameters:
      * - user_id: the UUID of the user who's sent card's card_ids are to be queried
-     *
+     * - values: a list of values to get from the record
+      *
      * Returns: 200 OK with JSON array of UUID card_ids
      * Returns: 200 OK with empty JSON array if no cards sent by the given user are found
      * Returns: 500 Internal Server Error for database issues
      *
      * Example response:
-     * {"card_id":["X-X-X-X-X"]}
+     * [{card_id:"X-X-X-X-X", ...}]
      */
     @GET
     @Path("list/sent")
     @Produces(MediaType.APPLICATION_JSON)
-    public CardIdList getSentKudoList(@QueryParam("user_id") UUID user_id) {
-        return kudoService.getCardListBySender(user_id);
+    public Object getSentKudoList(@QueryParam("user_id") UUID sender_id,
+                                        @QueryParam("values") Optional<ArrayList<String>> values) {
+        HashMap<String, Object> match = new HashMap<>();
+        match.put("sender_id", sender_id);
+
+        return kudoService.getCardListBy(values.orElseGet(ArrayList::new), match).stream()
+                .map(FlexibleDTO::getFields)
+                .toList();
     }
 
     //Returns list of all IDs pertaining to Kudos which are received by this user
@@ -84,18 +98,37 @@ public class KudoCardResource {
      * Query Parameters:
      * - user_id: the UUID of the user who's received card's card_ids are to be queried
      *
+     * Request Body (optional):
+     *        {
+     *         "sender_id": "SENDER-UUID",
+     *         ...
+     *         }
+     *
      * Returns: JSON array of UUID card_ids
      * Returns: empty JSON array if no cards received by the given user are found
      * Returns: 500 Internal Server Error for database issues
      *
      * Example response:
-     * {"card_id":["X-X-X-X-X"]}
+     * [{card_id:"X-X-X-X-X", ...}]
      */
+//    @GET
+//    @Path("list/received")
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public CardIdList getReceivedKudoList(@QueryParam("user_id") UUID user_id) {
+//        return kudoService.getCardListByReceived(user_id, values.get());
+//    }
+
     @GET
     @Path("list/received")
     @Produces(MediaType.APPLICATION_JSON)
-    public CardIdList getReceivedKudoList(@QueryParam("user_id") UUID user_id) {
-        return kudoService.getCardListByReceived(user_id);
+    public Object getReceivedKudoList(@QueryParam("user_id") UUID recipient_id,
+                                          @QueryParam("values") Optional<ArrayList<String>> values) {
+        HashMap<String, Object> match = new HashMap<>();
+        match.put("recipient_id", recipient_id);
+
+        return kudoService.getCardListBy(values.orElseGet(ArrayList::new), match).stream()
+                .map(FlexibleDTO::getFields)
+                .toList();
     }
 
     /**
@@ -146,7 +179,6 @@ public class KudoCardResource {
         "class_id": "CLASS-UUID",
         "title": "{card title}",
         "content": "{card content}",
-        "is_anonymous": true (DEFAULT)
         }   
      * If successful, should return saved Kudos card response, status:CREATED
      */

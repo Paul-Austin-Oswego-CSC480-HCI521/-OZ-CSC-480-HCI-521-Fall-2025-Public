@@ -167,6 +167,7 @@ Get list of card IDs sent by a user.
 
 **Parameters:**
 - `user_id` (query): User UUID
+- `values` : a list of values to get from the record
 
 **Example:**
 ```bash
@@ -175,12 +176,12 @@ curl "http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api/kudo-card/l
 
 **Response:**
 ```json
-{
-  "card_id": [
-    "abcd1234-1234-1234-1234-123456789def",
-    "abcd1234-1234-1234-1234-123456789ghi"
-  ]
-}
+[
+  {
+    card_id:"X-X-X-X-X",
+    ...
+  }
+]
 ```
 
 ### `GET /api/kudo-card/list/received`
@@ -188,6 +189,8 @@ Get list of card IDs received by a user.
 
 **Parameters:**
 - `user_id` (query): User UUID
+- `values` : a list of values to get from the record
+```
 
 **Example:**
 ```bash
@@ -196,12 +199,12 @@ curl "http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api/kudo-card/l
 
 **Response:**
 ```json
-{
-  "card_id": [
-    "abcd1234-1234-1234-1234-123456789jkl",
-    "abcd1234-1234-1234-1234-123456789mno"
-  ]
-}
+[
+  {
+    card_id:"X-X-X-X-X",
+    ...
+  }
+]
 ```
 
 ### `GET /api/kudo-card/{card_id}`
@@ -330,9 +333,14 @@ curl -X PATCH http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api/kud
 
 Create a new class.
 
-**Parameters:**
+**Request:**
 
-- `class_name` (query): Name of the class
+```json
+{
+  "class_name": "Teaching 101",
+  "closed_at": "2026-08-24T14:00:00" | optional
+}
+```
 
 **Example:**
 
@@ -477,3 +485,55 @@ curl -X DELETE "http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api/c
 ```
 200 OK
 ```
+
+Here’s the documentation for your `PATCH /api/class/{class_id}` endpoint, formatted consistently with the rest of your API docs:
+
+---
+
+### `PATCH /api/class/{class_id}`
+
+Update a class, such as setting the `closed_at` timestamp.
+
+**Parameters:**
+
+* `class_id` (path): UUID of the class to update
+
+**Request Body:**
+
+```json
+{
+  "closed_at": "2025-12-31T23:59:59" 
+}
+```
+
+**Example:**
+
+```bash
+curl -X PATCH "http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api/class/12345678-1234-1234-1234-123456789abc" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "closed_at": "2025-12-31T23:59:59"
+  }'
+```
+
+**Response:**
+
+```json
+{
+  "class_id": "12345678-1234-1234-1234-123456789abc",
+  "class_name": "Teaching 101",
+  "class_code": 42,
+  "created_at": "2025-08-01T10:15:30",
+  "closed_at": "2025-12-31T23:59:59"
+}
+```
+
+**Notes:**
+
+* If `closed_at` is omitted in the request, the field will remain unchanged.
+* Returns `404 Not Found` if the class with the given `class_id` does not exist.
+* Returns `500 Internal Server Error` if there is a database problem.
+
+---
+
+Do you want me to also **update the table of classes API endpoints** in your document to include this `PATCH` entry in the same style as `POST` and `PUT`?

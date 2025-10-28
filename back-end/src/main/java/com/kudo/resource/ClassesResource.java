@@ -1,7 +1,9 @@
 package com.kudo.resource;
 
 import com.kudo.dto.ClassDTO;
+import com.kudo.dto.KudocardDTO;
 import com.kudo.model.Classes;
+import com.kudo.model.Kudocard;
 import jakarta.annotation.Resource;
 import jakarta.json.Json;
 import jakarta.json.JsonArrayBuilder;
@@ -12,10 +14,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -28,42 +27,111 @@ public class ClassesResource {
     @Resource(lookup = "jdbc/kudosdb")
     private DataSource dataSource;
 
+
+
     /**
      * POST /kudo-app/api/class - Create a new class
      *
-     * Call: POST http://localhost:9080/kudo-app/api/class
+     * Accepts JSON payload with:
+     * - class_name (required)
+     * - closed_at (optional)
      *
-     * Query Parameters:
-     * - class_name: The name of the class
+     * Request Body:
+     * {
+     *   "class_name": "Teaching 101",
+     *   "closed_at": "2026-08-24T14:00:00" | optional
+     * }
      *
-     * Returns: 200 OK with the JSON representation of the created class
-     * Returns: 500 Internal Server Error for database issues
-     *
-     * Example response:
-     * {"class_id":"X-X-X-X-X","class_name":"Teaching 101"}
+     * Example Response:
+     * {
+     *   "class_id": "X-X-X-X-X",
+     *   "class_name": "Teaching 101",
+     *   "class_code": 123456,
+     *   "created_at": "2025-12-27T14:00:00",
+     *   "closed_at": "2026-08-24T14:00:00"
+     * }
      */
     @POST
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Classes createClass(@QueryParam("class_name") String class_name) {
+    public Classes createClass(ClassDTO.ClassCreate dto) {
+        if (dto.getClass_name() == null || dto.getClass_name().isBlank()) {
+            throw new NotFoundException("class_name is required");
+        }
+
         final String sql = """
-        INSERT INTO CLASSES
-            (class_name)
-        VALUES (?)
-        RETURNING *
+            INSERT INTO CLASSES (class_name, closed_at)
+            VALUES (?, ?)
+            RETURNING *
         """;
 
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setObject(1, class_name);
 
-            try  (ResultSet rs = stmt.executeQuery()) {
+            stmt.setString(1, dto.getClass_name());
+
+            if (dto.getClosed_at() != null) {
+                stmt.setTimestamp(2, Timestamp.valueOf(dto.getClosed_at()));
+            } else {
+                stmt.setNull(2, Types.TIMESTAMP);
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return new Classes(rs.getString("class_name"));
+                    return new Classes(
+                            (UUID) rs.getObject("class_id"),
+                            rs.getString("class_name"),
+                            rs.getInt("class_code"),
+                            rs.getTimestamp("created_at"),
+                            rs.getTimestamp("closed_at")
+                    );
                 }
             }
+
             throw new InternalServerErrorException("Failed to create class");
-        } catch  (SQLException e) {
+        } catch (SQLException e) {
             throw new InternalServerErrorException("Database error");
+        }
+    }
+
+    @PATCH
+    @Path("{class_id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateClass(@PathParam("class_id") UUID class_id, ClassDTO.ClassUpdate update) {
+
+        final String sql = """
+        UPDATE CLASSES
+        SET closed_at = ?
+        WHERE class_id = ?
+        RETURNING class_id, class_name, class_code, created_at, closed_at
+        """;
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setTimestamp(1, update.getClosedAtAsTimestamp());
+            stmt.setObject(2, class_id);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (!rs.next()) {
+                    throw new NotFoundException("Class not found");
+                }
+
+                // You already have a DTO for classes, so reuse it if available.
+                Classes updated = new Classes(
+                        (UUID) rs.getObject("class_id"),
+                        rs.getString("class_name"),
+                        rs.getInt("class_code"),
+                        rs.getTimestamp("created_at"),
+                        rs.getTimestamp("closed_at")
+                );
+
+                return Response.ok(updated).build();
+            }
+
+        } catch (SQLException e) {
+            throw new InternalServerErrorException("Database error: " + e.getMessage());
         }
     }
 
@@ -192,6 +260,9 @@ public class ClassesResource {
                 JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
                 objectBuilder.add("class_id", rs.getString("class_id"));
                 objectBuilder.add("class_name", rs.getString("class_name"));
+                objectBuilder.add("class_code", rs.getInt("class_code"));
+                objectBuilder.add("created_at", rs.getTimestamp("created_at").toString());
+                objectBuilder.add("closed_at", rs.getTimestamp("closed_at").toString());
                 arrayBuilder.add(objectBuilder);
             }
 
@@ -201,7 +272,6 @@ public class ClassesResource {
             throw new InternalServerErrorException("Database error");
         }
     }
-
 
     @GET
     @Path("{class_id}/users")
