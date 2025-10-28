@@ -31,7 +31,7 @@ function App(){
                     element={user && user.role === 'STUDENT' ? <StudentView/> : <Navigate to ="/login" />} />
                 <Route path = "/professorView" 
                     element={user && user.role === 'INSTRUCTOR' ? <ProfessorView /> : <Navigate to ="/login" />} />
-                <Route path = "/class-management" element={user && user.role === 'INSTRUCTOR' ? <CourseManagement /> : <Navigate to="/login" />} />
+                <Route path = "/course-management" element={user && user.role === 'INSTRUCTOR' ? <CourseManagement /> : <Navigate to="/login" />} />
                 <Route path="/studentView/new-kudos" element={user && user.role === 'STUDENT' ? <NewKudosPage /> : <Navigate to="/login" />} />
                 <Route path="/professorView/new-kudos" element={user && user.role === 'INSTRUCTOR' ? <NewKudosPage /> : <Navigate to="/login" />} />
                 <Route path = "/review" element={user && user.role === 'INSTRUCTOR' ? <ReviewPage /> : <Navigate to="/" />} />

@@ -45,6 +45,7 @@ function StudentView() {
     
     // get all kudos (sent and received) for this user
     const getKudos = useCallback(async () => {
+        console.log("here");
         if (!user?.user_id) return;
         setLoading(true);
         setError(null);
@@ -129,11 +130,11 @@ function StudentView() {
         } finally {
             setLoading(false);
         }
-    }, [user?.user_id, BASE_URL, getCard, getUserInfo]);
+    }, [user?.user_id, BASE_URL]);
 
     useEffect(() => {
         getKudos();
-    }, [getKudos, getCard, getUserInfo]);
+    }, [getKudos]);
 
     return (
         <div className="app-container">
