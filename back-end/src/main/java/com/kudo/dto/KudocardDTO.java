@@ -4,7 +4,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import jakarta.json.bind.annotation.JsonbProperty;
+
+
 import com.kudo.model.Kudocard.Status;
 
 import java.sql.Timestamp;
@@ -277,5 +278,6 @@ public class KudocardDTO {
             this.professor_note = professor_note;
         }
     }
+
 
 }

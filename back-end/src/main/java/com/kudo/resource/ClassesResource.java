@@ -1,7 +1,9 @@
 package com.kudo.resource;
 
 import com.kudo.dto.ClassDTO;
+import com.kudo.dto.KudocardDTO;
 import com.kudo.model.Classes;
+import com.kudo.model.Kudocard;
 import jakarta.annotation.Resource;
 import jakarta.json.Json;
 import jakarta.json.JsonArrayBuilder;
@@ -100,6 +102,47 @@ public class ClassesResource {
         Random random = new Random();
         int code = 100000 + random.nextInt(900000);
         return String.valueOf(code);
+    }
+
+    @PATCH
+    @Path("{class_id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateClass(@PathParam("class_id") UUID class_id, ClassDTO.ClassUpdate update) {
+
+        final String sql = """
+        UPDATE CLASSES
+        SET closed_at = ?
+        WHERE class_id = ?
+        RETURNING class_id, class_name, class_code, created_at, closed_at
+        """;
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setTimestamp(1, update.getClosedAtAsTimestamp());
+            stmt.setObject(2, class_id);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (!rs.next()) {
+                    throw new NotFoundException("Class not found");
+                }
+
+                // You already have a DTO for classes, so reuse it if available.
+                Classes updated = new Classes(
+                        (UUID) rs.getObject("class_id"),
+                        rs.getString("class_name"),
+                        rs.getInt("class_code"),
+                        rs.getTimestamp("created_at"),
+                        rs.getTimestamp("closed_at")
+                );
+
+                return Response.ok(updated).build();
+            }
+
+        } catch (SQLException e) {
+            throw new InternalServerErrorException("Database error: " + e.getMessage());
+        }
     }
 
     /**
@@ -574,6 +617,9 @@ public class ClassesResource {
                 JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
                 objectBuilder.add("class_id", rs.getString("class_id"));
                 objectBuilder.add("class_name", rs.getString("class_name"));
+                objectBuilder.add("class_code", rs.getInt("class_code"));
+                objectBuilder.add("created_date", rs.getTimestamp("created_date").toString());
+                objectBuilder.add("end_date", rs.getTimestamp("end_date").toString());
                 objectBuilder.add("join_code", rs.getString("join_code"));
                 arrayBuilder.add(objectBuilder);
             }
