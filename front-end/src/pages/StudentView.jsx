@@ -129,11 +129,11 @@ function StudentView() {
         } finally {
             setLoading(false);
         }
-    }, [user?.user_id, BASE_URL]);
+    }, [user?.user_id, BASE_URL, getCard, getUserInfo]);
 
     useEffect(() => {
         getKudos();
-    }, [getKudos]);
+    }, [getKudos, getCard, getUserInfo]);
 
     return (
         <div className="app-container">

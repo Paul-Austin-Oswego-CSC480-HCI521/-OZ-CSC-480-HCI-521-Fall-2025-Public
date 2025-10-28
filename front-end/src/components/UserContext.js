@@ -44,7 +44,7 @@ export const UserProvider = ({ children }) => {
         }
     };
       fetchUser();
-  }, [BASE_URL]);
+  }, [BASE_URL, user?.user_id]);
 
   const saveUser = (userData) => {
     setUser(userData);

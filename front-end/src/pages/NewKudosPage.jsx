@@ -13,7 +13,7 @@ function NewKudosPage({ onSubmit }) {
     const {user} = useUser();
     const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-    const PLACEHOLDER_CLASS_ID = "12345678-1234-1234-1234-123456789def";
+    // const PLACEHOLDER_CLASS_ID = "12345678-1234-1234-1234-123456789def";
 
     const [rosters, setRosters] = useState([]);
 
@@ -73,7 +73,7 @@ function NewKudosPage({ onSubmit }) {
                 setLoading(false);
             });
 
-    }, [BASE_URL]);
+    }, [BASE_URL, user?.user_id]);
 
     const handleCreateNew = () => {
         const base = location.pathname.includes("studentView")

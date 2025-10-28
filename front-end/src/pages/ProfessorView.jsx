@@ -128,7 +128,7 @@ function ProfessorView() {
         } finally {
             setLoading(false);
         }
-    }, [user?.user_id, BASE_URL]);
+    }, [user?.user_id, BASE_URL, getCard, getUserInfo]);
 
     useEffect(() => {
         if (!user?.user_id) return;

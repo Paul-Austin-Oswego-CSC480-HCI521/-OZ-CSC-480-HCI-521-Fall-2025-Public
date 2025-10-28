@@ -8,8 +8,10 @@ function Header({ onCreateNew, showNav = true }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [showNotif, setShowNotif] = useState(false);
-  const { setUser } = useUser();
+  const { user, setUser } = useUser();
 
+  const handleCourseAddition = () => navigate('/course-addition');
+  const handleCourseManagement = () => navigate('/course-management');
   const handleGoHome = () => navigate('/home');
   const handleNotif = () => setShowNotif((v) => !v);
   const handleLogOut = () => {
@@ -18,7 +20,8 @@ function Header({ onCreateNew, showNav = true }) {
     setTimeout(() => {
         navigate('/home');
     }, 0);
-    }
+};
+
     const isSelected = (path) => {
         if (path ==='/home') {
             return location.pathname === '/home' ||
@@ -71,26 +74,53 @@ function Header({ onCreateNew, showNav = true }) {
                     </svg>
                     <span className="icon-label">Create</span>
                 </button>
-                <button onClick={handleLogOut}
-                        className={`icon-btn ${isSelected('/logout') ? 'selected' : ''}`}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                         className="lucide lucide-grip-icon lucide-grip">
-                        <circle cx="12" cy="5" r="1"/>
-                        <circle cx="19" cy="5" r="1"/>
-                        <circle cx="5" cy="5" r="1"/>
-                        <circle cx="12" cy="12" r="1"/>
-                        <circle cx="19" cy="12" r="1"/>d
-                        <circle cx="5" cy="12" r="1"/>
-                        <circle cx="12" cy="19" r="1"/>
-                        <circle cx="19" cy="19" r="1"/>
-                        <circle cx="5" cy="19" r="1"/>
+                {user?.role === 'STUDENT' && (
+                    <button onClick={handleCourseAddition} className="icon-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                        viewBox='0 0 24 24' fill="none"
+                        stroke="currentColor" strokeWidth="2" strokeLinecap='round'
+                        strokeLinejoin='round' className='lucide lucide-book-plus'>
+                            <path d="M12 4v16" />
+                            <path d="M8 8h8" />
+                            <path d="M4 19V5a2 2 0 0 1 2-2h10" />
+                        </svg>
+                        <span className='icon-label'>Add Course</span>
+                    </button>
+                )}
+
+                {user?.role === 'INSTRUCTOR' && (
+                    <button onClick={handleCourseManagement} className="icon-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                        viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" strokeWidth="2" strokeLinecap="round"
+                        strokeLinejoin="round" className="lucide lucide-book-cog">
+                        <path d="M4 19V5a2 2 0 0 1 2-2h10"/>
+                        <path d="M12 10h4"/>
+                        <path d="M12 14h4"/>
+                        <circle cx="18" cy="18" r="3"/>
+                        <path d="M18 15v6"/>
+                        <path d="M15 18h6"/>
+                    </svg>
+                    <span className="icon-label">Manage Courses</span>
+                    </button>
+                )}
+
+                <button
+                    onClick={handleLogOut}
+                    className={`icon-btn ${isSelected('/logout') ? 'selected' : ''}`}
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                        viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" strokeWidth="2" strokeLinecap="round"
+                        strokeLinejoin="round" className="lucide lucide-log-out">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
                     </svg>
                     <span className="icon-label">Log Out</span>
                 </button>
-            </nav>
-        )}
-
+                </nav>
+            )}
           <Notification
               open={showNotif}
               onClose={() => setShowNotif(false)}
