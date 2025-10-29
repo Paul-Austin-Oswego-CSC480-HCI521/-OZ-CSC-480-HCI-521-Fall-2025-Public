@@ -37,7 +37,7 @@ function Header({ onCreateNew, showNav = true }) {
 
   return (
       <header className="header">
-        <img src="/updatedLogo.png" alt="Animated Logo" className="logo"/>
+        <img src="/updatedLogoV2.png" alt="Animated Logo" className="logoSmall"/>
 
         {showNav && (
             <nav className="nav-buttons">

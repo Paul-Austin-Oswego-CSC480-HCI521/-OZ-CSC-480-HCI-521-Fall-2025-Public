@@ -235,6 +235,11 @@
     width: auto;
 }
 
+.logoSmall {
+    height: 100px;
+    width: auto;
+}
+
 .nav-buttons {
     display: flex;
     flex-direction: row;
