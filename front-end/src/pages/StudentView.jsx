@@ -67,6 +67,13 @@ function StudentView() {
             const cardDetails = await Promise.all(allCardsIds.map(cardId => 
                 getCard(cardId)));
 
+            // sort by date
+            cardDetails.sort((a, b) => {
+                const dateA = new Date(a.created_at?.replace(/\[UTC\]$/, '') || 0);
+                const dateB = new Date(b.created_at?.replace(/\[UTC\]$/, '') || 0);
+                return dateB - dateA;
+            });
+
             // get the name of each user
             const userIds = new Set();
             cardDetails.forEach(kudo => {
