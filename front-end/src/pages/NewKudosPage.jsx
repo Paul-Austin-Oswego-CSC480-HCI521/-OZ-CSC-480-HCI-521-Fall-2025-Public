@@ -92,14 +92,22 @@ function NewKudosPage({ onSubmit }) {
     };
 
     const handlePaste = (e) => {
+        e.preventDefault(); 
+
         const pastedText = e.clipboardData.getData('text');
-        console.log("Pasted from clipboard:", pastedText);
-        const cleanedText = pastedText.trim();
-        setFormData(prev => ({
-            ...prev,
-            message: prev.message + cleanedText
-        }));
-        e.preventDefault();
+        const incoming = pastedText.trim();
+
+        setFormData(prev => {
+            const current = prev.message;
+            const spaceLeft = 500 - current.length;
+
+            const clipped = incoming.slice(0, Math.max(spaceLeft, 0));
+
+            return {
+                ...prev,
+                message: current + clipped
+            };
+        });
     };
 
     const handleSubmit = (e) => {
