@@ -43,8 +43,9 @@ export const UserProvider = ({ children }) => {
             setLoading(false);
         }
     };
-      fetchUser();
-  }, [BASE_URL]);
+    if (!user?.user_id) return;
+    fetchUser();
+  }, []);
 
   const saveUser = (userData) => {
     setUser(userData);
@@ -58,6 +59,31 @@ export const UserProvider = ({ children }) => {
   return (<UserContext.Provider value={{ user, setUser, loading, error }}>
     {children}
     </UserContext.Provider>);
+};
+
+export const authFetch = async (url, options = {}) => {
+
+    // get token from localstroage 
+    const token = localStorage.getItem('jwt_token');
+    if (!token) {
+    throw new Error('No authentication token found');
+    }
+
+    // put token in header
+    const headers = {
+    'Content-Type': 'application/json',
+    ...options.headers,
+    'Authorization': `Bearer ${token}`,};
+    const response = await fetch(url, {
+    ...options,
+    headers,});
+
+    // reomve bad tokens 
+    if (response.status === 401) {
+    localStorage.removeItem('jwt_token');
+    window.location.href = '/login';
+    throw new Error('Session expired. Please login again.');}
+    return response;
 };
 
 export const useUser = () => useContext(UserContext);

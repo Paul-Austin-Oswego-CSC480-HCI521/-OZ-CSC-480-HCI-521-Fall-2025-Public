@@ -10,7 +10,8 @@ services:
       - "${POSTGRES_PORT}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - .back-end/src/main/resources/db/migration:/docker-entrypoint-initdb.d:ro
+      - ./back-end/src/main/resources/db/migration:/docker-entrypoint-initdb.d:ro
+
     networks:
       - kudos-network
     healthcheck:

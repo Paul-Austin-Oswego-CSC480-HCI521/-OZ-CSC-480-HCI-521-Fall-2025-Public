@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 function SubmittedKudosProf({ submitted, onSelect }) {
     const navigate = useNavigate();
 
-    // Navigate to review page when a row is clicked
     const handleRowClick = (kudos) => {
         onSelect(kudos);
     };

@@ -16,6 +16,153 @@
     flex: 1;
 }
 
+.login-container {
+    display: flex;
+    flex-direction: row;
+    width: 100vw;   /* full width of screen */
+    height: 100vh;  /* full height of viewport */
+    margin: 0;
+    padding: 0;
+}
+
+.login-left-column {
+    flex: 1;
+    background-color: #093B3B;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.login-right-column {
+    flex: 1;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+}
+
+.login-right-column h2 {
+    font-size: 2rem;
+    color: #093B3B;
+    margin-bottom: 2rem;
+    font-weight: bold;
+    text-align: left;
+}
+
+@media (max-width: 768px) {
+    .login-container {
+        flex-direction: column; /* stack columns on mobile */
+    }
+    .login-left-column,
+    .login-right-column {
+        flex: none;
+        width: 100%;
+        height: auto;
+    }
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;       /* fills the right column */
+    padding: 2rem 3rem; /* smaller padding so inputs are proportional */
+    box-sizing: border-box;
+}
+
+.login-form h2 {
+    width: 100%;
+    text-align: left;
+    margin: 0 0 1rem 0;
+}
+
+.login-form label {
+    display: flex;
+    flex-direction: column;
+    text-align:left;
+    font-size: 1rem;
+    color: #333;
+    width: 100%;
+}
+
+.login-form input[type="email"],
+.login-form input[type="password"] {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+.login-form input[type="email"]:focus,
+.login-form input[type="password"]:focus {
+    border-color: #093B3B;
+    outline: none;
+}
+
+/* Buttons */
+.login-button {
+    width: 50%;
+    padding: 0.9rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-color: #CCDDBE;
+    color: #093B3B;
+    font: bold 1rem "Poppins", sans-serif;
+}
+
+.login-button:hover{
+    background-color: #093B3B;
+    color: white;
+}
+
+/* Create account link/button */
+.create-new-user {
+    background: none;
+    border: none;
+    color: black;
+    font-size: 0.95rem;
+    margin-top: 1rem;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 1.5rem;
+    flex-direction: column;
+    text-align:left;
+}
+
+.create-new-user:hover {
+    color: #0b4f4f;
+    cursor: pointer;
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    margin: 0;
+}
+
+.checkbox-group input[type="checkbox"] {
+    transform: scale(1.2);
+    accent-color: #093B3B; /* match your theme */
+    margin: 0;
+}
+
+.checkbox-group label {
+    font-size: 1rem;
+    color: #333;
+    margin: 0;
+    line-height:1;
+}
+
 /* received/sent kudos forms */
 .received-kudos,
 .sent-kudos {
@@ -84,7 +231,7 @@
 
 /* kudos logo */
 .logo {
-    height: 120px;
+    height: 240px;
     width: auto;
 }
 
@@ -362,18 +509,17 @@ tr.selected-row td.default-kudos-table-data {
   gap: 0.5rem;
 }
 
-.login-form label {
-  display: flex;
-  flex-direction: column;
-  text-align: left;
-  width: 250px;
-}
+/*.login-form label {*/
+/*  display: flex;*/
+/*  flex-direction: column;*/
+/*  text-align: left;*/
+/*}*/
 
-.login-form input[type="text"],
-.login-form input[type="email"] {
-  padding: 0.5rem;
-  font-size: 1rem;
-}
+/*.login-form input[type="text"],*/
+/*.login-form input[type="email"] {*/
+/*  padding: 0.5rem;*/
+/*  font-size: 1rem;*/
+/*}*/
 
 .home-content {
     display: flex;
@@ -816,53 +962,54 @@ select:focus {
     justify-content: center;
 }
 
-.modal-overlay {
-    position: fixed;
-    display: flex;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.55);
-    z-index: 3000;
-    align-items: center;
-    justify-content: center;
-    animation: fadeIn 0.2s ease-in-out;
+.tabs-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 1rem;
 }
 
-.modal-content {
+.tab-button {
+  padding: 8px 16px;
+  border: none;
+  background-color: #ddd;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.tab-button:hover {
+  background-color: #ccc;
+}
+
+.tab-button.active {
+  background-color: #007bff;
+  color: white;
+}
+
+
+/* login page */
+
+.loginPage-button {
     position: relative;
-    background: #fafdf2;
-    border-radius: 12px;
-    padding: 1rem;
-    max-width: 80vw;
-    max-height: 80vh;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    animation: fadeIn 0.3s ease-in-out;
-}
-
-.modal-content img {
-    max-width: 100%;
-    max-height: 70vh;
-    object-fit: contain;
-    border-radius: 8px;
-    border: 3px solid #093b3b;
-    background-color: white;
-}
-
-.close-btn {
-    position: absolute;
-    top: 10px;
-    right: 14px;
-    background: #fafdf2;
-    border: none;
-    color: #093b3b;
-    font-size: 1.8rem;
+    bottom: 6px;
+    font-family: 'Poppins', sans-serif;
+    border: 2px solid #FAFDF2;
+    margin: 1px 1px;
+    border-radius: 6px;
+    width: 30%;
+    padding: 10px 95px;
     cursor: pointer;
-    transition: transform 0.2s ease, color 0.2s ease;
+    transition: background 0.3s ease;
+    background-color: #ebebeb;
+    color: #093B3B;
 }
 
-.close-btn:hover {
-    color: #05888a;
-    transform: scale(1.15);
+.loginPage-button:hover {
+    background-color: white;
+    color: black;
+}
+
+.loginPage-button.selected {
+    background: #CCDDBE;
+    color: #093B3B;
 }

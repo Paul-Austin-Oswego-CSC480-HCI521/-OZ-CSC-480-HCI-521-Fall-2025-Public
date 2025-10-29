@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import '../styles/Wireframe.css';
-import { useUser } from "./UserContext";
+import { useUser, authFetch } from "./UserContext";
 
 function Notification({ open, onClose }) {
     const [items, setItems] = useState([]);
@@ -12,7 +12,7 @@ function Notification({ open, onClose }) {
 
         const fetchNotifications = async () => {
             try {
-                const res = await fetch(`${BASE_URL}/notifications?recipient=${user.user_id}`);
+                const res = await authFetch(`${BASE_URL}/notifications?recipient=${user.user_id}`);
                 const data = await res.json();
                 setItems(data);
             } catch (err) {

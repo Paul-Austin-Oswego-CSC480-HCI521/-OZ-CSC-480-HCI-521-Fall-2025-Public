@@ -5,7 +5,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import ReceivedKudosStudent from "../components/ReceivedKudosStudent";
 import SentKudosStudent from "../components/SentKudosStudent";
-import { useUser } from "../components/UserContext";
+import { useUser, authFetch } from "../components/UserContext";
 import { v4 as uuidv4} from 'uuid';
 
 // const PLACEHOLDER_CLASS_ID = "12345678-1234-1234-1234-123456789def"; 
@@ -21,7 +21,7 @@ function StudentView() {
 
     // get cards details 
     const getCard = async (cardId) => {
-        const response = await fetch(`${BASE_URL}/kudo-card/${cardId}?user_id=${user.user_id}`);
+        const response = await authFetch(`${BASE_URL}/kudo-card/${cardId}?user_id=${user.user_id}`);
         if (!response.ok) {
             throw new Error(`Failed to fetch card ${cardId}`);
         }
@@ -31,7 +31,7 @@ function StudentView() {
     // get users info (name, email, role) from the id
     const getUserInfo = async (userId) => {
         try {
-            const response = await fetch(`${BASE_URL}/users/${userId}`);
+            const response = await authFetch(`${BASE_URL}/users/${userId}`);
             if (!response.ok) {
                 throw new Error(`Failed to fetch user ${userId}`);
             }
@@ -45,15 +45,16 @@ function StudentView() {
     
     // get all kudos (sent and received) for this user
     const getKudos = useCallback(async () => {
+        console.log("here");
         if (!user?.user_id) return;
         setLoading(true);
         setError(null);
         try {
 
             // get list of sent card ids and list of received card ids 
-            const sentRes = await fetch(`${BASE_URL}/kudo-card/list/sent?user_id=${user.user_id}`);
+            const sentRes = await authFetch(`${BASE_URL}/kudo-card/list/sent?user_id=${user.user_id}`);
             const sentList = await sentRes.json();
-            const receivedRes = await fetch(`${BASE_URL}/kudo-card/list/received?user_id=${user.user_id}`);
+            const receivedRes = await authFetch(`${BASE_URL}/kudo-card/list/received?user_id=${user.user_id}`);
             const receivedList = await receivedRes.json();
             if (!sentRes.ok || !receivedRes.ok) {
                 throw new Error('Failed to fetch card lists');

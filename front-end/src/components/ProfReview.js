@@ -1,6 +1,6 @@
 // src/components/ProfReview.jsx
 import React, { useState } from "react";
-import { useUser } from "../components/UserContext";
+import { useUser, authFetch } from "../components/UserContext";
 import { useNavigate } from "react-router-dom";
 
 const BASE_URL = process.env.REACT_APP_API_BASE_URL;
@@ -36,7 +36,7 @@ function ProfReview({ initialData, onClose }) {
                                 };
 
             console.log(updatedCard);
-            const res = await fetch( `${BASE_URL}/kudo-card`,{
+            const res = await authFetch( `${BASE_URL}/kudo-card`,{
                     method: "PATCH",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(updatedCard),
