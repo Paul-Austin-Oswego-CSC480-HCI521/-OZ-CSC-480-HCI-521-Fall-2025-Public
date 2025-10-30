@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-// import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { useUser } from '../components/UserContext';
 import '../styles/Wireframe.css';
@@ -8,7 +7,6 @@ import '../styles/Wireframe.css';
 function Login() {
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  // const [submitting, setSubmitting] = useState(false);
   const [mode, setMode] = useState("LG");
   const [googleSignIn, setGoogleSignIn] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
@@ -18,7 +16,7 @@ function Login() {
 
   const [name, setName] = useState("");
   const [role, setRole] = useState(""); 
-  const GOOGLE_API_KEY = process.env.REACT_APP_GOOGLE_CLIENT_ID; // this must be updated in .env with your own client-id
+  const GOOGLE_API_KEY = process.env.REACT_APP_GOOGLE_CLIENT_ID;
   const [googleCred, setGoogleCred] = useState(null);
   
   useEffect(() => {

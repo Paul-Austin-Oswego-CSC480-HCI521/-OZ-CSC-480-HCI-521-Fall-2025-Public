@@ -3,14 +3,16 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import Notification from './Notification';
 import '../styles/Wireframe.css';
 import { useUser } from './UserContext';
+import CourseCodeModal from './CourseCodeModal';
 
 function Header({ onCreateNew, showNav = true }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [showNotif, setShowNotif] = useState(false);
   const { user, setUser } = useUser();
+  const [showCourseModal, setShowCourseModal] = useState(false);
 
-  const handleCourseAddition = () => navigate('/course-addition');
+  const handleCourseAddition = () => setShowCourseModal(true);
   const handleCourseManagement = () => navigate('/course-management');
   const handleGoHome = () => navigate('/home');
   const handleNotif = () => setShowNotif((v) => !v);
@@ -21,6 +23,12 @@ function Header({ onCreateNew, showNav = true }) {
         navigate('/home');
     }, 0);
 };
+
+    const handleCourseSubmit = (code) => {
+        console.log('Course code submitted:', code);
+        // TODO: call API to add course using the code
+        setShowCourseModal(false);
+    };
 
     const isSelected = (path) => {
         if (path ==='/home') {
@@ -126,6 +134,11 @@ function Header({ onCreateNew, showNav = true }) {
               onClose={() => setShowNotif(false)}
               // items={notifications}
           />
+          <CourseCodeModal
+                    open={showCourseModal}
+                    onClose={() => setShowCourseModal(false)}
+                    onSubmit={handleCourseSubmit}
+                    />
       </header>
   );
 }

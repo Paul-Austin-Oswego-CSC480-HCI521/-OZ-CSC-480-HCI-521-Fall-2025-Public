@@ -10,11 +10,11 @@ import React from "react";
 
 function Tabs({ tabs, activeTab, onTabChange }) {
   return (
-    <div className="tabs-container">
+    <div className="title-button-group">
       {tabs.map((tab) => (
         <button
           key={tab.value}
-          className={`tab-button ${activeTab === tab.value ? "active" : ""}`}
+          className={`title-button ${activeTab === tab.value ? "selected" : ""}`}
           onClick={() => onTabChange(tab.value)}
         >
           {tab.label}

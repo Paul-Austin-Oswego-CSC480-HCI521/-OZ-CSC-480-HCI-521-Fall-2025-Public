@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import Tabs from "../components/Shared/Tabs";
 import CreateClassForm from "../components/CourseManagement/CreateClassForm";
@@ -12,6 +13,7 @@ function CourseManagement() {
   const [activeTab, setActiveTab] = useState("myClasses"); // myClasses / createClass / pending
   const [classes, setClasses] = useState([]);
   const [toast, setToast] = useState(null);
+  const navigate = useNavigate();
   const { user } = useUser();
 
   const userId = user?.user_id;
@@ -71,11 +73,14 @@ function CourseManagement() {
   };
 
   return (
-    <div className="course-management-container">
+    <div className="app-container">
       <Header showNav={true} />
-
+      <div className="main-content">
       <main>
-        <h1>Course Management</h1>
+        <div className="create-new-header">
+          <button type='button' className='back-button' onClick={() => navigate(-1)}>←</button>
+          <h2>Course Management</h2>
+        </div>
 
         <Tabs
           tabs={[
@@ -121,6 +126,7 @@ function CourseManagement() {
           />
         )}
       </main>
+    </div>
     </div>
   );
 }

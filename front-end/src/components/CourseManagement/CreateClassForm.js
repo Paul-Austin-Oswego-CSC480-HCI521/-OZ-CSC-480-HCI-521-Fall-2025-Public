@@ -40,9 +40,9 @@ function CreateClassForm({ onClassCreated }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="create-class-form">
+    <form onSubmit={handleSubmit} className="button-row">
       <label>
-        Class Name:
+        Class Name : 
         <input
           type="text"
           value={className}
@@ -53,7 +53,7 @@ function CreateClassForm({ onClassCreated }) {
         />
       </label>
 
-      <button type="submit" disabled={submitting || !className.trim()}>
+      <button type="label" disabled={submitting || !className.trim()}>
         {submitting ? "Creating..." : "Create Class"}
       </button>
 
