@@ -45,7 +45,6 @@ function StudentView() {
     
     // get all kudos (sent and received) for this user
     const getKudos = useCallback(async () => {
-        console.log("here");
         if (!user?.user_id) return;
         setLoading(true);
         setError(null);

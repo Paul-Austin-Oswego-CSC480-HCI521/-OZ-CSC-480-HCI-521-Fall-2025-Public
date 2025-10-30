@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from '../components/Header';
+// import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { useUser } from '../components/UserContext';
 import '../styles/Wireframe.css';
@@ -8,7 +8,7 @@ import '../styles/Wireframe.css';
 function Login() {
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
+  // const [submitting, setSubmitting] = useState(false);
   const [mode, setMode] = useState("LG");
   const [googleSignIn, setGoogleSignIn] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
@@ -22,34 +22,45 @@ function Login() {
   const [googleCred, setGoogleCred] = useState(null);
   
   useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://accounts.google.com/gsi/client';
-    script.async = true;
-    script.defer = true;
-    document.body.appendChild(script);
+  const script = document.createElement('script');
+  script.src = 'https://accounts.google.com/gsi/client';
+  script.async = true;
+  script.defer = true;
+  document.body.appendChild(script);
 
-    script.onload = () => {
-      window.google.accounts.id.initialize({
-        client_id: GOOGLE_API_KEY,
-        callback: handleGoogleResponse,
-      });
-      window.google.accounts.id.renderButton(
-        document.getElementById('googleSignInButton'),
-        {
-          theme: 'outline',
-          size: 'large',
-          text: 'signin_with',
-          width: 300,
-        }
-      );
-    };
-
-    return () => {
-      if (document.body.contains(script)) {
-        document.body.removeChild(script);
+  script.onload = () => {
+    // Sign in button
+    window.google.accounts.id.initialize({
+      client_id: GOOGLE_API_KEY,
+      callback: handleGoogleResponse,
+    });
+    window.google.accounts.id.renderButton(
+      document.getElementById('googleSignInButton'),
+      {
+        theme: 'outline',
+        size: 'large',
+        text: 'signin_with',   // Sign in text
+        width: 300,
       }
-    };
-  }, []);
+    );
+
+    // Sign up button
+    window.google.accounts.id.renderButton(
+      document.getElementById('googleSignUpButton'),
+      {
+        theme: 'outline',
+        size: 'large',
+        text: 'signup_with',   // Sign up text
+        width: 300,
+      }
+    );
+  };
+
+  return () => {
+    if (document.body.contains(script)) document.body.removeChild(script);
+  };
+}, []);
+
 
   const handleGoogleResponse = async (response) => {
     try {
@@ -124,33 +135,39 @@ function Login() {
                   </div>
               </div>
               <div className="login-right-column">
-
-                    <h2>Login / Sign Up:</h2>
-                    <div id="googleSignInButton" className='button-row' style={{ marginBottom: '20px' }}></div>
-
-                    <div className="button-row">
-                      <button
-                          type="button"
-                          className={`loginPage-button ${
-                          mode === "LG" ? "selected" : ""
-                          }`}
-                          onClick={() => setMode("LG")}
-                      >
-                          Login
-                      </button>
-                      <button
-                          type="button"
-                          className={`loginPage-button ${
-                          mode === "SU" ? "selected" : ""
-                          }`}
-                          onClick={() => setMode("SU")}
-                      >
-                          Sign Up
-                      </button>
-                    </div>
-
+                  {mode === "LG" && (
+                    <>
+                      <h2>Login</h2>
+                      <div id="googleSignInButton" className="button-row"></div>
+                      <div id="googleSignUpButton" className="button-row"></div>
+                    </>
+                  )}
                   {mode === "SU" && (
-                    <form className="login-form" onSubmit={handleNewAuth}>
+                    <form className='login-form' onSubmit={handleNewAuth}>
+                    <div className="su-header">
+                      <button type='button' className='back-button' onClick={() => setMode("LG")}>←</button>
+                      <h2>Create Account</h2>
+                    </div>
+                      <label className='role-label'>I am a . . .</label>
+                      <div className="button-row">
+                        <button
+                            type="button"
+                            className={`role-button ${
+                            role === "STUDENT" ? "selected" : ""
+                            }`}
+                            onClick={() => setRole("STUDENT")}>
+                              <span className='circle'></span>
+                        Student</button>
+                        <button
+                            type="button"
+                            className={`role-button ${
+                            role === "INSTRUCTOR" ? "selected" : ""
+                            }`}
+                            onClick={() => setRole("INSTRUCTOR")}
+                        >
+                          <span className='circle'></span>Instructor
+                        </button>
+                      </div>
                       <div className='button-row'>
                         <label>
                             Display Name
@@ -160,42 +177,21 @@ function Login() {
                                 onChange={(e) => setName(e.target.value)}
                                 required
                                 className='textBox'
-                                placeholder=""
+                                placeholder="Set Display Name"
                                 disabled={loading}
                             />
                         </label>
                       </div>
-                      <div className='button-row'>
-                        <label>I am . . .</label>
-                      </div>
-                      <div className="button-row">
-                        <button
-                            type="button"
-                            className={`loginPage-button ${
-                            role === "STUDENT" ? "selected" : ""
-                            }`}
-                            onClick={() => setRole("STUDENT")}
-                        >Student
-                        </button>
-                        <button
-                            type="button"
-                            className={`loginPage-button ${
-                            role === "INSTRUCTOR" ? "selected" : ""
-                            }`}
-                            onClick={() => setRole("INSTRUCTOR")}
-                        >Instructor
-                        </button>
-                      </div>
+                
                       
                       <button className="login-button" type="submit" disabled={loading}>
                           {loading ? 'Logging in...' : 'Create Account'}
                       </button>
-
-                    </form>
+                    </form>                    
                   )}
                   
-                  {errorMessage && <p style={{color: 'red'}}>{errorMessage}</p>}
-                  {successMessage && <p style={{ color: "green", marginTop: "1rem" }}>{successMessage}</p>}
+                  {errorMessage && <p style={{color: 'red', textAlign: 'center'}}>{errorMessage}</p>}
+                  {successMessage && <p style={{ color: "green", marginTop: "1rem", textAlign: 'center'}}>{successMessage}</p>}
               </div>
             </div>
         <Footer/>

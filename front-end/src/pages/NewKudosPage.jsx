@@ -19,9 +19,9 @@ function NewKudosPage({ onSubmit }) {
 
     const titleOptions = ['Well Done!', 'Nice Job!', 'Great Work!'];
     const imageMap = {
-        'Well Done!': '/images/wellDoneP.png',
-        'Nice Job!': '/images/niceJobPreview.png',
-        'Great Work!': '/images/greatWorkPreview.png',
+        'Well Done!': '/images/welldone2.png',
+        'Nice Job!': '/images/nicejob2.png',
+        'Great Work!': '/images/greatwork2.png',
     };
     const [selectedImage, setSelectedImage] = useState(imageMap[titleOptions[0]]);
 
@@ -184,7 +184,10 @@ function NewKudosPage({ onSubmit }) {
                             <path d="M19 12H5"/>
                         </svg>
                     </button>
-                    <h1>Create a Kudo Card</h1>
+                    <div className="create-new-header">
+                      <button type='button' className='back-button' onClick={() => navigate(-1)}>←</button>
+                      <h2>Create a Kudo Card</h2>
+                    </div>
                 </div>
 
                 <form onSubmit={handleSubmit} className="kudos-form">
@@ -282,8 +285,11 @@ function NewKudosPage({ onSubmit }) {
 
                         <div className="right-column">
                             {selectedImage && (
-                                <div className="image-preview">
+                                <div className="image-preview-container">
                                     <img src={selectedImage} alt={formData.title}/>
+                                    <div className='message-preview-container'>
+                                        {formData.message || "Your message will appear here..."}
+                                        </div>
                                 </div>
                             )}
                         </div>
