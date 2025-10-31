@@ -1,5 +1,5 @@
 module.exports = {
-    testDir: './tests/qa_tests',
+    testDir: './test/qa_tests',
     timeout: 30000,
     use: {
         headless: true,

@@ -28,7 +28,7 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Run Playwright tests
-        run: npx playwright test tests/qa_tests/
+        run: npx playwright test test/qa_tests/
         continue-on-error: false
 
       - name: Upload test results
