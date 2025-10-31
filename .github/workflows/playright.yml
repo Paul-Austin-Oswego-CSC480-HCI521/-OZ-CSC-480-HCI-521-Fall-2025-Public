@@ -2,9 +2,9 @@ name: Playwright Tests
 
 on:
   push:
-    branches: [main, master]
+    branches: [ main, develop ]
   pull_request:
-    branches: [main, master]
+    branches: [ main, develop ]
   workflow_dispatch:
 
 jobs:
@@ -28,7 +28,7 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Run Playwright tests
-        run: npx playwright test test/
+        run: npx playwright test tests/qa_tests/
         continue-on-error: false
 
       - name: Upload test results
@@ -75,7 +75,7 @@ jobs:
             **Triggered by:** ${context.actor}
             
             ### Details
-            The Playwright test suite has failed. Please check the workflow run for detailed test results and screenshot
+            The Playwright test suite has failed. Please check the workflow run for detailed test results, screenshots, and videos.
             
             **Artifacts:**
             - Test reports and videos are available in the workflow run artifacts
