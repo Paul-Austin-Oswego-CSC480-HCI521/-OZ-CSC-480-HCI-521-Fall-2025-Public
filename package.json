@@ -1,5 +1,8 @@
 {
   "dependencies": {
     "uuid": "^13.0.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.56.1"
   }
 }
