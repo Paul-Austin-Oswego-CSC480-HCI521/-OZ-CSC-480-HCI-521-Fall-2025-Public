@@ -1,4 +1,6 @@
-module.exports = {
+// playwright.config.js
+/** @type {import('@playwright/test').PlaywrightTestConfig} */
+const config = {
     testDir: './test/qa_tests',
     timeout: 30000,
     use: {
@@ -11,4 +13,11 @@ module.exports = {
             use: { browserName: 'chromium' },
         },
     ],
+    webServer: {
+        command: 'npm run start', // change if your app uses "npm run dev" or similar
+        port: 3000,
+        reuseExistingServer: false,
+    },
 };
+
+module.exports = config;
