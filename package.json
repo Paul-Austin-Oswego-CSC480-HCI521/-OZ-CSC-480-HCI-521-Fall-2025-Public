@@ -4,5 +4,9 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.56.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "test": "playwright test"
   }
 }
