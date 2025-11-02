@@ -7,50 +7,71 @@ function SentKudosStudent( {messages = []} ) {
 
     return (
         <section className="sent-kudos">
-            <h2>Sent Kudos - ({sentKudos.length})</h2>
+            <h2>Sent Kudos - {sentKudos.length}</h2>
 
-            {sentKudos.length === 0 ? (
-                <p style={{ padding: "1rem", fontStyle: "italic" }}>No sent Kudos yet.</p>
-            ) : (
                 <table>
                     <thead>
                     <tr>
                         <th>Recipient</th>
                         <th>Title</th>
-                        <th>Kudos Status</th>
+                        <th>Kudos Status (Approved, Rejected, Pending)</th>
                         <th>Date</th>
                     </tr>
                     </thead>
                     <tbody>
-                    {sentKudos.map((k, i) => (
-                        <tr
-                            className={`received-kudos-row ${selectedRows.includes(i) ? "selected-row" : ""}`}
-                            key={k.card_id}
-                            role="button"
-                            tabIndex={0}
-                            onClick={() => {
-                                setSelectedRows((prev) =>
-                                    prev.includes(i) ? prev.filter((idx) => idx !== i): [...prev, i]
-                                );
-                                setSelectedImage(k.imageUrl);
-                            }}
-                            onKeyDown={(e) => {
-                                if (e.key === "Enter" || e.key === " ") {
+                        {sentKudos.length === 0 ? (
+                            <tr>
+                                <td colSpan={4} className="emptyTable">
+                                    No sent Kudos yet.
+                                </td>
+                            </tr>
+                        ) : (
+                            sentKudos.map((k, i) => (
+                            <tr
+                                className={`received-kudos-row ${selectedRows.includes(i) ? "selected-row" : ""}`}
+                                key={k.card_id}
+                                role="button"
+                                tabIndex={0}
+                                onClick={() => {
                                     setSelectedRows((prev) =>
-                                        prev.includes(i) ? prev.filter((idx) => idx !== i) : [...prev, i]);
+                                        prev.includes(i) ? prev.filter((idx) => idx !== i): [...prev, i]
+                                    );
                                     setSelectedImage(k.imageUrl);
-                                }
-                            }}
-                        >
-                            <td className={'default-kudos-table-data'}>{k.recipient}</td>
-                            <td className={'default-kudos-table-data'}>{k.title}</td>
-                            <td className={'default-kudos-table-data'}>{k.status}</td>
-                            <td className={'default-kudos-table-data'}>{k.date}</td>
-                        </tr>
-                    ))}
+                                }}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter" || e.key === " ") {
+                                        setSelectedRows((prev) =>
+                                            prev.includes(i) ? prev.filter((idx) => idx !== i) : [...prev, i]);
+                                        setSelectedImage(k.imageUrl);
+                                    }
+                                }}
+                            >
+                                <td className={'reviewed-kudos-table-data'}>{k.recipient}</td>
+                                <td className={'reviewed-kudos-table-data'}>{k.title}</td>
+                                <td
+                                    className={`reviewed-kudos-status ${
+                                        k.status === "APPROVED" ? "approved" :
+                                        k.status === "DENIED" ? "denied" :
+                                        "pending"
+                                    } ${selectedRows.includes(i) ? "row-read" : ""}`}
+                                >
+                                    {k.status === "APPROVED" ? (
+                                        <span>Approved</span>
+                                    ) : k.status === "DENIED" ? (
+                                        <>
+                                            <span>Rejected:</span>{" "}
+                                            {k.professor_note || "No reason provided"}
+                                        </>
+                                        ) : (
+                                            <span>Pending</span>
+                                    )}
+                                </td>
+                                <td className={'reviewed-kudos-table-data'}>{k.date}</td>
+                            </tr>
+                            ))
+                        )}
                     </tbody>
                 </table>
-            )}
 
             {selectedImage && (
                 <div className="modal-overlay" onClick={() => setSelectedImage(null)}>

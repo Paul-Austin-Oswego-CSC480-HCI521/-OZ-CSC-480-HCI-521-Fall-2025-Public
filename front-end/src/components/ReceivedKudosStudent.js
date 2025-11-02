@@ -6,10 +6,7 @@ function ReceivedKudosStudent( { received }) {
 
     return (
         <section className="received-kudos">
-            <h2>Received Kudos - ({received.length})</h2>
-            {received.length === 0 ? (
-                <p style={{padding: "1rem", fontStyle: "italic" }}>No received Kudos yet.</p>
-            ) : (
+            <h2>Received Kudos - {received.length}</h2>
             <table>
                 <thead>
                 <tr>
@@ -20,36 +17,45 @@ function ReceivedKudosStudent( { received }) {
                 </tr>
                 </thead>
                 <tbody>
-                {received.map((k, i) => (
+                {received.length === 0 ? (
+                    <tr>
+                        <td colSpan={4} className="emptyTable">
+                            No Received Kudos yet.
+                        </td>
+                    </tr>
+                ) : (
+                received.map((k, i) => (
                     <tr
                         key={k.card_id}
                         role="button"
                         tabIndex={0}
                         onClick={() => {
                             setSelectedRows((prev) =>
-                                prev.includes(i) ? prev.filter((idx) => idx !== i): [...prev, i]
+                                prev.includes(i) ? prev : [...prev, i]
                             );
                             setSelectedImage(k.imageUrl);
                         }}
                         onKeyDown={(e) => {
                             if (e.key === "Enter" || e.key === " ") {
                                 setSelectedRows((prev) => 
-                                    prev.includes(i) ? prev.filter((idx) => idx !== i) : [...prev, i]);
+                                    prev.includes(i) ? prev : [...prev, i]);
                                 setSelectedImage(k.imageUrl);
                             }
                         }}
                         className={selectedRows.includes(i) ? "selected-row" : ""}
                     >
-                        <td className={'default-kudos-table-data'}>{k.sender}</td>
+                        <td className='default-kudos-table-data'>
+                            {!selectedRows.includes(i) && <span className="unread-indicator" />}
+                            {k.sender}
+                        </td>
                         <td className={'default-kudos-table-data'}>{k.title}</td>
                         <td className={'default-kudos-table-data'}>{k.message}</td>
                         <td className={'default-kudos-table-data'}>{k.date}</td>
                     </tr>
-                ))}
+                    ))
+                )}
                 </tbody>
             </table>
-            )}
-
 
             {selectedImage && (
                 <div className="modal-overlay" onClick={() => setSelectedImage(null)}>
