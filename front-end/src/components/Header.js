@@ -45,7 +45,11 @@ function Header({ onCreateNew, showNav = true }) {
 
   return (
       <header className="header">
-        <img src="/updatedLogoV2.png" alt="Animated Logo" className="logoSmall"/>
+        <img src="/updatedLogoV2.png" 
+        alt="Kudo Space Logo " 
+        className="logoSmall"
+        onClick={handleGoHome}
+        style={{cursor: 'pointer'}}/>
 
         {showNav && (
             <nav className="nav-buttons">
