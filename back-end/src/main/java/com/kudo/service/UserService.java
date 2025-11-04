@@ -254,18 +254,38 @@ public class UserService {
         }
     }
 
-    public ClassDTO.ClassIdList getUserClasses(UUID user_id) {
-        try (Connection conn = dataSource.getConnection(); //establish database connection
-             PreparedStatement stmt = conn.prepareStatement("SELECT class_id FROM USER_CLASSES WHERE user_id = ?;");){//Static elements of query
-            stmt.setObject(1,user_id); //form the query
-            ResultSet rs = stmt.executeQuery(); //execute query to obtain list of IDs
-            List<String> classIds = new ArrayList<>(); //List which will be filled with card_ids from the result set
-            while (rs.next()) {
-                classIds.add(rs.getString("class_id")); //add ids to list
+    public ClassDTO.ClassIdList getUserClasses(UUID user_id, String enrollmentStatus) {
+        // Validate enrollment_status if provided
+        if (enrollmentStatus != null && !enrollmentStatus.isEmpty()) {
+            if (!enrollmentStatus.equals("PENDING") && !enrollmentStatus.equals("APPROVED") && !enrollmentStatus.equals("DENIED")) {
+                throw new IllegalArgumentException("Invalid enrollment_status. Must be PENDING, APPROVED, or DENIED");
+            }
+        }
+
+        try (Connection conn = dataSource.getConnection()) {
+            String sql;
+            if (enrollmentStatus != null && !enrollmentStatus.isEmpty()) {
+                sql = "SELECT class_id FROM USER_CLASSES WHERE user_id = ? AND enrollment_status = ?";
+            } else {
+                // Default to APPROVED for compatibility
+                sql = "SELECT class_id FROM USER_CLASSES WHERE user_id = ? AND enrollment_status = 'APPROVED'";
             }
 
-            return new ClassDTO.ClassIdList(classIds);
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setObject(1, user_id);
+                if (enrollmentStatus != null && !enrollmentStatus.isEmpty()) {
+                    stmt.setString(2, enrollmentStatus);
+                }
 
+                try (ResultSet rs = stmt.executeQuery()) {
+                    List<String> classIds = new ArrayList<>();
+                    while (rs.next()) {
+                        classIds.add(rs.getString("class_id"));
+                    }
+
+                    return new ClassDTO.ClassIdList(classIds);
+                }
+            }
         } catch (SQLException e) {
             throw new InternalServerErrorException("Database error");
         }

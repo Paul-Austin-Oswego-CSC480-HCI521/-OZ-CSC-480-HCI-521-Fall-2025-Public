@@ -26,6 +26,9 @@ public class ExceptionMapper implements jakarta.ws.rs.ext.ExceptionMapper<Except
         if(e instanceof NotFoundException) {
             return ((NotFoundException) e).getResponse();
         }
+        if(e instanceof BadRequestException) {
+            return ((BadRequestException) e).getResponse();
+        }
         return new ServerErrorException(e.getMessage(), 500).getResponse();
     }
 }

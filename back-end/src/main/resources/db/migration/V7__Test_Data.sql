@@ -23,36 +23,44 @@ INSERT INTO USERS (user_id, email, name, google_id, role) VALUES
 ('99999999-9999-9999-9999-999999999999', 'george.garcia@student.edu', 'George Garcia', 'google_id_george_999999', 'STUDENT'),
 ('88888888-8888-8888-8888-888888888888', 'hannah.harris@student.edu', 'Hannah Harris', 'google_id_hannah_888888', 'STUDENT');
 
--- Test classes
-INSERT INTO CLASSES (class_id, class_name) VALUES
-('c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c1c1c1', 'CSC 480 - Software Engineering'),
-('c2c2c2c2-c2c2-c2c2-c2c2-c2c2c2c2c2c2', 'CSC 365 - Database Systems'),
-('c3c3c3c3-c3c3-c3c3-c3c3-c3c3c3c3c3c3', 'CSC 321 - Data Structures');
+-- Test classes with join codes and instructors
+INSERT INTO CLASSES (class_id, class_name, join_code, created_by, end_date) VALUES
+('c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c1c1c1', 'CSC 480 - Software Engineering', '123456', '11111111-1111-1111-1111-111111111111', CURRENT_TIMESTAMP + INTERVAL '4 months'),
+('c2c2c2c2-c2c2-c2c2-c2c2-c2c2c2c2c2c2', 'CSC 365 - Database Systems', '654321', '22222222-2222-2222-2222-222222222222', CURRENT_TIMESTAMP + INTERVAL '3 months'),
+('c3c3c3c3-c3c3-c3c3-c3c3-c3c3c3c3c3c3', 'CSC 321 - Data Structures', '789012', '11111111-1111-1111-1111-111111111111', CURRENT_TIMESTAMP + INTERVAL '5 months');
 
--- Instructor enrollments
-INSERT INTO USER_CLASSES (user_id, class_id) VALUES
-('11111111-1111-1111-1111-111111111111', 'c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c1c1c1'),
-('11111111-1111-1111-1111-111111111111', 'c3c3c3c3-c3c3-c3c3-c3c3-c3c3c3c3c3c3'),
-('22222222-2222-2222-2222-222222222222', 'c2c2c2c2-c2c2-c2c2-c2c2-c2c2c2c2c2c2'),
-('33333333-3333-3333-3333-333333333333', 'c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c1c1c1');
+-- Instructor enrollments (APPROVED status)
+INSERT INTO USER_CLASSES (user_id, class_id, enrollment_status) VALUES
+('11111111-1111-1111-1111-111111111111', 'c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c1c1c1', 'APPROVED'),
+('11111111-1111-1111-1111-111111111111', 'c3c3c3c3-c3c3-c3c3-c3c3-c3c3c3c3c3c3', 'APPROVED'),
+('22222222-2222-2222-2222-222222222222', 'c2c2c2c2-c2c2-c2c2-c2c2-c2c2c2c2c2c2', 'APPROVED'),
+('33333333-3333-3333-3333-333333333333', 'c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c1c1c1', 'APPROVED');
 
--- Student enrollments
-INSERT INTO USER_CLASSES (user_id, class_id) VALUES
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c1c1c1'),
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'c2c2c2c2-c2c2-c2c2-c2c2-c2c2c2c2c2c2'),
-('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'c3c3c3c3-c3c3-c3c3-c3c3-c3c3c3c3c3c3'),
-('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c1c1c1'),
-('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'c2c2c2c2-c2c2-c2c2-c2c2-c2c2c2c2c2c2'),
-('cccccccc-cccc-cccc-cccc-cccccccccccc', 'c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c1c1c1'),
-('dddddddd-dddd-dddd-dddd-dddddddddddd', 'c2c2c2c2-c2c2-c2c2-c2c2-c2c2c2c2c2c2'),
-('dddddddd-dddd-dddd-dddd-dddddddddddd', 'c3c3c3c3-c3c3-c3c3-c3c3-c3c3c3c3c3c3'),
-('eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee', 'c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c1c1c1'),
-('ffffffff-ffff-ffff-ffff-ffffffffffff', 'c3c3c3c3-c3c3-c3c3-c3c3-c3c3c3c3c3c3'),
-('99999999-9999-9999-9999-999999999999', 'c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c1c1c1'),
-('99999999-9999-9999-9999-999999999999', 'c2c2c2c2-c2c2-c2c2-c2c2-c2c2c2c2c2c2'),
-('88888888-8888-8888-8888-888888888888', 'c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c1c1c1'),
-('88888888-8888-8888-8888-888888888888', 'c2c2c2c2-c2c2-c2c2-c2c2-c2c2c2c2c2c2'),
-('88888888-8888-8888-8888-888888888888', 'c3c3c3c3-c3c3-c3c3-c3c3-c3c3c3c3c3c3');
+-- Student enrollments (APPROVED status - already enrolled)
+INSERT INTO USER_CLASSES (user_id, class_id, enrollment_status) VALUES
+('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c1c1c1', 'APPROVED'),
+('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'c2c2c2c2-c2c2-c2c2-c2c2-c2c2c2c2c2c2', 'APPROVED'),
+('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'c3c3c3c3-c3c3-c3c3-c3c3-c3c3c3c3c3c3', 'APPROVED'),
+('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c1c1c1', 'APPROVED'),
+('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'c2c2c2c2-c2c2-c2c2-c2c2-c2c2c2c2c2c2', 'APPROVED'),
+('cccccccc-cccc-cccc-cccc-cccccccccccc', 'c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c1c1c1', 'APPROVED'),
+('dddddddd-dddd-dddd-dddd-dddddddddddd', 'c2c2c2c2-c2c2-c2c2-c2c2-c2c2c2c2c2c2', 'APPROVED'),
+('dddddddd-dddd-dddd-dddd-dddddddddddd', 'c3c3c3c3-c3c3-c3c3-c3c3-c3c3c3c3c3c3', 'APPROVED'),
+('eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee', 'c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c1c1c1', 'APPROVED'),
+('ffffffff-ffff-ffff-ffff-ffffffffffff', 'c3c3c3c3-c3c3-c3c3-c3c3-c3c3c3c3c3c3', 'APPROVED'),
+('88888888-8888-8888-8888-888888888888', 'c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c1c1c1', 'APPROVED'),
+('88888888-8888-8888-8888-888888888888', 'c2c2c2c2-c2c2-c2c2-c2c2-c2c2c2c2c2c2', 'APPROVED'),
+('88888888-8888-8888-8888-888888888888', 'c3c3c3c3-c3c3-c3c3-c3c3-c3c3c3c3c3c3', 'APPROVED');
+
+-- Student enrollments (PENDING status - waiting for instructor approval)
+INSERT INTO USER_CLASSES (user_id, class_id, enrollment_status) VALUES
+('cccccccc-cccc-cccc-cccc-cccccccccccc', 'c2c2c2c2-c2c2-c2c2-c2c2-c2c2c2c2c2c2', 'PENDING'),
+('eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee', 'c2c2c2c2-c2c2-c2c2-c2c2-c2c2c2c2c2c2', 'PENDING'),
+('ffffffff-ffff-ffff-ffff-ffffffffffff', 'c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c1c1c1', 'PENDING');
+
+-- Student enrollments (DENIED status - rejected by instructor)
+INSERT INTO USER_CLASSES (user_id, class_id, enrollment_status) VALUES
+('eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee', 'c3c3c3c3-c3c3-c3c3-c3c3-c3c3c3c3c3c3', 'DENIED');
 
 -- Test kudos cards: PENDING status
 INSERT INTO KUDOS_CARDS (card_id, sender_id, recipient_id, class_id, title, content, is_anonymous, status, created_at) VALUES
@@ -129,4 +137,8 @@ INSERT INTO KUDOS_CARDS (card_id, sender_id, recipient_id, class_id, title, cont
  'Hannah helped me understand database normalization. My schema is now in 3NF thanks to her!',
  false, 'APPROVED', '22222222-2222-2222-2222-222222222222', 'Excellent peer teaching', CURRENT_TIMESTAMP - INTERVAL '12 hours');
 
--- Summary: 3 instructors, 8 students, 3 classes, 13 kudos cards (various statuses)
+-- Summary:
+-- - 3 instructors, 8 students
+-- - 3 classes (with join codes: 123456, 654321, 789012)
+-- - 19 enrollments (15 APPROVED, 3 PENDING, 1 DENIED)
+-- - 13 kudos cards (various statuses)

@@ -5,6 +5,7 @@ import com.kudo.filter.AuthenticationFilter;
 import com.kudo.model.User;
 import com.kudo.security.UserContext;
 import com.kudo.service.OAuthService;
+import com.kudo.service.UserService;
 import com.kudo.util.JwtUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -14,6 +15,9 @@ import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Authentication REST API endpoints
@@ -27,6 +31,9 @@ public class AuthResource {
 
     @Inject
     private JwtUtil jwtUtil;
+
+    @Inject
+    private UserService userService;
 
     /**
      * Authenticate with Google OAuth and return JWT token
@@ -105,5 +112,48 @@ public class AuthResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response healthCheck() {
         return Response.ok("{\"status\": \"OK\", \"service\": \"OAuth Authentication\"}").build();
+    }
+
+    /**
+     * Generate test JWT token for a given user ID (testing only)
+     * POST /kudo-app/api/auth/test-token?user_id=<UUID>
+     *
+     * This endpoint is for testing purposes only.
+     * Returns a JWT token for the specified user without requiring Google OAuth.
+     */
+    @POST
+    @Path("test-token")
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response generateTestToken(@QueryParam("user_id") String userId) {
+        try {
+            if (userId == null || userId.isEmpty()) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity("user_id query parameter is required")
+                        .build();
+            }
+
+            UUID userUuid = UUID.fromString(userId);
+            Optional<User> userOpt = userService.getUserById(userUuid);
+
+            if (userOpt.isEmpty()) {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity("User not found with ID: " + userId)
+                        .build();
+            }
+
+            User user = userOpt.get();
+            String jwtToken = jwtUtil.generateToken(user);
+
+            return Response.ok(jwtToken).build();
+
+        } catch (IllegalArgumentException e) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Invalid user_id format: " + e.getMessage())
+                    .build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("Failed to generate token: " + e.getMessage())
+                    .build();
+        }
     }
 }

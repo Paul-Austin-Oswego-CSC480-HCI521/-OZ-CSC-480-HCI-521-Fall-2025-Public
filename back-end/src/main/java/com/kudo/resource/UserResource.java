@@ -231,8 +231,9 @@ public Response getUserByEmail(@QueryParam("email") String email) throws SQLExce
     @GET
     @Path("{user_id}/classes")
     @Produces(MediaType.APPLICATION_JSON)
-    public ClassDTO.ClassIdList getUserClasses(@PathParam("user_id") UUID user_id) {
-        return userService.getUserClasses(user_id);
+    public ClassDTO.ClassIdList getUserClasses(@PathParam("user_id") UUID user_id,
+                                               @QueryParam("enrollment_status") String enrollmentStatus) {
+        return userService.getUserClasses(user_id, enrollmentStatus);
     }
 
 }
