@@ -8,16 +8,28 @@ import SentKudosStudent from "../components/SentKudosStudent";
 import { useUser, authFetch } from "../components/UserContext";
 import { v4 as uuidv4} from 'uuid';
 
-// const PLACEHOLDER_CLASS_ID = "12345678-1234-1234-1234-123456789def"; 
-
 function StudentView() {
     const BASE_URL = process.env.REACT_APP_API_BASE_URL;
     const navigate = useNavigate();
     const [sentKudos, setSentKudos] = useState([]);
     const [receivedKudos, setReceivedKudos] = useState([]);
+    const [receivedSortOrder, setReceivedSortOrder] = useState("desc");
+    const [sentSortOrder, setSentSortOrder] = useState("desc");
+    const [sentFilter, setSentFilter] = useState("ALL");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const { user } = useUser();
+
+    const handleReceivedSort = () => {
+        setReceivedSortOrder((prev) => (prev === "desc" ? "asc" : "desc"));
+    }
+
+    const handleSentSort = () => {
+        setSentSortOrder((prev) => (prev === "desc" ? "asc" : "desc"));
+    }
+    const handleFilterChange = () => {
+        console.log("Filter button clicked");
+    }
 
     // get cards details 
     const getCard = async (cardId) => {
@@ -142,6 +154,23 @@ function StudentView() {
         getKudos();
     }, [getKudos]);
 
+    const sortedReceived = [...receivedKudos].sort((a, b) => {
+        const dateA = new Date(a.date);
+        const dateB = new Date(b.date);
+        return receivedSortOrder === "asc" ? dateA - dateB : dateB - dateA;
+    });
+
+    const filteredSent = sentKudos.filter((k) =>
+        sentFilter === "ALL" ? true : k.status === sentFilter
+    );
+
+    const sortedSent = [...filteredSent].sort((a, b) => {
+        const dateA = new Date(a.date);
+        const dateB = new Date(b.date);
+        return sentSortOrder === "asc" ? dateA - dateB : dateB - dateA;
+    });
+
+
     return (
         <div className="app-container">
             <Header onCreateNew = {() => navigate('/studentView/new-kudos')} />
@@ -152,8 +181,8 @@ function StudentView() {
 
                 {!loading && !error && (
                     <>
-                    <ReceivedKudosStudent received = {receivedKudos} />
-                    <SentKudosStudent messages = {sentKudos} />
+                    <ReceivedKudosStudent received = {sortedReceived} />
+                    <SentKudosStudent messages = {sortedSent} />
                     </>                 
                 )}
 
