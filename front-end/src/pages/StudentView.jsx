@@ -128,7 +128,8 @@ function StudentView() {
                     status: kudo.status,
                     date: formattedDate || "-",
                     imageUrl: kudo.imageUrl || null,
-                    message: kudo.content 
+                    message: kudo.content, 
+                    professor_note: kudo.professor_note
                 };
             };
 

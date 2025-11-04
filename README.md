@@ -19,7 +19,7 @@ docker-compose --version
 
 #### 2. Environment Configuration:
 1. Locate the three template env files. Look for a `.env.example` file in each of these directories `**project root**`, `/front-end`, and `/back-end`
-2. For each `.env.example` file, copy the content of each file into a new file named `.env` located in the same directory as the template. 
+2. For each `.env.example` file, duplicate it and rename the copy to `.env`. Place the new file in the same directory as the template.  
 ##### Important Notes: 
 - Each template is unique. You must use the appropriate template for each directory.  
 - You must manually create **ALL three** unique `.env` files using the `.env.example` templates.
@@ -38,6 +38,9 @@ GOOGLE_CLIENT_ID=your-google-client-id.apps.googleusercontent.com
 ```
 REACT_APP_GOOGLE_CLIENT_ID=YOUR_CLIENT_ID.apps.googleusercontent.com
 ```
+
+##### Important Note:
+- Do **NOT** edit any of the `.env.example` files. Only edit the local `.env` files you created in step two.
 
 #### 4. Database Information:
 - All data in the db is stored in your local Docker volume named `oz-csc-480-hci-521-fall-2025-public_postgres_data`
