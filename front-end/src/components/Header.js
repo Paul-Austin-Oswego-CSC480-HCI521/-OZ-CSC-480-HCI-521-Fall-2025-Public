@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Notification from './Notification';
 import '../styles/Wireframe.css';
-import { useUser } from './UserContext';
+import { authFetch, useUser } from './UserContext';
 import CourseCodeModal from './CourseCodeModal';
 
 function Header({ onCreateNew, showNav = true }) {
@@ -11,6 +11,7 @@ function Header({ onCreateNew, showNav = true }) {
   const [showNotif, setShowNotif] = useState(false);
   const { user, setUser } = useUser();
   const [showCourseModal, setShowCourseModal] = useState(false);
+  const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
   const handleCourseAddition = () => setShowCourseModal(true);
   const handleCourseManagement = () => navigate('/course-management');
@@ -24,9 +25,19 @@ function Header({ onCreateNew, showNav = true }) {
     }, 0);
 };
 
-    const handleCourseSubmit = (code) => {
+    const handleCourseSubmit = async (code) => {
         console.log('Course code submitted:', code);
-        // TODO: call API to add course using the code
+        try{
+            const res = await authFetch(`${BASE_URL}/class/enrollment/request?join_code=${code}&user_id=${user.user_id}`, {
+                method: "POST",
+                headers: {"Content-Type": "application/json",},
+            });
+            if (!res.ok) throw new Error("Failed to submit code");
+            const data = await res.json();
+            console.log(data);
+        } catch (e) {
+            console.error(e);
+        }
         setShowCourseModal(false);
     };
 
@@ -138,11 +149,20 @@ function Header({ onCreateNew, showNav = true }) {
               onClose={() => setShowNotif(false)}
               // items={notifications}
           />
-          <CourseCodeModal
+
+          {showCourseModal && (
+            <div className="modal-overlay-rev">
+            <div className="code-modal">
+                <CourseCodeModal
                     open={showCourseModal}
                     onClose={() => setShowCourseModal(false)}
                     onSubmit={handleCourseSubmit}
                     />
+            </div>
+          </div>
+          )}
+          
+          
       </header>
   );
 }

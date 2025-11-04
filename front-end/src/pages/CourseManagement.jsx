@@ -7,7 +7,7 @@ import ClassList from "../components/CourseManagement/ClassList";
 import PendingRequests from "../components/CourseManagement/PendingRequests";
 import ToastMessage from "../components/Shared/ToastMessage";
 import "../styles/Wireframe.css";
-import { useUser } from "../components/UserContext";
+import { useUser, authFetch } from "../components/UserContext";
 
 function CourseManagement() {
   const [activeTab, setActiveTab] = useState("myClasses"); // myClasses / createClass / pending
@@ -28,15 +28,16 @@ function CourseManagement() {
 
     const fetchClasses = async () => {
       try {
-        const res = await fetch(`${BASE_URL}/users/${userId}/classes`);
+        const res = await authFetch(`${BASE_URL}/users/${userId}/classes`);
         if (!res.ok) throw new Error("Failed to fetch classes");
         const data = await res.json();
+        console.log(data);
 
         const classDetails = await Promise.all(
           data.class_id.map(async (id) => {
-            const clsRes = await fetch(`${BASE_URL}/class/${id}`);
+            const clsRes = await authFetch(`${BASE_URL}/class/${id}`);
             const clsData = await clsRes.json();
-            const studentsRes = await fetch(`${BASE_URL}/class/${id}/users`);
+            const studentsRes = await authFetch(`${BASE_URL}/class/${id}/users`);
             const studentsData = await studentsRes.json();
             return {
               ...clsData.class[0],
@@ -44,6 +45,7 @@ function CourseManagement() {
             };
           })
         );
+        console.log(classDetails);
 
         setClasses(classDetails);
       } catch (err) {
@@ -132,3 +134,5 @@ function CourseManagement() {
 }
 
 export default CourseManagement;
+
+

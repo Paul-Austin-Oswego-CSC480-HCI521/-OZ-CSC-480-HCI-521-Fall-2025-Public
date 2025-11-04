@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import {authFetch } from '../UserContext';
 
 function PendingRequests({ userId }) {
   const [pendingRequests, setPendingRequests] = useState([]);
@@ -14,10 +15,11 @@ function PendingRequests({ userId }) {
     const fetchPendingRequests = async () => {
       try {
         // TODO: Replace with actual backend endpoint for pending requests
-        const res = await fetch(`${BASE_URL}/class/pending-requests?instructor_id=${userId}`);
-        if (!res.ok) throw new Error("Failed to fetch pending requests");
+        const res = await authFetch(`${BASE_URL}/class/pending-requests?instructor_id=${userId}`);
+        if (!res.ok) throw new Error("Failed to authFetch pending requests");
         const data = await res.json();
-        setPendingRequests(data.requests || []);
+        setPendingRequests(data || []);
+        console.log(data);
       } catch (err) {
         console.error(err);
         setErrorMessage("Failed to load pending requests.");
@@ -31,7 +33,7 @@ function PendingRequests({ userId }) {
 
   const handleApprove = async (classId, studentId) => {
     try {
-      const res = await fetch(`${BASE_URL}/class/${classId}`, {
+      const res = await authFetch(`${BASE_URL}/class/${classId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ user_id: [studentId] }),
@@ -60,9 +62,9 @@ function PendingRequests({ userId }) {
   return (
     <div className="pending-requests">
       {pendingRequests.map((req) => (
-        <div key={`${req.class_id}-${req.student.user_id}`} className="request-card">
+        <div key={`${req.class_id}-${req.user_id}`} className="request-card">
           <p>
-            <strong>{req.student.name}</strong> ({req.student.email}) requested to join{" "}
+            <strong>{req.student_name}</strong> ({req.student_email}) requested to join{" "}
             <strong>{req.class_name}</strong>
           </p>
           <button onClick={() => handleApprove(req.class_id, req.student.user_id)}>Approve</button>

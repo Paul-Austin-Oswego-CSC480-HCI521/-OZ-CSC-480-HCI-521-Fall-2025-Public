@@ -1,10 +1,12 @@
 import React, { useState } from "react";
+import { useUser, authFetch } from '../UserContext';
 
 function CreateClassForm({ onClassCreated }) {
   const [className, setClassName] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const {user} = useUser();
 
   const BASE_URL =
     window.location.hostname === "localhost"
@@ -14,13 +16,14 @@ function CreateClassForm({ onClassCreated }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!className.trim()) return;
+    console.log(user);
 
     setSubmitting(true);
     setSuccessMessage("");
     setErrorMessage("");
 
     try {
-      const res = await fetch(`${BASE_URL}/class?class_name=${encodeURIComponent(className.trim())}`, {
+      const res = await authFetch(`${BASE_URL}/class?class_name=${encodeURIComponent(className.trim())}&created_by=${user.user_id}&end_date=2025-12-25`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
       });

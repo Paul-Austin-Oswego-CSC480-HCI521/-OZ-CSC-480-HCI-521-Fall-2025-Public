@@ -49,8 +49,8 @@ public class ClassesResource {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     public Response createClass(@QueryParam("class_name") String class_name,
-                                 @QueryParam("created_by") String created_by,
-                                 @QueryParam("end_date") String end_date) {
+                                @QueryParam("created_by") String created_by,
+                                @QueryParam("end_date") String end_date) {
         final String sql = """
         INSERT INTO CLASSES
             (class_name, join_code, created_by, end_date)
@@ -58,32 +58,61 @@ public class ClassesResource {
         RETURNING *
         """;
 
+        final String addCreatorSql = """
+        INSERT INTO USER_CLASSES
+            (user_id, class_id, enrollment_status)
+        VALUES (?, ?, 'APPROVED')
+        """;
+
         int maxRetries = 10;
         for (int attempt = 0; attempt < maxRetries; attempt++) {
             String joinCode = generateJoinCode();
+            Connection conn = null; 
 
-            try (Connection conn = dataSource.getConnection();
-                 PreparedStatement stmt = conn.prepareStatement(sql)) {
-                stmt.setString(1, class_name);
-                stmt.setString(2, joinCode);
-                stmt.setObject(3, created_by != null ? UUID.fromString(created_by) : null);
-                stmt.setString(4, end_date);
+            try {
+                conn = dataSource.getConnection();
+                conn.setAutoCommit(false);
 
-                try (ResultSet rs = stmt.executeQuery()) {
-                    if (rs.next()) {
-                        JsonObjectBuilder jsonBuilder = Json.createObjectBuilder()
-                            .add("class_id", rs.getString("class_id"))
-                            .add("class_name", rs.getString("class_name"))
-                            .add("join_code", rs.getString("join_code"));
+                try (PreparedStatement stmt = conn.prepareStatement(sql)){
+                    stmt.setString(1, class_name);
+                    stmt.setString(2, joinCode);
+                    UUID creatorUuid = created_by != null ? UUID.fromString(created_by) : null;
+                    stmt.setObject(3, creatorUuid);
+                    stmt.setString(4, end_date);
 
-                        if (rs.getString("end_date") != null) {
-                            jsonBuilder.add("end_date", rs.getString("end_date"));
+                    try (ResultSet rs = stmt.executeQuery()) {
+                        if (rs.next()) {
+                            String classId = rs.getString("class_id");
+                            String className = rs.getString("class_name");
+                            String returnedJoinCode = rs.getString("join_code");
+                            String endDateStr = rs.getString("end_date");
+
+                            // add creator to the class if created_by is provided
+                            if (creatorUuid != null) {
+                                try (PreparedStatement addCreatorStmt = conn.prepareStatement(addCreatorSql)) {
+                                    addCreatorStmt.setObject(1, creatorUuid);
+                                    addCreatorStmt.setObject(2, UUID.fromString(classId));
+                                    addCreatorStmt.executeUpdate();
+                                }
+                            }
+
+                            conn.commit(); 
+                            JsonObjectBuilder jsonBuilder = Json.createObjectBuilder()
+                                .add("class_id", classId)
+                                .add("class_name", className)
+                                .add("join_code", returnedJoinCode);
+                            if (endDateStr != null) jsonBuilder.add("end_date", endDateStr);
+                            return Response.ok(jsonBuilder.build()).build();
                         }
-
-                        return Response.ok(jsonBuilder.build()).build();
                     }
                 }
+                
             } catch (SQLException e) {
+                if (conn != null) {
+                    try { 
+                        conn.rollback();
+                    } catch (SQLException rollbackEx) {}}
+                    
                 if ("23505".equals(e.getSQLState()) && e.getMessage().contains("join_code")) {
                     if (attempt == maxRetries - 1) {
                         throw new InternalServerErrorException("Failed to generate unique join code after " + maxRetries + " attempts");
@@ -91,6 +120,11 @@ public class ClassesResource {
                     continue;
                 }
                 throw new InternalServerErrorException("Database error: " + e.getMessage());
+            } finally {
+                if (conn != null) {
+                    try {
+                        conn.close();
+                    } catch (SQLException closeEx) {}}
             }
         }
         throw new InternalServerErrorException("Failed to create class");
@@ -194,6 +228,7 @@ public class ClassesResource {
                     .build())
                 .build();
         }
+
 
         final String validateSql = """
             SELECT class_id, class_name, end_date
@@ -575,6 +610,11 @@ public class ClassesResource {
                 objectBuilder.add("class_id", rs.getString("class_id"));
                 objectBuilder.add("class_name", rs.getString("class_name"));
                 objectBuilder.add("join_code", rs.getString("join_code"));
+                Timestamp endDate = rs.getTimestamp("end_date");
+                if (endDate != null) {
+                    objectBuilder.add("end_date", endDate.toString());
+                } else {
+                    objectBuilder.add("end_date", "");}
                 arrayBuilder.add(objectBuilder);
             }
 

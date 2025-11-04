@@ -21,7 +21,7 @@ function ClassCard({ classData, isActive, onClassUpdated }) {
       <div className="class-info">
         <h3>{classData.class_name}</h3>
         <p>End Date: {classData.end_date || "N/A"}</p>
-        <p>Class Code: {classData.class_id}</p>
+        <p>Class Code: {classData.join_code}</p>
         <button onClick={toggleRoster}>
           {showRoster ? "Hide Roster" : "View Roster"}
         </button>
