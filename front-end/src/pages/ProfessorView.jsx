@@ -158,7 +158,7 @@ function ProfessorView() {
                 <div className="main-content">
                 <>
                     <SubmittedKudosProf submitted={submittedKudos} onSelect={handleSelectKudos} />
-                    <ReviewedKudosProf reviewedKudos={reviewedKudos} />
+                    <ReviewedKudosProf reviewedKudos={reviewedKudos} onSelect={handleSelectKudos} />
                 </>
                 {/* )} */}
             </div></main>

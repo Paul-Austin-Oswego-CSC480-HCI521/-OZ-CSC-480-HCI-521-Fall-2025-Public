@@ -3,3 +3,4 @@
 .idea/
 changes-due-to-integration.txt
 front-end/.env
+back-end/.env

@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import ImageModal from "./ImageModal";
 
-function ReviewedKudosProf( {reviewedKudos = []} ) {
-    const [selectedImage, setSelectedImage] = useState(null);
+function ReviewedKudosProf( {reviewedKudos = [], onSelect} ) {
     const [selectedRows, setSelectedRows] = useState([]);
 
     return (
@@ -33,17 +32,13 @@ function ReviewedKudosProf( {reviewedKudos = []} ) {
                             role="button"
                             tabIndex={0}
                             onClick={() => {
-                                setSelectedRows((prev) =>
-                                    prev.includes(i) ? prev.filter((idx) => idx !== i): [...prev, i]
-                                );
-                                setSelectedImage(k.imageUrl);
+                                setSelectedRows(prev => prev.includes(i) ? prev.filter(idx => idx !== i) : [...prev, i]);
+                                if(onSelect) onSelect(k);
                             }}
-                            onKeyDown={(e) => {
-                                if (e.key === "Enter" || e.key === " ") {
-                                    setSelectedRows((prev) =>
-                                        prev.includes(i) ? prev.filter((idx) => idx !== i) : [...prev, i]
-                                    );
-                                    setSelectedImage(k.imageUrl);
+                            onKeyDown={e => {
+                                if(e.key === "Enter" || e.key === " ") {
+                                    setSelectedRows(prev => prev.includes(i) ? prev.filter(idx => idx !== i) : [...prev, i]);
+                                    if(onSelect) onSelect(k);
                                 }
                             }}
                         >
@@ -72,8 +67,6 @@ function ReviewedKudosProf( {reviewedKudos = []} ) {
                     )}
                 </tbody>
             </table>
-            
-            <ImageModal src={selectedImage} onClose={() => setSelectedImage(null)} />
         </section>
     );
 }
