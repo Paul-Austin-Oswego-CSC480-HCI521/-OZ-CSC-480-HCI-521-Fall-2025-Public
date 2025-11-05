@@ -8,7 +8,10 @@ import com.kudo.service.KudoService;
 
 import com.kudo.dto.KudocardDTO;
 import com.kudo.dto.KudocardDTO.CreateKudoRequest;
+import com.kudo.model.CardIdList;
 import com.kudo.model.Kudocard;
+import com.kudo.service.UserService;
+import jakarta.annotation.Resource;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -16,8 +19,9 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-
+import javax.sql.DataSource;
 import java.sql.*;
+import java.util.UUID;
 
 @ApplicationScoped
 @Path("kudo-card")
@@ -59,6 +63,7 @@ public class KudoCardResource {
 
         return kudoService.getReviewedCards(professorId);
     }
+
 
      /**
      * GET /kudo-app/kudo-card/list/sent - Retrieve all card_ids which correspond to cards sent by a given user

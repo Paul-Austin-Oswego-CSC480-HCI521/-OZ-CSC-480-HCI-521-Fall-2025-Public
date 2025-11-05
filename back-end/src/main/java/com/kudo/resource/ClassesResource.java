@@ -62,7 +62,7 @@ public class ClassesResource {
             stmt.setObject(3, created_by != null ? UUID.fromString(created_by) : null);
             stmt.setString(4, end_date);
 
-            try (ResultSet rs = stmt.executeQuery()) {
+            try  (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     JsonObjectBuilder jsonBuilder = Json.createObjectBuilder()
                         .add("class_id", rs.getString("class_id"))
