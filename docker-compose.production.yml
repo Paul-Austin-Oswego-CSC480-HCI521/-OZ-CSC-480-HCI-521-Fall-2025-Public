@@ -1,0 +1,72 @@
+# Docker Compose Production Override
+# This file provides production-specific configurations for Azure VM deployment
+#
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.production.yml up -d
+# Note: By default, docker-compose automatically reads docker-compose.yml and docker-compose.override.yml
+#       For production, you can manually specify this file or rename it to docker-compose.override.yml
+
+version: '3.8'
+
+services:
+  postgres:
+    # Restart policy: Always restart on failure
+    restart: unless-stopped
+
+    # Production-specific logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+    # Health check with increased intervals for production
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+  backend:
+    # Restart policy: Always restart on failure
+    restart: unless-stopped
+
+    # Production-specific logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+    # Depends on postgres being healthy
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    # Restart policy: Always restart on failure
+    restart: unless-stopped
+
+    # Production-specific logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+    # Set production environment
+    environment:
+      - NODE_ENV=production
+      - REACT_APP_GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - REACT_APP_API_BASE_URL=${REACT_APP_API_BASE_URL}
+
+# Note: To use this override file, run:
+#   docker-compose -f docker-compose.yml -f docker-compose.production.yml up -d
+#
+# Or rename this file to docker-compose.override.yml and docker-compose will use it automatically
+#
+# Key production features added:
+# - restart: unless-stopped (containers automatically restart on failure/reboot)
+# - Log rotation (10MB max size, keep 3 files)
+# - Enhanced health checks
+# - Production environment variables

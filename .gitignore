@@ -4,3 +4,25 @@
 changes-due-to-integration.txt
 front-end/.env
 back-end/.env
+
+# Azure VM deployment specific files
+azure/vm-config.sh
+*.sql
+*.sql.gz
+backup_*.sql
+backup_*.sql.gz
+
+# Node modules and build artifacts (if not already ignored)
+node_modules/
+dist/
+build/
+
+# IDE and editor files
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db

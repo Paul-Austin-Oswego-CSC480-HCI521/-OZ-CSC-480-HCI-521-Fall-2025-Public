@@ -68,8 +68,9 @@ public class KudoService {
                 FROM KUDOS_CARDS c
                 JOIN USERS u ON c.sender_id = u.user_id
                 JOIN USER_CLASSES uc ON u.user_id = uc.user_id
-                WHERE uc.class_id IN (
-                    SELECT class_id FROM USER_CLASSES WHERE user_id = ?
+                WHERE uc.enrollment_status = 'APPROVED'
+                AND uc.class_id IN (
+                    SELECT class_id FROM USER_CLASSES WHERE user_id = ? AND enrollment_status = 'APPROVED'
                 )
                 AND c.status = 'PENDING';
                 """
@@ -93,8 +94,9 @@ public class KudoService {
                 FROM KUDOS_CARDS c
                 JOIN USERS u ON c.sender_id = u.user_id
                 JOIN USER_CLASSES uc ON u.user_id = uc.user_id
-                WHERE uc.class_id IN (
-                    SELECT class_id FROM USER_CLASSES WHERE user_id = ?
+                WHERE uc.enrollment_status = 'APPROVED'
+                AND uc.class_id IN (
+                    SELECT class_id FROM USER_CLASSES WHERE user_id = ? AND enrollment_status = 'APPROVED'
                 )
                 AND c.status != 'PENDING';
                 """
@@ -240,11 +242,12 @@ public class KudoService {
     //returns true if instructor_id is an instructor and is in the same class as user_id
     public boolean inSameClass(UUID user_1, UUID user_2) throws InternalServerErrorException {
         try (Connection conn = dataSource.getConnection();) {
-            //Check if they are both in the class
+            //Check if they are both in the class with APPROVED enrollment status
             PreparedStatement stmt1 = conn.prepareStatement("""
                     SELECT COUNT(DISTINCT user_id) AS cnt
                     FROM USER_CLASSES
-                    WHERE user_id IN (?, ?);
+                    WHERE user_id IN (?, ?)
+                    AND enrollment_status = 'APPROVED';
                     """);
             stmt1.setObject(1, user_1);
             stmt1.setObject(2, user_2);
