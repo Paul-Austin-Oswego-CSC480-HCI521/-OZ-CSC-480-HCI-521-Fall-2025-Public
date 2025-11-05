@@ -3,6 +3,7 @@ package com.kudo.resource;
 import java.util.*;
 
 import com.kudo.dto.FlexibleDTO;
+import com.kudo.model.CardIdList;
 import com.kudo.service.KudoService;
 
 import com.kudo.dto.KudocardDTO;
@@ -11,6 +12,7 @@ import com.kudo.model.Kudocard;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -72,19 +74,23 @@ public class KudoCardResource {
      * Returns: 500 Internal Server Error for database issues
      *
      * Example response:
-     * [{card_id:"X-X-X-X-X", ...}]
+     * [{card_id:"X-X-X-X-X", ...}]  OR  {"card_id":["X-X-X-X-X"]} (when values is empty)
      */
     @GET
     @Path("list/sent")
     @Produces(MediaType.APPLICATION_JSON)
     public Object getSentKudoList(@QueryParam("user_id") UUID sender_id,
-                                        @QueryParam("values") Optional<ArrayList<String>> values) {
-        HashMap<String, Object> match = new HashMap<>();
-        match.put("sender_id", sender_id);
+                                  @QueryParam("values") Optional<ArrayList<String>> values) {
+        if(values.isEmpty()) {
+            return kudoService.getCardListBySender(sender_id);
+        } else {
+            HashMap<String, Object> match = new HashMap<>();
+            match.put("sender_id", sender_id);
 
-        return kudoService.getCardListBy(values.orElseGet(ArrayList::new), match).stream()
-                .map(FlexibleDTO::getFields)
-                .toList();
+            return kudoService.getCardListBy(values.orElseGet(ArrayList::new), match).stream()
+                    .map(FlexibleDTO::getFields)
+                    .toList();
+        }
     }
 
     //Returns list of all IDs pertaining to Kudos which are received by this user
@@ -109,27 +115,25 @@ public class KudoCardResource {
      * Returns: 500 Internal Server Error for database issues
      *
      * Example response:
-     * [{card_id:"X-X-X-X-X", ...}]
+     * [{card_id:"X-X-X-X-X", ...}]  OR  {"card_id":["X-X-X-X-X"]} (when values is empty)
      */
-//    @GET
-//    @Path("list/received")
-//    @Produces(MediaType.APPLICATION_JSON)
-//    public CardIdList getReceivedKudoList(@QueryParam("user_id") UUID user_id) {
-//        return kudoService.getCardListByReceived(user_id, values.get());
-//    }
-
     @GET
     @Path("list/received")
     @Produces(MediaType.APPLICATION_JSON)
     public Object getReceivedKudoList(@QueryParam("user_id") UUID recipient_id,
-                                          @QueryParam("values") Optional<ArrayList<String>> values) {
-        HashMap<String, Object> match = new HashMap<>();
-        match.put("recipient_id", recipient_id);
+                                      @QueryParam("values") Optional<ArrayList<String>> values) {
+        if(values.isEmpty()) {
+            return kudoService.getCardListByReceived(recipient_id);
+        } else {
+            HashMap<String, Object> match = new HashMap<>();
+            match.put("recipient_id", recipient_id);
 
-        return kudoService.getCardListBy(values.orElseGet(ArrayList::new), match).stream()
-                .map(FlexibleDTO::getFields)
-                .toList();
+            return kudoService.getCardListBy(values.orElseGet(ArrayList::new), match).stream()
+                    .map(FlexibleDTO::getFields)
+                    .toList();
+        }
     }
+
 
     /**
      * GET /kudo-app/kudo-card/{card_id} - retrieve the card which has the given card_id if it is accessible to the user with the given user_id

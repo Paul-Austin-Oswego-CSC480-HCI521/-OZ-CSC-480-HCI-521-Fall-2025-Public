@@ -2,7 +2,6 @@ package com.kudo.model;
 
 import jakarta.json.bind.annotation.JsonbProperty;
 
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.UUID;
 
@@ -13,36 +12,35 @@ public class Classes {
     @JsonbProperty("name")
     private String name;
 
-    @JsonbProperty("class_code")
-    private Integer class_code;
+    @JsonbProperty("join_code")
+    private Integer join_code;
 
-    @JsonbProperty("created_at")
-    private Timestamp created_at;
+    @JsonbProperty("created_date")
+    private Timestamp created_date;
 
-    @JsonbProperty("closed_at")
-    private Timestamp closed_at;
+    @JsonbProperty("created_by")
+    private UUID created_by;
 
-
+    @JsonbProperty("end_date")
+    private Timestamp end_date;
 
     public Classes() {}
 
-    public Classes(String className, Timestamp createdAt, Timestamp closedAt) {
-
-    }
-
-    public Classes(UUID class_id, String name,  Integer class_code, Timestamp created_at) {
-        this.created_at = created_at;
-        this.class_code = class_code;
+    public Classes(UUID class_id, String name,  Integer join_code, Timestamp created_date, UUID created_by) {
+        this.created_date = created_date;
+        this.join_code = join_code;
         this.name = name;
         this.class_id = class_id;
+        this.created_by = created_by;
     }
 
-    public Classes(UUID class_id, String name, Integer class_code, Timestamp created_at, Timestamp closed_at) {
+    public Classes(UUID class_id, String name, Integer join_code, Timestamp created_date, UUID created_by, Timestamp end_date) {
         this.class_id = class_id;
         this.name = name;
-        this.class_code = class_code;
-        this.created_at = created_at;
-        this.closed_at = closed_at;
+        this.join_code = join_code;
+        this.created_date = created_date;
+        this.end_date = end_date;
+        this.created_by = created_by;
     }
 
     public UUID getClass_id() {
@@ -61,27 +59,35 @@ public class Classes {
         this.name = name;
     }
 
-    public Integer getClass_code() {
-        return class_code;
+    public Integer getJoin_code() {
+        return join_code;
     }
 
-    public void setClass_code(Integer class_code) {
-        this.class_code = class_code;
+    public void setJoin_code(Integer join_code) {
+        this.join_code = join_code;
     }
 
-    public Timestamp getCreated_at() {
-        return created_at;
+    public Timestamp getCreated_date() {
+        return created_date;
     }
 
-    public void setCreated_at(Timestamp created_at) {
-        this.created_at = created_at;
+    public void setCreated_date(Timestamp created_date) {
+        this.created_date = created_date;
     }
 
-    public Timestamp getClosed_at() {
-        return closed_at;
+    public UUID getCreated_by() {
+        return created_by;
     }
 
-    public void setClosed_at(Timestamp closed_at) {
-        this.closed_at = closed_at;
+    public void setCreated_by(UUID created_by) {
+        this.created_by = created_by;
+    }
+
+    public Timestamp getEnd_date() {
+        return end_date;
+    }
+
+    public void setEnd_date(Timestamp end_date) {
+        this.end_date = end_date;
     }
 }

@@ -1,7 +1,6 @@
 package com.kudo.service;
 
 import com.kudo.dto.ClassDTO;
-import com.kudo.model.Classes;
 import com.kudo.model.User;
 import com.kudo.dto.UserDTO;
 import jakarta.annotation.Resource;
@@ -254,7 +253,7 @@ public class UserService {
         }
     }
 
-    public ClassDTO.ClassIdList getUserClasses(UUID user_id, String enrollmentStatus) {
+    public ClassDTO.ClassIdList getUserClasses(UUID user_id, String enrollmentStatus, Boolean is_archived) {
         // Validate enrollment_status if provided
         if (enrollmentStatus != null && !enrollmentStatus.isEmpty()) {
             if (!enrollmentStatus.equals("PENDING") && !enrollmentStatus.equals("APPROVED") && !enrollmentStatus.equals("DENIED")) {
@@ -263,13 +262,7 @@ public class UserService {
         }
 
         try (Connection conn = dataSource.getConnection()) {
-            String sql;
-            if (enrollmentStatus != null && !enrollmentStatus.isEmpty()) {
-                sql = "SELECT class_id FROM USER_CLASSES WHERE user_id = ? AND enrollment_status = ?";
-            } else {
-                // Default to APPROVED for compatibility
-                sql = "SELECT class_id FROM USER_CLASSES WHERE user_id = ? AND enrollment_status = 'APPROVED'";
-            }
+            String sql = getFilteredUserClasses(enrollmentStatus, is_archived);
 
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
                 stmt.setObject(1, user_id);
@@ -289,6 +282,25 @@ public class UserService {
         } catch (SQLException e) {
             throw new InternalServerErrorException("Database error");
         }
+    }
+
+    private static String getFilteredUserClasses(String enrollmentStatus, Boolean is_archived) {
+        String sql = "SELECT USER_CLASSES.class_id FROM USER_CLASSES JOIN CLASSES ON USER_CLASSES.class_id = CLASSES.class_id WHERE user_id = ?";
+        if (enrollmentStatus != null && !enrollmentStatus.isEmpty()) {
+            sql += " AND enrollment_status = ?";
+        } else {
+            // Default to APPROVED for compatibility
+            sql += " AND enrollment_status = 'APPROVED'";
+        }
+
+        //Default to False for compatibility
+
+
+        if(is_archived == null) {
+            is_archived = false;
+        }
+        sql += " AND end_date " + ((is_archived) ? "<" : ">=") + "CURRENT_TIMESTAMP";
+        return sql;
     }
 
     // Parse role string

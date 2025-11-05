@@ -62,60 +62,27 @@ public class ClassDTO {
         }
     }
 
-    public static class ClassCreate {
-        @NotNull
-        private String class_name;
-        @JsonbDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-        private LocalDateTime closed_at;
-
-        public ClassCreate() {}
-        public ClassCreate(String class_name) {
-            this.class_name = class_name;
-        }
-
-        public ClassCreate(String class_name, LocalDateTime closed_at) {
-            this.class_name = class_name;
-            this.closed_at = closed_at;
-        }
-
-        public String getClass_name() {
-            return class_name;
-        }
-
-        public void setClass_name(String class_name) {
-            this.class_name = class_name;
-        }
-
-        public LocalDateTime getClosed_at() {
-            return closed_at;
-        }
-
-        public void setClosed_at(LocalDateTime closed_at) {
-            this.closed_at = closed_at;
-        }
-    }
-
     public static class ClassUpdate {
         @JsonbDateFormat("yyyy-MM-dd'T'HH:mm:ss")
         @NotNull
-        private LocalDateTime closed_at;
+        private LocalDateTime end_date;
 
         public ClassUpdate() {}
 
-        public LocalDateTime getClosed_at() {
-            return closed_at;
+        public LocalDateTime getEnd_date() {
+            return end_date;
         }
 
-        public void setClosed_at(LocalDateTime closed_at) {
-            this.closed_at = closed_at;
+        public void setEnd_date(LocalDateTime end_date) {
+            this.end_date = end_date;
         }
 
 
 
         public Timestamp getClosedAtAsTimestamp() {
-            if (closed_at == null) return null;
+            if (end_date == null) return null;
             try {
-                return Timestamp.valueOf(closed_at);
+                return Timestamp.valueOf(end_date);
             } catch (IllegalArgumentException e) {
                 throw new BadRequestException("Invalid closed_at format. Expected yyyy-MM-dd HH:mm:ss");
             }

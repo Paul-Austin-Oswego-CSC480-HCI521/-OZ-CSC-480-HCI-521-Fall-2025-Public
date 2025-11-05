@@ -21,7 +21,7 @@ public class SqlGenerator {
         sql.append(") VALUES (");
 
         sql.append("?, ".repeat(columns.size()));
-        sql.deleteCharAt(sql.length()-2); //drop trailing ', '
+        sql.setLength(sql.length()-2); //drop trailing ', '
 
         return sql.toString();
                 //"(email, name, password_hash, role) VALUES (?, ?, ?, ?) RETURNING user_id";
@@ -35,7 +35,7 @@ public class SqlGenerator {
         for(String r : returning) {
             sql.append(r).append(", ");
         }
-        sql.deleteCharAt(sql.length()-2); //drop trailing ', '
+        sql.setLength(sql.length()-2); //drop trailing ', '
         return sql.toString();
     }
 
@@ -51,9 +51,9 @@ public class SqlGenerator {
         for(String s : selectColumns) {
             sql.append(s).append(", ");
         }
-        sql.deleteCharAt(sql.length()-2); //drop trailing ', '
+        sql.setLength(sql.length()-2); //drop trailing ', '
 
-        sql.append("FROM ").append(table);
+        sql.append(" FROM ").append(table);
         return sql.toString();
     }
 
@@ -65,7 +65,7 @@ public class SqlGenerator {
         for(String w : whereColumns) {
             sql.append(w).append(" = ? AND ");
         }
-        sql.deleteCharAt(sql.length()-4); //drop trailing ', '
+        sql.setLength(sql.length()-4); //drop trailing ', '
 
         return sql.toString();
     }
@@ -78,7 +78,7 @@ public class SqlGenerator {
         for(String w : whereColumns) {
             sql.append(w).append(" = ? AND ");
         }
-        sql.deleteCharAt(sql.length()-4); //drop trailing ', '
+        sql.setLength(sql.length()-4); //drop trailing ', '
 
         return sql.toString();
     }
@@ -98,7 +98,7 @@ public class SqlGenerator {
                 sql.delete(sql.length() - 2, sql.length()); //drop trailing ', '
             } else {
                 sql.append(col).append("= ? AND ");
-                sql.delete(sql.length() - 4, sql.length()); //drop trailing 'AND '
+                sql.setLength(sql.length() - 4); //drop trailing 'AND '
             }
         }
         return sql.toString();

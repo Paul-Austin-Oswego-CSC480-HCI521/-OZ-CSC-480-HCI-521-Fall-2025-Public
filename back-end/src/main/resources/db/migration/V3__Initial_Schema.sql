@@ -9,7 +9,7 @@ BEGIN
         -- Generate a random number between 100000... and 999999...
         new_code := floor(random() * 9*(POWER(10,(n-1))) + 1*(POWER(10,(n-1))));
         -- Check if the number already exists; exit the loop if it's unique
-        IF NOT EXISTS (SELECT 1 FROM CLASSES WHERE class_code = new_code) THEN
+        IF NOT EXISTS (SELECT 1 FROM CLASSES WHERE join_code = new_code) THEN
             RETURN new_code;
         END IF;
     END LOOP;
@@ -28,10 +28,7 @@ CREATE TABLE USERS (
 -- Create CLASSES table
 CREATE TABLE CLASSES (
     class_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    class_name VARCHAR(100) NOT NULL,
-    class_code INT DEFAULT gen_unique_n_digit_code(6),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    closed_at TIMESTAMP
+    class_name VARCHAR(100) NOT NULL
 );
 
 -- Create USER_CLASSES junction table

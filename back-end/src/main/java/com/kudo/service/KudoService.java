@@ -125,6 +125,43 @@ public class KudoService {
         }
     }
 
+    public CardIdList getCardListBySender(UUID sender_id) {
+        try (Connection conn = dataSource.getConnection(); //establish database connection
+             PreparedStatement stmt = conn.prepareStatement("SELECT card_id FROM KUDOS_CARDS WHERE sender_id = ?;");){//Static elements of query
+            stmt.setObject(1,sender_id); //form the query
+            ResultSet rs = stmt.executeQuery(); //execute query to obtain list of IDs
+            List<String> cardIds = new ArrayList<>(); //List which will be filled with card_ids from the result set
+            while (rs.next()) {
+                cardIds.add(rs.getString("card_id")); //add ids to list
+            }
+            //Wrap list as CardIdList
+            //CardIdList is automatically converted to JSON due to the MIME type
+            return new CardIdList(cardIds);
+
+        } catch (SQLException e) {
+            throw new InternalServerErrorException("Database error");
+        }
+    }
+
+
+    public CardIdList getCardListByReceived(UUID received_id) {
+        try (Connection conn = dataSource.getConnection(); //establish database connection
+             PreparedStatement stmt = conn.prepareStatement("SELECT card_id FROM KUDOS_CARDS WHERE recipient_id = ?;");){//Static elements of query
+            stmt.setObject(1,received_id); //form the query
+            ResultSet rs = stmt.executeQuery(); //execute query to obtain list of IDs
+            List<String> cardIds = new ArrayList<>(); //List which will be filled with card_ids from the result set
+            while (rs.next()) {
+                cardIds.add(rs.getString("card_id")); //add ids to list
+            }
+            //Wrap list as CardIdList
+            //CardIdList is automatically converted to JSON due to the MIME type
+            return new CardIdList(cardIds);
+
+        } catch (SQLException e) {
+            throw new InternalServerErrorException("Database error");
+        }
+    }
+
 //    // Get all submitted kudos for a professor (status = PENDING)
 //    public List<FlexibleDTO> getSubmittedCards(UUID professor_id, ArrayList<String> select) {
 //        //Get intersection of provided values
