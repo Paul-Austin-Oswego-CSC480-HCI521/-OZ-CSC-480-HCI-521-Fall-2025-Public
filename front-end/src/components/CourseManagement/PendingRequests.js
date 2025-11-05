@@ -12,47 +12,41 @@ function PendingRequests({ userId }) {
       : "http://backend:9080/kudo-app/api";
 
   useEffect(() => {
-    const fetchPendingRequests = async () => {
-      try {
-        // TODO: Replace with actual backend endpoint for pending requests
-        const res = await authFetch(`${BASE_URL}/class/pending-requests?instructor_id=${userId}`);
-        if (!res.ok) throw new Error("Failed to authFetch pending requests");
-        const data = await res.json();
-        setPendingRequests(data || []);
-        console.log(data);
-      } catch (err) {
-        console.error(err);
-        setErrorMessage("Failed to load pending requests.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchPendingRequests();
   }, [userId, BASE_URL]);
 
-  const handleApprove = async (classId, studentId) => {
+  // pull the list of all pending requests
+  const fetchPendingRequests = async () => {
     try {
-      const res = await authFetch(`${BASE_URL}/class/${classId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user_id: [studentId] }),
+      const res = await authFetch(`${BASE_URL}/class/pending-requests?instructor_id=${userId}`);
+      if (!res.ok) throw new Error("Failed to authFetch pending requests");
+      const data = await res.json();
+      setPendingRequests(data || []);
+      setErrorMessage("");
+      console.log(data);
+    } catch (err) {
+      console.error(err);
+      setErrorMessage("Failed to load pending requests.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // approve or deny a request, send action to the BE
+  const handleRequestUpdate = async (classId, studentId, action) => {
+    try {
+      const res = await authFetch(`${BASE_URL}/class/enrollment/${studentId}/${classId}?action=${action}&instructor_id=${userId}`, {
+        method: "PATCH",
       });
       if (!res.ok) throw new Error("Failed to approve student");
-
       setPendingRequests((prev) =>
-        prev.filter((r) => !(r.class_id === classId && r.student.user_id === studentId))
+        prev.filter((r) => !(r.class_id === classId && r.userId === studentId))
       );
+      fetchPendingRequests();
     } catch (err) {
       console.error(err);
       setErrorMessage("Failed to approve student.");
     }
-  };
-
-  const handleReject = (classId, studentId) => {
-    setPendingRequests((prev) =>
-      prev.filter((r) => !(r.class_id === classId && r.student.user_id === studentId))
-    );
   };
 
   if (loading) return <p>Loading pending requests...</p>;
@@ -67,8 +61,8 @@ function PendingRequests({ userId }) {
             <strong>{req.student_name}</strong> ({req.student_email}) requested to join{" "}
             <strong>{req.class_name}</strong>
           </p>
-          <button onClick={() => handleApprove(req.class_id, req.student.user_id)}>Approve</button>
-          <button onClick={() => handleReject(req.class_id, req.student.user_id)}>Reject</button>
+          <button onClick={() => handleRequestUpdate(req.class_id, req.user_id, "approve")}>Approve</button>
+          <button onClick={() => handleRequestUpdate(req.class_id, req.user_id, "deny")}>Reject</button>
         </div>
       ))}
     </div>

@@ -642,14 +642,14 @@ public class ClassesResource {
             String sql;
             if (enrollmentStatus != null && !enrollmentStatus.isEmpty()) {
                 sql = """
-                SELECT u.user_id, u.name
+                SELECT u.user_id, u.name, u.email, u.role
                 FROM USER_CLASSES uc
                 JOIN USERS u ON uc.user_id = u.user_id
                 WHERE uc.class_id = ? AND uc.enrollment_status = ?""";
             } else {
                 // Default to APPROVED for backward compatibility
                 sql = """
-                SELECT u.user_id, u.name
+                SELECT u.user_id, u.name, u.email, u.role
                 FROM USER_CLASSES uc
                 JOIN USERS u ON uc.user_id = u.user_id
                 WHERE uc.class_id = ? AND uc.enrollment_status = 'APPROVED'""";
@@ -667,6 +667,8 @@ public class ClassesResource {
                         Map<String, String> user = new HashMap<>();
                         user.put("id", rs.getString("user_id"));
                         user.put("name", rs.getString("name"));
+                        user.put("email", rs.getString("email"));
+                        user.put("role", rs.getString("role"));
                         users.add(user);
                     }
                     return users;

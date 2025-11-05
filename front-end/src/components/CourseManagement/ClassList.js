@@ -1,7 +1,7 @@
 import React from "react";
 import ClassCard from "./ClassCard";
 
-function ClassList({ classes, isActive }) {
+function ClassList({ classes, isActive, professorId }) {
   if (!classes || classes.length === 0) {
     return <p>No {isActive ? "active" : "archived"} classes available.</p>;
   }
@@ -9,7 +9,7 @@ function ClassList({ classes, isActive }) {
   return (
     <div className="class-list">
       {classes.map((cls) => (
-        <ClassCard key={cls.class_id} classData={cls} isActive={isActive} />
+        <ClassCard key={cls.class_id} classData={cls} isActive={isActive} professorId={professorId} />
       ))}
     </div>
   );

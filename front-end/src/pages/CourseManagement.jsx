@@ -25,37 +25,36 @@ function CourseManagement() {
 
   useEffect(() => {
     if (!userId) return;
-
-    const fetchClasses = async () => {
-      try {
-        const res = await authFetch(`${BASE_URL}/users/${userId}/classes`);
-        if (!res.ok) throw new Error("Failed to fetch classes");
-        const data = await res.json();
-        console.log(data);
-
-        const classDetails = await Promise.all(
-          data.class_id.map(async (id) => {
-            const clsRes = await authFetch(`${BASE_URL}/class/${id}`);
-            const clsData = await clsRes.json();
-            const studentsRes = await authFetch(`${BASE_URL}/class/${id}/users`);
-            const studentsData = await studentsRes.json();
-            return {
-              ...clsData.class[0],
-              students: studentsData,
-            };
-          })
-        );
-        console.log(classDetails);
-
-        setClasses(classDetails);
-      } catch (err) {
-        console.error(err);
-        setToast({ message: "Failed to load classes.", type: "error" });
-      }
-    };
-
     fetchClasses();
   }, [userId, BASE_URL]);
+
+  const fetchClasses = async () => {
+    try {
+      const res = await authFetch(`${BASE_URL}/users/${userId}/classes`);
+      if (!res.ok) throw new Error("Failed to fetch classes");
+      const data = await res.json();
+      console.log(data);
+
+      const classDetails = await Promise.all(
+        data.class_id.map(async (id) => {
+          const clsRes = await authFetch(`${BASE_URL}/class/${id}`);
+          const clsData = await clsRes.json();
+          const studentsRes = await authFetch(`${BASE_URL}/class/${id}/users`);
+          const studentsData = await studentsRes.json();
+          return {
+            ...clsData.class[0],
+            students: studentsData,
+          };
+        })
+      );
+      console.log(classDetails);
+
+      setClasses(classDetails);
+    } catch (err) {
+      console.error(err);
+      setToast({ message: "Failed to load classes.", type: "error" });
+    }
+  };
 
   const handleClassCreated = (newClass) => {
     setClasses((prev) => [...prev, { ...newClass, students: [] }]);
@@ -101,14 +100,16 @@ function CourseManagement() {
               <ClassList
                 classes={classes.filter((c) => new Date(c.end_date) >= new Date())}
                 isActive={true}
-                onClassUpdated={handleClassUpdated}
+                onClassUpdated={fetchClasses()}
+                professorId={userId}
               />
 
               <h2>Archived Classes</h2>
               <ClassList
                 classes={classes.filter((c) => new Date(c.end_date) < new Date())}
                 isActive={false}
-                onClassUpdated={handleClassUpdated}
+                onClassUpdated={fetchClasses()}
+                professorId={userId}
               />
             </>
           )}
