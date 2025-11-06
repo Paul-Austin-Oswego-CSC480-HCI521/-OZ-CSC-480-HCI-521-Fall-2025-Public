@@ -100,7 +100,7 @@ function CourseManagement() {
               <ClassList
                 classes={classes.filter((c) => new Date(c.end_date) >= new Date())}
                 isActive={true}
-                onClassUpdated={fetchClasses()}
+                onClassUpdated={fetchClasses}
                 professorId={userId}
               />
 
@@ -108,7 +108,7 @@ function CourseManagement() {
               <ClassList
                 classes={classes.filter((c) => new Date(c.end_date) < new Date())}
                 isActive={false}
-                onClassUpdated={fetchClasses()}
+                onClassUpdated={fetchClasses}
                 professorId={userId}
               />
             </>
