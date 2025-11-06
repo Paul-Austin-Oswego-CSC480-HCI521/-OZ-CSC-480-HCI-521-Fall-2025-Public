@@ -85,14 +85,14 @@ public class KudoCardResource {
     @Path("list/sent")
     @Produces(MediaType.APPLICATION_JSON)
     public Object getSentKudoList(@QueryParam("user_id") UUID sender_id,
-                                  @QueryParam("values") Optional<ArrayList<String>> values) {
-        if(values.isEmpty()) {
+                                  @QueryParam("values") ArrayList<String> values) {
+        if(values == null || values.isEmpty()) {
             return kudoService.getCardListBySender(sender_id);
         } else {
             HashMap<String, Object> match = new HashMap<>();
             match.put("sender_id", sender_id);
 
-            return kudoService.getCardListBy(values.orElseGet(ArrayList::new), match).stream()
+            return kudoService.getCardListBy(values, match).stream()
                     .map(FlexibleDTO::getFields)
                     .toList();
         }
@@ -100,7 +100,6 @@ public class KudoCardResource {
 
     //Returns list of all IDs pertaining to Kudos which are received by this user
     //UUID should be in the format X-X-X-X-X where each X is a string of alphanumerics
-
     /**
      * GET /kudo-app/kudo-card/list/received - Retrieve all card_ids which correspond to cards received by a given user
      *
@@ -126,14 +125,14 @@ public class KudoCardResource {
     @Path("list/received")
     @Produces(MediaType.APPLICATION_JSON)
     public Object getReceivedKudoList(@QueryParam("user_id") UUID recipient_id,
-                                      @QueryParam("values") Optional<ArrayList<String>> values) {
-        if(values.isEmpty()) {
+                                      @QueryParam("values") ArrayList<String> values) {
+        if(values == null || values.isEmpty()) {
             return kudoService.getCardListByReceived(recipient_id);
         } else {
             HashMap<String, Object> match = new HashMap<>();
             match.put("recipient_id", recipient_id);
 
-            return kudoService.getCardListBy(values.orElseGet(ArrayList::new), match).stream()
+            return kudoService.getCardListBy(values, match).stream()
                     .map(FlexibleDTO::getFields)
                     .toList();
         }
