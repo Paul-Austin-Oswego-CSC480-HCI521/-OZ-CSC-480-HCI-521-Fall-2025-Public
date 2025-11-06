@@ -1245,6 +1245,22 @@ select:focus {
     width: 70%;
     max-width: 800px;
     max-height: 90%;
+    min-height: 200px; 
+    overflow-y: auto;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    background: white;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+}
+
+.code-modal {
+    padding: 0;
+    width: 600px;
+    max-height: 90%;
+    min-height: 200px; 
     overflow-y: auto;
     position: relative;
     display: flex;
@@ -1265,6 +1281,7 @@ select:focus {
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 9999; 
 }
 
 /* .tabs-container {

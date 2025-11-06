@@ -47,8 +47,8 @@ public class ClassesResource {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     public Response createClass(@QueryParam("class_name") String class_name,
-                                 @QueryParam("created_by") String created_by,
-                                 @QueryParam("end_date") String end_date) {
+                                @QueryParam("created_by") String created_by,
+                                @QueryParam("end_date") String end_date) {
         final String sql = """
         INSERT INTO CLASSES
             (class_name, join_code, created_by, end_date)
@@ -56,10 +56,18 @@ public class ClassesResource {
         RETURNING *
         """;
 
+        final String addCreatorSql = """
+        INSERT INTO USER_CLASSES
+            (user_id, class_id, enrollment_status)
+        VALUES (?, ?, 'APPROVED')
+        """;
+
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
+            conn.setAutoCommit(false);
             stmt.setString(1, class_name);
-            stmt.setObject(3, created_by != null ? UUID.fromString(created_by) : null);
+            UUID creatorUuid = created_by != null ? UUID.fromString(created_by) : null;
+            stmt.setObject(3, creatorUuid);
             stmt.setString(4, end_date);
 
             try  (ResultSet rs = stmt.executeQuery()) {
@@ -73,6 +81,17 @@ public class ClassesResource {
                         jsonBuilder.add("end_date", rs.getString("end_date"));
                     }
 
+                    // add creator to the class if created_by is provided
+                    if (creatorUuid != null) {
+                        try (PreparedStatement addCreatorStmt = conn.prepareStatement(addCreatorSql)) {
+                            addCreatorStmt.setObject(1, creatorUuid);
+                            addCreatorStmt.setObject(2, UUID.fromString(rs.getString("class_id")));
+                            addCreatorStmt.executeUpdate();
+                        }
+                    }
+
+                    conn.commit();
+
                     return Response.ok(jsonBuilder.build()).build();
                 }
 
@@ -84,6 +103,8 @@ public class ClassesResource {
         }
         throw new InternalServerErrorException("Failed to create class");
     }
+
+
 
     /**
      * Patch /kudo-app/api/class/X-X-X-X-X - Update a class's values
@@ -694,14 +715,14 @@ public class ClassesResource {
             String sql;
             if (enrollmentStatus != null && !enrollmentStatus.isEmpty()) {
                 sql = """
-                SELECT u.user_id, u.name
+                SELECT u.user_id, u.name, u.email, u.role
                 FROM USER_CLASSES uc
                 JOIN USERS u ON uc.user_id = u.user_id
                 WHERE uc.class_id = ? AND uc.enrollment_status = ?""";
             } else {
                 // Default to APPROVED for backward compatibility
                 sql = """
-                SELECT u.user_id, u.name
+                SELECT u.user_id, u.name, u.email, u.role
                 FROM USER_CLASSES uc
                 JOIN USERS u ON uc.user_id = u.user_id
                 WHERE uc.class_id = ? AND uc.enrollment_status = 'APPROVED'""";
@@ -719,6 +740,8 @@ public class ClassesResource {
                         Map<String, String> user = new HashMap<>();
                         user.put("id", rs.getString("user_id"));
                         user.put("name", rs.getString("name"));
+                        user.put("email", rs.getString("email"));
+                        user.put("role", rs.getString("role"));
                         users.add(user);
                     }
                     return users;

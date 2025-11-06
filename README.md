@@ -47,7 +47,7 @@ REACT_APP_GOOGLE_CLIENT_ID=YOUR_CLIENT_ID.apps.googleusercontent.com
 - If the database schema changes, you may need to remove your local Docker volume to avoid conflicts with outdated data. 
 - Data survives container restarts and rebuilds.
 - Schema migrations only run on first startup (empty database)
-- Follow the `FE Testing setup` guide for more information on how to set up a working database.   
+ 
 
 
 #### 5. Starting:  

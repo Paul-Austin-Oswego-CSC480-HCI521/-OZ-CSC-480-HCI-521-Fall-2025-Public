@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import StudentList from "./StudentList";
 import EditClassModal from "./EditClassModal";
 
-function ClassCard({ classData, isActive, onClassUpdated }) {
+function ClassCard({ classData, isActive, onClassUpdated, professorId }) {
   const [showRoster, setShowRoster] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
 
@@ -21,7 +21,7 @@ function ClassCard({ classData, isActive, onClassUpdated }) {
       <div className="class-info">
         <h3>{classData.class_name}</h3>
         <p>End Date: {classData.end_date || "N/A"}</p>
-        <p>Class Code: {classData.class_id}</p>
+        <p>Class Code: {classData.join_code}</p>
         <button onClick={toggleRoster}>
           {showRoster ? "Hide Roster" : "View Roster"}
         </button>
@@ -30,7 +30,13 @@ function ClassCard({ classData, isActive, onClassUpdated }) {
 
       {showRoster && (
         <div className="student-roster">
-          <StudentList students={classData.students || []} isEditable={isActive} />
+          <StudentList 
+            students={classData.students || []}
+            isEditable={isActive}
+            classId={classData.class_id}
+            professorId={professorId}
+            onStudentRemoved = {handleUpdate}
+          />
         </div>
       )}
 
