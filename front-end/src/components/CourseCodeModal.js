@@ -1,4 +1,3 @@
-// src/components/CourseCodeModal.jsx
 import React, { useState } from "react";
 import "../styles/Wireframe.css";
 
@@ -15,7 +14,7 @@ function CourseCodeModal({ open, onClose, onSubmit }) {
 
   return (
     <div className="review-page">
-      <div className="review-page"> {/* reuse review-page styles */}
+      <div className="review-page">
         <div className="header-row">
           <button onClick={onClose} className="icon-btn">
             <svg

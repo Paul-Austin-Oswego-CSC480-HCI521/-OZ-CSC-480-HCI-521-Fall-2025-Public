@@ -1157,21 +1157,23 @@ select:focus {
     position: absolute;
     color: #093B3B;
     left: 43%;
-    top: 55%;
-    max-width: 55%;
-    max-height: 70%;
-    width: 100%;
+    top: 60%;
+    transform: translateY(-50%);
+    width: 55%;              /* defines the visual text area width */
+    height: 70%;             /* defines the max vertical space */
     background-color: transparent;
     white-space: pre-wrap;
     word-wrap: break-word;
     overflow-wrap: break-word;
-    overflow-y: hidden;
+    overflow: hidden;         /* prevent overflow clipping */
     padding: 0.5rem;
     text-align: center;
-    font-size: 16px;
     box-sizing: border-box;
-    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
+
 
 /* ----------<> Approve / Review Page <>---------- */
 

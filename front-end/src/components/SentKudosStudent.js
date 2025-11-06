@@ -225,7 +225,7 @@ function SentKudosStudent( {messages = []} ) {
               </td>
             </tr>
           ) : (
-            sentKudos.map((k, i) => (
+            sortedKudos.map((k, i) => (
               <tr
                 className={`received-kudos-row ${
                   selectedRows.includes(i) ? "selected-row" : ""

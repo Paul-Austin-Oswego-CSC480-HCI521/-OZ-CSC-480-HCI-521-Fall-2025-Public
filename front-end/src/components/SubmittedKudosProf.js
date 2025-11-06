@@ -99,7 +99,7 @@ function SubmittedKudosProf({ submitted, onSelect}) {
                             <td colSpan={5} className="emptyTable">No Kudos to Review.</td>
                         </tr>
                     ) : (
-                        submitted.map((k) => (
+                        sortedKudos.map((k) => (
                                 <tr
                                     key={k.card_id}
                                     role="button"

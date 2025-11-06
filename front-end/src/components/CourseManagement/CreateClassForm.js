@@ -31,7 +31,7 @@ function CreateClassForm({ onClassCreated }) {
       if (!res.ok) throw new Error("Failed to create class");
 
       const data = await res.json();
-      setSuccessMessage(`Class created! Class code: ${data.class_id}`);
+      setSuccessMessage(`Class created! Join code: ${data.join_code}`);
       onClassCreated(data);
       setClassName("");
     } catch (err) {

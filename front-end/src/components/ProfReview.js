@@ -145,9 +145,9 @@ function ProfReview({ initialData, onClose }) {
                         >
                             <option value=""> -- Select a reason -- </option>
                             <option value="Not relevant to the class or learning content: ">Not relevant to the class or learning content</option>
-                            <option value="Inappropritae language: ">Inappropritae language</option>
+                            <option value="Inappropriate language: ">Inappropriate language</option>
                             <option value="Incomplete or too short to be meaningful: ">Incomplete or too short to be meaningful</option>
-                            <option value="This Kudos duplicates a previous submissions: ">This Kudos duplicates a previous submissions</option>
+                            <option value="This Kudos duplicates a previous submission: ">This Kudos duplicates a previous submission</option>
                             <option value="Submitted to the wrong section or group: ">Submitted to the wrong section or group</option>
                             <option value="Other: ">Other</option>
                         </select>
