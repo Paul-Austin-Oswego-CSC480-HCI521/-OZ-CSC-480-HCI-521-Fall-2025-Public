@@ -51,8 +51,8 @@ public class ClassesResource {
                                 @QueryParam("end_date") String end_date) {
         final String sql = """
         INSERT INTO CLASSES
-            (class_name, join_code, created_by, end_date)
-        VALUES (?, ?, ?, ?::timestamp)
+            (class_name, created_by, end_date)
+        VALUES (?, ?, ?::timestamp)
         RETURNING *
         """;
 
@@ -67,8 +67,8 @@ public class ClassesResource {
             conn.setAutoCommit(false);
             stmt.setString(1, class_name);
             UUID creatorUuid = created_by != null ? UUID.fromString(created_by) : null;
-            stmt.setObject(3, creatorUuid);
-            stmt.setString(4, end_date);
+            stmt.setObject(2, creatorUuid);
+            stmt.setString(3, end_date);
 
             try  (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
