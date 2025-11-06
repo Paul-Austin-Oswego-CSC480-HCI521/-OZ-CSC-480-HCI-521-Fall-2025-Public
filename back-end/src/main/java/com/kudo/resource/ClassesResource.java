@@ -304,7 +304,7 @@ public class ClassesResource {
     @POST
     @Path("enrollment/request")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response requestEnrollment(@QueryParam("join_code") String joinCode,
+    public Response requestEnrollment(@QueryParam("join_code") Integer joinCode,
                                       @QueryParam("user_id") String userId) {
         if (joinCode == null || userId == null) {
             return Response.status(Response.Status.BAD_REQUEST)
@@ -323,7 +323,7 @@ public class ClassesResource {
         try (Connection conn = dataSource.getConnection();
              PreparedStatement validateStmt = conn.prepareStatement(validateSql)) {
 
-            validateStmt.setString(1, joinCode);
+            validateStmt.setInt(1, joinCode);
 
             try (ResultSet rs = validateStmt.executeQuery()) {
                 if (!rs.next()) {
