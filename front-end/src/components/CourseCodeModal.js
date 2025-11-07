@@ -3,13 +3,26 @@ import "../styles/Wireframe.css";
 
 function CourseCodeModal({ open, onClose, onSubmit }) {
   const [courseCode, setCourseCode] = useState("");
+  const [statusMessage, setStatusMessage] = useState("");
+  const [statusType, setStatusType] = useState(""); // "success" | "error"
 
   if (!open) return null;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSubmit(courseCode);
-    setCourseCode("");
+    setStatusMessage("");
+    setStatusType("");
+
+    const result = await onSubmit(courseCode);
+
+    if (result.success) {
+      setStatusType("success");
+      setStatusMessage(result.message);
+      setCourseCode("");
+    } else {
+      setStatusType("error");
+      setStatusMessage(result.message);
+    }
   };
 
   return (
@@ -48,10 +61,18 @@ function CourseCodeModal({ open, onClose, onSubmit }) {
             />
           </div>
 
+          {statusMessage && (
+            <div
+              className={`status-message ${
+                statusType === "success" ? "success-text" : "error-text"
+              }`}
+            >
+              {statusMessage}
+            </div>
+          )}
+
           <div className="button-row">
-            <button type="submit" className="submit-btn">
-              Submit
-            </button>
+            <button type="submit" className="submit-btn">Submit</button>
             <button type="button" className="submit-btn" onClick={onClose}>
               Cancel
             </button>

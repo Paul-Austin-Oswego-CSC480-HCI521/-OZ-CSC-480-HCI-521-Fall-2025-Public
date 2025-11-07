@@ -1,3 +1,17 @@
+.status-message {
+  margin-top: 12px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.success-text {
+  color: #2e7d32;
+}
+
+.error-text {
+  color: #d32f2f;
+}
+
 .sort-dropdown-container {
   position: relative;
 }
@@ -1132,7 +1146,6 @@ select:focus {
     background: white;
 }
 
-/* Responsive stacking for small screens */
 @media (max-width: 768px) {
     .message-image-container {
         flex-direction: column;
@@ -1140,12 +1153,6 @@ select:focus {
         gap: 16px;
         padding-right: 0;
     }
-/* 
-    .image-preview {
-        width: 150px;
-        height: 150px;
-        margin-left: 0;
-    } */
 }
 
 .image-preview-container {
@@ -1159,13 +1166,13 @@ select:focus {
     left: 43%;
     top: 60%;
     transform: translateY(-50%);
-    width: 55%;              /* defines the visual text area width */
-    height: 70%;             /* defines the max vertical space */
+    width: 55%;
+    height: 70%;
     background-color: transparent;
     white-space: pre-wrap;
     word-wrap: break-word;
     overflow-wrap: break-word;
-    overflow: hidden;         /* prevent overflow clipping */
+    overflow: hidden;
     padding: 0.5rem;
     text-align: center;
     box-sizing: border-box;

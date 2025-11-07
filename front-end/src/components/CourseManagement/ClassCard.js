@@ -10,12 +10,15 @@ function ClassCard({ classData, isActive, onClassUpdated, professorId }) {
   const toggleRoster = () => setShowRoster((prev) => !prev);
 
   const handleUpdate = (updateInfo) => {
-    if (updateInfo.deleted) {
-      onClassUpdated({ deleted: true, class_id: classData.class_id });
-    } else {
-      onClassUpdated(updateInfo);
-    }
-  };
+  if (updateInfo.deleted) {
+    onClassUpdated({ deleted: true, class_id: classData.class_id });
+  } else if (updateInfo.message) {
+    onClassUpdated({ ...updateInfo });
+  } else {
+    onClassUpdated(updateInfo);
+  }
+};
+
 
   return (
     <div className="class-card">

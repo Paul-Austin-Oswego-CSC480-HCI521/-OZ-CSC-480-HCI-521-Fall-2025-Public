@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {authFetch } from '../UserContext';
 
-function PendingRequests({ userId }) {
+function PendingRequests({ userId, onStudentApproved }) {
   const [pendingRequests, setPendingRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
@@ -15,7 +15,6 @@ function PendingRequests({ userId }) {
     fetchPendingRequests();
   }, [userId, BASE_URL]);
 
-  // pull the list of all pending requests
   const fetchPendingRequests = async () => {
     try {
       const res = await authFetch(`${BASE_URL}/class/pending-requests?instructor_id=${userId}`);
@@ -32,20 +31,22 @@ function PendingRequests({ userId }) {
     }
   };
 
-  // approve or deny a request, send action to the BE
   const handleRequestUpdate = async (classId, studentId, action) => {
     try {
-      const res = await authFetch(`${BASE_URL}/class/enrollment/${studentId}/${classId}?action=${action}&instructor_id=${userId}`, {
-        method: "PATCH",
-      });
-      if (!res.ok) throw new Error("Failed to approve student");
-      setPendingRequests((prev) =>
-        prev.filter((r) => !(r.class_id === classId && r.userId === studentId))
+      const res = await authFetch(
+        `${BASE_URL}/class/enrollment/${studentId}/${classId}?action=${action}&instructor_id=${userId}`,
+        { method: "PATCH" }
       );
-      fetchPendingRequests();
+      if (!res.ok) throw new Error("Failed to update enrollment");
+
+      setPendingRequests((prev) =>
+        prev.filter((r) => !(r.class_id === classId && r.user_id === studentId))
+      );
+
+      if (onStudentApproved) onStudentApproved(); 
     } catch (err) {
       console.error(err);
-      setErrorMessage("Failed to approve student.");
+      setErrorMessage(`Failed to ${action} student.`);
     }
   };
 

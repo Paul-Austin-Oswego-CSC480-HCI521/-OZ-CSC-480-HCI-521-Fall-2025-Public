@@ -1,4 +1,3 @@
-// src/pages/NewKudosPage.jsx
 import React, { useState, useEffect } from 'react';
 import { useUser, authFetch } from '../components/UserContext';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -179,6 +178,22 @@ function NewKudosPage({ onSubmit }) {
 
     if (loading) return <div className="app-container">Loading...</div>;
 
+    // 🔹 Show simple message if user is not in any classes
+    if (!loading && classes.length === 0) {
+        return (
+            <div className="app-container">
+                <Header onCreateNew={handleCreateNew} />
+                <div className="main-content no-classes-container">
+                    <h2>You haven’t joined any classes yet!</h2>
+                    <p>
+                        Click the 'Add Course' button and type in your instructor-provided join code to join a class and start sending Kudos.
+                    </p>
+                </div>
+                <Footer />
+            </div>
+        );
+    }
+
     return (
         <div className="app-container">
             <Header onCreateNew={handleCreateNew} />
@@ -292,14 +307,14 @@ function NewKudosPage({ onSubmit }) {
                         <div className="right-column">
                             {selectedImage && (
                                 <div className="image-preview-container">
-                                    <img src={selectedImage} alt={formData.title} style={{ width: '100%'}}/>
+                                    <img src={selectedImage} alt={formData.title} style={{ width: '100%' }} />
                                     <div className="message-preview-container">
                                         <AutoFitText
                                             text={formData.message || "Your message will appear here..."}
-                                            maxFontSize={32}   // start big — adjusts down as needed
-                                            minFontSize={10}   // small enough for long messages
+                                            maxFontSize={32}
+                                            minFontSize={10}
                                         />
-                                        </div>
+                                    </div>
                                 </div>
                             )}
                         </div>
