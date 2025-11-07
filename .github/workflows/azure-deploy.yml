@@ -1,6 +1,9 @@
 name: Deploy to Azure VM
 
 on:
+  push:
+    branches:
+      - azure-production
   workflow_dispatch:
     inputs:
       branch:
