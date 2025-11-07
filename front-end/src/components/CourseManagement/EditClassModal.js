@@ -18,8 +18,6 @@ function EditClassModal({ open, onClose, classData, onUpdate }) {
       ? process.env.REACT_APP_API_BASE_URL
       : "http://backend:9080/kudo-app/api";
 
-  if (!open) return null;
-
   const handleRemoveStudent = async (studentId) => {
     setSubmitting(true);
     setErrorMessage("");
@@ -27,7 +25,7 @@ function EditClassModal({ open, onClose, classData, onUpdate }) {
 
     try {
       const res = await fetch(
-        `${BASE_URL}/class/${classData.class_id}?user_id=${studentId}`,
+        `${BASE_URL}/class/${classData.class_id}/${studentId}`,
         { method: "DELETE" }
       );
 
@@ -50,11 +48,10 @@ function EditClassModal({ open, onClose, classData, onUpdate }) {
 
     try {
       const res = await authFetch(`${BASE_URL}/class/${classData.class_id}`, {
-        method: "PUT",
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          class_name: className,
-          end_date: endDate || null,
+          closedAt: endDate ? new Date(endDate).toISOString() : null,
         }),
       });
 
@@ -97,27 +94,27 @@ function EditClassModal({ open, onClose, classData, onUpdate }) {
   };
 
   return (
+  <div className="edit-modal-overlay">
     <div className="review-page">
-      <div className="review-page">
-        <div className="header-row">
-          <button onClick={onClose} className="icon-btn">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="m12 19-7-7 7-7" />
-              <path d="M19 12H5" />
-            </svg>
-          </button>
-          <h2>Edit Class</h2>
-        </div>
+      <div className="header-row">
+        <button onClick={onClose} className="icon-btn">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="m12 19-7-7 7-7" />
+            <path d="M19 12H5" />
+          </svg>
+        </button>
+        <h2>Edit Class</h2>
+      </div>
 
         <form
           onSubmit={(e) => {
