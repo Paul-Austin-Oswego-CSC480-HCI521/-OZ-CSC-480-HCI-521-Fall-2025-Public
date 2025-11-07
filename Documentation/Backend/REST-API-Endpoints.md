@@ -554,19 +554,19 @@ curl -X DELETE http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api/cl
 200 OK
 ```
 
-### `DELETE /api/class/{class_id}`
+### `DELETE /api/class/{class_id}/{user_id}`
 
 Remove a user from a class.
 
 **Parameters:**
 
 - `class_id` (path): UUID of the class
-- `user_id` (query): UUID of user to delete
+- `user_id` (path): UUID of user to delete
 
 **Example:**
 
 ```bash
-curl -X DELETE "http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api/class/12345678-1234-1234-1234-123456789abc?user_id=87654321-4321-4321-4321-987654321xyz"
+curl -X DELETE "http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api/class/12345678-1234-1234-1234-123456789abc/87654321-4321-4321-4321-987654321xyz"
 ```
 
 **Response:**

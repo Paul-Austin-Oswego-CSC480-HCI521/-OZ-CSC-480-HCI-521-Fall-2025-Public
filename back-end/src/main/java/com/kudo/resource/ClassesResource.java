@@ -787,7 +787,7 @@ public class ClassesResource {
     /**
      * DELETE /kudo-app/api/class/{class_id} - Remove a user from a class
      *
-     * Call: DELETE http://localhost:9080/kudo-app/api/class/{class_id}
+     * Call: DELETE http://localhost:9080/kudo-app/api/class/{class_id}/(user_id}
      *
      * Path Parameters
      * - class_id: The UUID of the class
@@ -798,10 +798,10 @@ public class ClassesResource {
      * Returns: 500 Internal Server Error for database issues
      */
     @DELETE
-    @Path("{class_id}")
+    @Path("{class_id}/{user_id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response removeUserFromClass(@PathParam("class_id") UUID class_id,
-                                        @QueryParam("user_id") UUID user_id) {
+                                        @PathParam("user_id") UUID user_id) {
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement("SELECT class_id FROM CLASSES WHERE class_id = ? AND end_date > CURRENT_TIMESTAMP;")) {
             stmt.setObject(1, class_id);
