@@ -62,16 +62,20 @@ function CourseManagement() {
   };
 
   const handleClassUpdated = (updateInfo) => {
-    if (updateInfo.deleted) {
-      setClasses((prev) => prev.filter((c) => c.class_id !== updateInfo.class_id));
-      setToast({ message: "Class deleted successfully.", type: "success" });
-    } else {
-      setClasses((prev) =>
-        prev.map((c) => (c.class_id === updateInfo.class_id ? updateInfo : c))
-      );
-      setToast({ message: "Class updated successfully.", type: "success" });
-    }
-  };
+  if (updateInfo.deleted) {
+    setClasses((prev) => prev.filter((c) => c.class_id !== updateInfo.class_id));
+    setToast({ message: "Class deleted successfully.", type: "success" });
+  } else if (updateInfo.message) {
+    setToast({ message: updateInfo.message, type: "success" });
+    fetchClasses();
+  } else {
+    setClasses((prev) =>
+      prev.map((c) => (c.class_id === updateInfo.class_id ? updateInfo : c))
+    );
+    setToast({ message: "Class updated successfully.", type: "success" });
+  }
+};
+
 
   return (
     <div className="app-container">
@@ -118,7 +122,7 @@ function CourseManagement() {
             <CreateClassForm onClassCreated={handleClassCreated} />
           )}
 
-          {activeTab === "pending" && <PendingRequests userId={userId} />}
+          {activeTab === "pending" && <PendingRequests userId={userId} onStudentApproved={fetchClasses} />}
         </div>
 
         {toast && (

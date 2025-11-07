@@ -1,18 +1,21 @@
 import React from "react";
 import ClassCard from "./ClassCard";
 
-function ClassList({ classes, isActive, professorId }) {
-  if (!classes || classes.length === 0) {
-    return <p>No {isActive ? "active" : "archived"} classes available.</p>;
-  }
-
+function ClassList({ classes, isActive, onClassUpdated, professorId }) {
   return (
     <div className="class-list">
-      {classes.map((cls) => (
-        <ClassCard key={cls.class_id} classData={cls} isActive={isActive} professorId={professorId} />
+      {classes.map((c) => (
+        <ClassCard
+          key={c.class_id}
+          classData={c}
+          isActive={isActive}
+          professorId={professorId}
+          onClassUpdated={onClassUpdated}
+        />
       ))}
     </div>
   );
 }
+
 
 export default ClassList;
