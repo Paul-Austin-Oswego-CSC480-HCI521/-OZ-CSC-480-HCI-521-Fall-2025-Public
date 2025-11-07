@@ -1,0 +1,93 @@
+name: Deploy to Azure VM
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to deploy'
+        required: false
+        default: 'azure-production'
+        type: string
+
+jobs:
+  deploy:
+    name: Deploy to Azure Production
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.AZURE_VM_SSH_KEY }}" > ~/.ssh/azure_vm_key
+          chmod 600 ~/.ssh/azure_vm_key
+          ssh-keyscan -H ${{ secrets.AZURE_VM_IP }} >> ~/.ssh/known_hosts
+
+      - name: Test SSH connection
+        run: |
+          ssh -i ~/.ssh/azure_vm_key -o StrictHostKeyChecking=no \
+            ${{ secrets.AZURE_VM_USER }}@${{ secrets.AZURE_VM_IP }} \
+            'echo "✓ SSH connection successful"'
+
+      - name: Verify VM environment
+        run: |
+          ssh -i ~/.ssh/azure_vm_key \
+            ${{ secrets.AZURE_VM_USER }}@${{ secrets.AZURE_VM_IP }} << 'ENDSSH'
+          docker --version
+          docker-compose --version
+          if [ -d ~/-OZ-CSC-480-HCI-521-Fall-2025-Public ]; then
+            cd ~/-OZ-CSC-480-HCI-521-Fall-2025-Public
+            echo "✓ Repository: $(git branch --show-current)"
+          else
+            echo "✗ Repository not found"
+            exit 1
+          fi
+          ENDSSH
+
+      - name: Deploy application
+        run: |
+          ssh -i ~/.ssh/azure_vm_key \
+            ${{ secrets.AZURE_VM_USER }}@${{ secrets.AZURE_VM_IP }} << 'ENDSSH'
+          set -e
+          cd ~/-OZ-CSC-480-HCI-521-Fall-2025-Public
+
+          echo "→ Pulling latest code from ${{ github.event.inputs.branch || 'azure-production' }}..."
+          git fetch origin
+          git checkout ${{ github.event.inputs.branch || 'azure-production' }}
+          git pull origin ${{ github.event.inputs.branch || 'azure-production' }}
+
+          echo "→ Stopping containers..."
+          docker-compose down
+
+          echo "→ Building and starting..."
+          docker-compose up --build -d
+
+          echo "→ Waiting for startup..."
+          sleep 10
+
+          docker-compose ps
+          echo "✓ Deployment complete"
+          ENDSSH
+
+      - name: Verify deployment
+        run: |
+          ssh -i ~/.ssh/azure_vm_key \
+            ${{ secrets.AZURE_VM_USER }}@${{ secrets.AZURE_VM_IP }} << 'ENDSSH'
+          cd ~/-OZ-CSC-480-HCI-521-Fall-2025-Public
+
+          echo "=== Container Status ==="
+          docker-compose ps
+
+          echo ""
+          echo "=== Recent Logs ==="
+          docker-compose logs --tail=15 backend
+          docker-compose logs --tail=15 frontend
+          docker-compose logs --tail=15 db
+          ENDSSH
+
+      - name: Cleanup SSH key
+        if: always()
+        run: |
+          rm -f ~/.ssh/azure_vm_key
