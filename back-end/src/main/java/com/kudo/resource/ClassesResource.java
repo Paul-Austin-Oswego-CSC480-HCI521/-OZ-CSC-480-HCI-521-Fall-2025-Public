@@ -133,15 +133,15 @@ public class ClassesResource {
 
         final String sql = """
         UPDATE CLASSES
-        SET closed_at = ?
+        SET end_date = ?
         WHERE class_id = ? AND end_date > CURRENT_TIMESTAMP
-        RETURNING class_id, class_name, join_code, created_at, closed_at
+        RETURNING class_id, class_name, join_code, created_date, end_date
         """;
 
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setTimestamp(1, update.getClosedAtAsTimestamp());
+            stmt.setTimestamp(1, update.getEndDateAsTimestamp());
             stmt.setObject(2, class_id);
 
             try (ResultSet rs = stmt.executeQuery()) {
