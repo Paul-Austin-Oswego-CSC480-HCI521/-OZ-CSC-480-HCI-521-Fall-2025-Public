@@ -1,19 +1,43 @@
 /* ---------- Course Management Page ---------- */
+.course-management-container {
+  display: flex;
+  gap: 20px;
+}
+
+.course-subheaders {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 0 0 0;
+  margin-bottom: 10px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.course-subheaders h3:first-child {
+  margin-left: 20px; /* Align over sidebar */
+}
+
+.course-subheaders h3:last-child {
+  padding-left: 50px;
+}
+
 .class-students-container {
   display: flex;
   gap: 20px; /* space between columns */
   margin-top: 20px;
+  width: 100%;
 }
 
 .student-list-column,
 .pending-list-column {
-  flex: 1;
-  max-height: 400px; /* adjust as needed */
-  overflow-y: auto; /* scroll if content exceeds height */
-  border: 1px solid #ddd;
+  /* flex: 1; */
+  max-height: 400px;
+  /* width: 550px; */
+  overflow-y: auto;
+  border: 1px solid #093b3b;
   padding: 10px;
   border-radius: 6px;
-  background-color: #fafafa;
+  background-color: white;
 }
 
 .student-list-column h4,
@@ -27,7 +51,7 @@
   display: flex;
   gap: 20px;
   padding: 30px;
-  background-color: #FAFDF2;
+  background-color: #ccddbe;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.2);
   font-family: 'Poppins', sans-serif;
@@ -122,6 +146,24 @@
   cursor: pointer;
   color: #093B3B;
 }
+
+.pencil-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+}
+
+.pencil-btn svg {
+  display: block;
+}
+
+.pencil-btn:hover svg {
+  opacity: 0.8;
+}
+
 
 /* Roster and Pending lists */
 .course-roster {
@@ -539,6 +581,7 @@
   gap: 10px;               /* space between arrow and header */
   width: 100%;
   margin-bottom: 10px;
+  padding-left: 20px;
 }
 
 .create-new-header .back-button {
@@ -744,8 +787,8 @@
     font-family: 'Poppins', sans-serif;
     font-weight: bold;
     border-radius: 6px;
-    border: 2px solid #ebebeb;
-    background-color: #ebebeb;
+    border: 2px solid #093B3B;
+    background-color: white;
     color: black;
     cursor: pointer;
     transition: background-color 0.3s ease, color 0.3s ease;

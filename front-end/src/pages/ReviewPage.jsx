@@ -1,4 +1,3 @@
-// src/pages/ReviewPage.js
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import ProfReview from "../components/ProfReview";

@@ -119,15 +119,16 @@ function CourseManagement() {
         <button
           className="title-button"
           onClick={() => setShowCreateModal(true)}
-          style={{ padding: "12px 24px" }}
+          style={{ padding: "5px 10px" }}
         >
           Create New Course +
         </button>
       </div>
-
-      {/* Main content */}
+      <div className="course-subheaders">
+        <h3>Current Courses</h3>
+        <h3>Manage Courses</h3>
+      </div>
       <div className="course-management-container">
-        {/* Sidebar with active/archived */}
         <div className="course-sidebar">
           <h3>Active Classes</h3>
           <ul className="course-list">
@@ -166,9 +167,7 @@ function CourseManagement() {
           </ul>
         </div>
 
-        {/* Class details */}
         <div className="course-details-section">
-          <h3>Manage Courses</h3>
           {selectedClass ? (
             <>
               {console.log("Rendering ClassCard with selected class:", selectedClass)}

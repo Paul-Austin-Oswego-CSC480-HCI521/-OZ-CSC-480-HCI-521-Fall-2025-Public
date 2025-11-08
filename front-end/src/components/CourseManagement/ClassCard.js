@@ -60,9 +60,8 @@ function ClassCard({ classData, isActive, onClassUpdated, professorId }) {
 
   return (
     <div className={`class-card ${isArchived ? "archived" : ""}`}>
-      {/* Class Info */}
       <div className="class-info">
-        <h3>
+        <h2>
           {editingName ? (
             <input
               value={className}
@@ -73,10 +72,25 @@ function ClassCard({ classData, isActive, onClassUpdated, professorId }) {
             />
           ) : (
             <>
-              {className} <button onClick={() => setEditingName(true)}>✏️</button>
+              {className} <button onClick={() => setEditingName(true)} className="pencil-btn" aria-label="Edit name">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="lucide lucide-pencil"
+                >
+                  <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+                </svg>
+              </button>
             </>
           )}
-        </h3>
+        </h2>
 
         <p>
           End Date:{" "}
@@ -85,26 +99,48 @@ function ClassCard({ classData, isActive, onClassUpdated, professorId }) {
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              onBlur={() => { handleUpdateField("end_date", endDate); setEditingEndDate(false); }}
-              onKeyDown={(e) => { if (e.key === "Enter") { handleUpdateField("end_date", endDate); setEditingEndDate(false); } }}
+              onBlur={() => {
+                handleUpdateField("end_date", endDate);
+                setEditingEndDate(false);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleUpdateField("end_date", endDate);
+                  setEditingEndDate(false);
+                }
+              }}
               autoFocus
             />
           ) : (
             <>
-              {endDate || "N/A"} <button onClick={() => setEditingEndDate(true)}>✏️</button>
+              {endDate ? new Date(endDate).toISOString().split("T")[0] : "N/A"}{" "}
+              <button onClick={() => setEditingName(true)} className="pencil-btn" aria-label="Edit name">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="lucide lucide-pencil"
+                  >
+                    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+                </svg>
+              </button>
+
             </>
-          )}
+          )}{" "}
+          | Course Code: {classData.join_code}
         </p>
 
-        <p>Class Code: {classData.join_code}</p>
-
-        {isActive && <button onClick={handleDeleteClass}>Delete Class</button>}
       </div>
 
-      {/* Two-column layout for students */}
       <div className="class-students-container">
         <div className="student-list-column">
-          <h4>Enrolled Students</h4>
+          <h4>Students in this Course</h4>
           <StudentList
             students={classData.students || []}
             isEditable={isActive}
@@ -115,7 +151,7 @@ function ClassCard({ classData, isActive, onClassUpdated, professorId }) {
         </div>
 
         <div className="pending-list-column">
-          <h4>Pending Requests</h4>
+          <h4>Students Pending Approval</h4>
           <PendingRequests
             classId={classData.class_id}
             userId={professorId}
@@ -123,6 +159,7 @@ function ClassCard({ classData, isActive, onClassUpdated, professorId }) {
           />
         </div>
       </div>
+      {isActive && <button className="edit-btn" onClick={handleDeleteClass}>Delete Course</button>}
 
       {toast && (
         <ToastMessage

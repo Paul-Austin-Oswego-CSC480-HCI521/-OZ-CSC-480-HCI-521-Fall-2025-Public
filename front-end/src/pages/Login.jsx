@@ -27,7 +27,6 @@ function Login() {
   document.body.appendChild(script);
 
   script.onload = () => {
-    // Sign in button
     window.google.accounts.id.initialize({
       client_id: GOOGLE_API_KEY,
       callback: handleGoogleResponse,
@@ -37,18 +36,17 @@ function Login() {
       {
         theme: 'outline',
         size: 'large',
-        text: 'signin_with',   // Sign in text
+        text: 'signin_with',
         width: 300,
       }
     );
 
-    // Sign up button
     window.google.accounts.id.renderButton(
       document.getElementById('googleSignUpButton'),
       {
         theme: 'outline',
         size: 'large',
-        text: 'signup_with',   // Sign up text
+        text: 'signup_with',
         width: 300,
       }
     );

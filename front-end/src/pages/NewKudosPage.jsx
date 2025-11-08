@@ -13,7 +13,6 @@ function NewKudosPage({ onSubmit }) {
     const { user } = useUser();
     const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-    // Check for edit mode
     const queryParams = new URLSearchParams(location.search);
     const editCardId = queryParams.get('edit');
 
@@ -36,7 +35,6 @@ function NewKudosPage({ onSubmit }) {
         message: '',
     });
 
-    // Fetch user classes and rosters
     useEffect(() => {
         authFetch(`${BASE_URL}/users/${user.user_id}/classes`)
             .then(res => res.json())
@@ -49,7 +47,6 @@ function NewKudosPage({ onSubmit }) {
                 const classList = await Promise.all(classProm);
                 setClasses(classList);
 
-                // auto-select if only one class
                 if (classList.length === 1) {
                     setFormData(prev => ({ ...prev, class: classList[0].id }));
                 }
@@ -70,7 +67,6 @@ function NewKudosPage({ onSubmit }) {
             });
     }, [BASE_URL, user?.user_id]);
 
-    // Prefill existing Kudos if editing
     useEffect(() => {
         if (!editCardId) return;
 
@@ -178,7 +174,6 @@ function NewKudosPage({ onSubmit }) {
 
     if (loading) return <div className="app-container">Loading...</div>;
 
-    // 🔹 Show simple message if user is not in any classes
     if (!loading && classes.length === 0) {
         return (
             <div className="app-container">
