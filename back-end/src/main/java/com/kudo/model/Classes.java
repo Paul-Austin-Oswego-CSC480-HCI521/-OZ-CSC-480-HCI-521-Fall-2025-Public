@@ -2,6 +2,7 @@ package com.kudo.model;
 
 import jakarta.json.bind.annotation.JsonbProperty;
 
+import java.sql.Timestamp;
 import java.util.UUID;
 
 public class Classes {
@@ -11,15 +12,35 @@ public class Classes {
     @JsonbProperty("name")
     private String name;
 
+    @JsonbProperty("join_code")
+    private Integer join_code;
+
+    @JsonbProperty("created_date")
+    private Timestamp created_date;
+
+    @JsonbProperty("created_by")
+    private UUID created_by;
+
+    @JsonbProperty("end_date")
+    private Timestamp end_date;
+
     public Classes() {}
 
-    public Classes(UUID cardId, String name) {
-        this.class_id = cardId;
+    public Classes(UUID class_id, String name,  Integer join_code, Timestamp created_date, UUID created_by) {
+        this.created_date = created_date;
+        this.join_code = join_code;
         this.name = name;
+        this.class_id = class_id;
+        this.created_by = created_by;
     }
 
-    public Classes(String name) {
+    public Classes(UUID class_id, String name, Integer join_code, Timestamp created_date, UUID created_by, Timestamp end_date) {
+        this.class_id = class_id;
         this.name = name;
+        this.join_code = join_code;
+        this.created_date = created_date;
+        this.end_date = end_date;
+        this.created_by = created_by;
     }
 
     public UUID getClass_id() {
@@ -36,5 +57,37 @@ public class Classes {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Integer getJoin_code() {
+        return join_code;
+    }
+
+    public void setJoin_code(Integer join_code) {
+        this.join_code = join_code;
+    }
+
+    public Timestamp getCreated_date() {
+        return created_date;
+    }
+
+    public void setCreated_date(Timestamp created_date) {
+        this.created_date = created_date;
+    }
+
+    public UUID getCreated_by() {
+        return created_by;
+    }
+
+    public void setCreated_by(UUID created_by) {
+        this.created_by = created_by;
+    }
+
+    public Timestamp getEnd_date() {
+        return end_date;
+    }
+
+    public void setEnd_date(Timestamp end_date) {
+        this.end_date = end_date;
     }
 }

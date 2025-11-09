@@ -93,7 +93,7 @@ function ReceivedKudosStudent( { received }) {
               </td>
             </tr>
           ) : (
-            received.map((k, i) => (
+            sortedKudos.map((k, i) => (
               <tr
                 key={k.card_id}
                 role="button"

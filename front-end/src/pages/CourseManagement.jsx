@@ -1,20 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
-import Tabs from "../components/Shared/Tabs";
-import CreateClassForm from "../components/CourseManagement/CreateClassForm";
-import ClassList from "../components/CourseManagement/ClassList";
-import PendingRequests from "../components/CourseManagement/PendingRequests";
+import ClassCard from "../components/CourseManagement/ClassCard";
 import ToastMessage from "../components/Shared/ToastMessage";
+import { useUser, authFetch } from "../components/UserContext";
 import "../styles/Wireframe.css";
-import { useUser } from "../components/UserContext";
+import CreateCourseModal from "../components/CourseManagement/CreateCourseModal";
 
 function CourseManagement() {
-  const [activeTab, setActiveTab] = useState("myClasses"); // myClasses / createClass / pending
   const [classes, setClasses] = useState([]);
+  const [selectedClassId, setSelectedClassId] = useState(null);
   const [toast, setToast] = useState(null);
-  const navigate = useNavigate();
+  const [showCreateModal, setShowCreateModal] = useState(false);
   const { user } = useUser();
+  const navigate = useNavigate();
 
   const userId = user?.user_id;
 
@@ -23,110 +22,181 @@ function CourseManagement() {
       ? process.env.REACT_APP_API_BASE_URL
       : "http://backend:9080/kudo-app/api";
 
-  useEffect(() => {
+  // Fetch classes (wrapped in useCallback to prevent unnecessary re-renders)
+  const fetchClasses = useCallback(async () => {
     if (!userId) return;
 
-    const fetchClasses = async () => {
-      try {
-        const res = await fetch(`${BASE_URL}/users/${userId}/classes`);
-        if (!res.ok) throw new Error("Failed to fetch classes");
-        const data = await res.json();
+    try {
+      console.log("Fetching classes for user:", userId);
 
-        const classDetails = await Promise.all(
-          data.class_id.map(async (id) => {
-            const clsRes = await fetch(`${BASE_URL}/class/${id}`);
-            const clsData = await clsRes.json();
-            const studentsRes = await fetch(`${BASE_URL}/class/${id}/users`);
-            const studentsData = await studentsRes.json();
-            return {
-              ...clsData.class[0],
-              students: studentsData,
-            };
-          })
-        );
+      const res = await authFetch(`${BASE_URL}/users/${userId}/classes`);
+      if (!res.ok) throw new Error("Failed to fetch classes");
+      const data = await res.json();
+      console.log("User classes data:", data);
 
-        setClasses(classDetails);
-      } catch (err) {
-        console.error(err);
-        setToast({ message: "Failed to load classes.", type: "error" });
-      }
-    };
+      // Fetch each class and its students
+      const classDetails = await Promise.all(
+        data.class_id.map(async (id) => {
+          const clsRes = await authFetch(`${BASE_URL}/class/${id}`);
+          const clsData = await clsRes.json();
+          const studentsRes = await authFetch(`${BASE_URL}/class/${id}/users`);
+          const studentsData = await studentsRes.json();
 
-    fetchClasses();
+          return {
+            ...clsData.class[0],
+            students: studentsData,
+          };
+        })
+      );
+
+      console.log("Detailed class info:", classDetails);
+      setClasses(classDetails);
+
+      // Safely set initial selection if none exists
+      setSelectedClassId((prev) => {
+        if (prev) {
+          console.log("Keeping current selected class:", prev);
+          return prev;
+        }
+        const firstActiveClass =
+          classDetails.find((cls) => new Date(cls.end_date) >= new Date()) ||
+          classDetails[0];
+        if (firstActiveClass) {
+          console.log("Setting initial selected class:", firstActiveClass.class_id);
+          return firstActiveClass.class_id;
+        }
+        return null;
+      });
+    } catch (err) {
+      console.error("Error fetching classes:", err);
+      setToast({ message: "Failed to load classes.", type: "error" });
+    }
   }, [userId, BASE_URL]);
 
-  const handleClassCreated = (newClass) => {
-    setClasses((prev) => [...prev, { ...newClass, students: [] }]);
-    setToast({ message: `Class "${newClass.class_name}" created successfully!`, type: "success" });
-  };
+  // Fetch classes once userId is available
+  useEffect(() => {
+    fetchClasses();
+  }, [fetchClasses]);
 
-  const handleClassUpdated = (updateInfo) => {
-    if (updateInfo.deleted) {
-      setClasses((prev) => prev.filter((c) => c.class_id !== updateInfo.class_id));
-      setToast({ message: "Class deleted successfully.", type: "success" });
-    } else {
-      setClasses((prev) =>
-        prev.map((c) => (c.class_id === updateInfo.class_id ? updateInfo : c))
-      );
-      setToast({ message: "Class updated successfully.", type: "success" });
-    }
-  };
+  const handleClassUpdated = async (updateInfo) => {
+  if (!updateInfo || !updateInfo.class_id) {
+    // If no updateInfo, just refetch classes
+    await fetchClasses();
+    setToast({ message: "Updated successfully.", type: "success" });
+    return;
+  }
+
+  // Update local state first
+  setClasses((prev) =>
+    prev.map((c) => (c.class_id === updateInfo.class_id ? { ...c, ...updateInfo } : c))
+  );
+
+  setToast({ message: "Class updated successfully.", type: "success" });
+
+  // Refetch to get latest student info
+  await fetchClasses();
+};
+
+
+  const selectedClass = classes.find((c) => c.class_id === selectedClassId);
 
   return (
     <div className="app-container">
       <Header showNav={true} />
-      <div className="main-content">
-      <main>
+
+      {/* Page header */}
+      <div
+        className="course-header-row"
+        style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
+      >
         <div className="create-new-header">
-          <button type='button' className='back-button' onClick={() => navigate(-1)}>←</button>
+          <button className="back-button" onClick={() => navigate(-1)}>
+            ←
+          </button>
           <h2>Course Management</h2>
         </div>
 
-        <Tabs
-          tabs={[
-            { label: "My Classes", value: "myClasses" },
-            { label: "Create Class", value: "createClass" },
-            { label: "Pending Requests", value: "pending" },
-          ]}
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-        />
+        <button
+          className="title-button"
+          onClick={() => setShowCreateModal(true)}
+          style={{ padding: "5px 10px" }}
+        >
+          Create New Course +
+        </button>
+      </div>
+      <div className="course-subheaders">
+        <h3>Current Courses</h3>
+        <h3>Manage Courses</h3>
+      </div>
+      <div className="course-management-container">
+        <div className="course-sidebar">
+          <h3>Active Classes</h3>
+          <ul className="course-list">
+            {classes
+              .filter((c) => new Date(c.end_date) >= new Date())
+              .map((cls) => (
+                <li
+                  key={cls.class_id}
+                  className={cls.class_id === selectedClassId ? "selected" : ""}
+                  onClick={() => {
+                    console.log("Class clicked:", cls.class_id);
+                    setSelectedClassId(cls.class_id);
+                  }}
+                >
+                  {cls.class_name}
+                </li>
+              ))}
+          </ul>
 
-        <div className="tab-content">
-          {activeTab === "myClasses" && (
+          <h3>Archived Classes</h3>
+          <ul className="course-list">
+            {classes
+              .filter((c) => new Date(c.end_date) < new Date())
+              .map((cls) => (
+                <li
+                  key={cls.class_id}
+                  className={cls.class_id === selectedClassId ? "selected" : ""}
+                  onClick={() => {
+                    console.log("Class clicked:", cls.class_id);
+                    setSelectedClassId(cls.class_id);
+                  }}
+                >
+                  {cls.class_name}
+                </li>
+              ))}
+          </ul>
+        </div>
+
+        <div className="course-details-section">
+          {selectedClass ? (
             <>
-              <h2>Active Classes</h2>
-              <ClassList
-                classes={classes.filter((c) => new Date(c.end_date) >= new Date())}
-                isActive={true}
-                onClassUpdated={handleClassUpdated}
-              />
-
-              <h2>Archived Classes</h2>
-              <ClassList
-                classes={classes.filter((c) => new Date(c.end_date) < new Date())}
-                isActive={false}
+              {console.log("Rendering ClassCard with selected class:", selectedClass)}
+              <ClassCard
+                classData={selectedClass}
+                isActive={new Date(selectedClass.end_date) >= new Date()}
+                professorId={userId}
                 onClassUpdated={handleClassUpdated}
               />
             </>
+          ) : (
+            <p>Select a course to manage.</p>
           )}
-
-          {activeTab === "createClass" && (
-            <CreateClassForm onClassCreated={handleClassCreated} />
-          )}
-
-          {activeTab === "pending" && <PendingRequests userId={userId} />}
         </div>
+      </div>
 
-        {toast && (
-          <ToastMessage
-            message={toast.message}
-            type={toast.type}
-            onClose={() => setToast(null)}
-          />
-        )}
-      </main>
-    </div>
+      {toast && (
+        <ToastMessage
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
+
+      <CreateCourseModal
+        open={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onClassCreated={fetchClasses}
+      />
     </div>
   );
 }

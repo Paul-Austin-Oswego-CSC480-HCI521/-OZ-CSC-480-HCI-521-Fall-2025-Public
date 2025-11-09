@@ -231,7 +231,7 @@ function ReviewedKudosProf( {reviewedKudos = [], onSelect} ) {
                         </td>
                     </tr>
                 ) : (
-                    reviewedKudos.map((k, i) => (
+                    sortedKudos.map((k, i) => (
                         <tr
                             className={`received-kudos-row ${selectedRows.includes(i) ? "selected-row" : ""}`}
                             key={k.card_id}

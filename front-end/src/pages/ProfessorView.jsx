@@ -18,7 +18,6 @@ function ProfessorView() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    // get cards details (same as StudentView.jsx)
     const getCard = async (cardId) => {
         const response = await authFetch(`${BASE_URL}/kudo-card/${cardId}?user_id=${user.user_id}`);
         if (!response.ok) {
@@ -27,7 +26,6 @@ function ProfessorView() {
         return await response.json();
     };
 
-    // get users info (name, email, role) from the id (same as StudentView.jsx)
     const getUserInfo = async (userId) => {
         try {
             const response = await authFetch(`${BASE_URL}/users/${userId}`);
@@ -42,14 +40,12 @@ function ProfessorView() {
         }
     };
 
-    // get all kudos (submitted and reviewed ) for this user
     const getKudos = useCallback(async () => {
         if (!user?.user_id) return;
         setLoading(true);
         setError(null);
         try {
 
-            // get list of sent card ids and list of received card ids 
             const subRes = await authFetch(`${BASE_URL}/kudo-card/list/submitted?professor_id=${user.user_id}`);
             const subList = await subRes.json();
             const revRes = await authFetch(`${BASE_URL}/kudo-card/list/reviewed?professor_id=${user.user_id}`);
@@ -58,21 +54,18 @@ function ProfessorView() {
                 throw new Error('Failed to authFetch card lists');
             }
 
-            // gets card info
             const subCardIds = subList.card_id || [];
             const revCardIds = revList.card_id || [];
             const allCardsIds = [...new Set([...subCardIds, ...revCardIds])];
             const cardDetails = await Promise.all(allCardsIds.map(cardId => 
                 getCard(cardId)));
 
-            // sort by date
             cardDetails.sort((a, b) => {
                 const dateA = new Date(a.created_at?.replace(/\[UTC\]$/, '') || 0);
                 const dateB = new Date(b.created_at?.replace(/\[UTC\]$/, '') || 0);
                 return dateB - dateA;
             });
 
-            // get the name of each user
             const userIds = new Set();
             cardDetails.forEach(kudo => {
                 userIds.add(kudo.sender_id);
@@ -85,9 +78,7 @@ function ProfessorView() {
                 })
             );
 
-            // format cards for display 
             const formatKudo = (kudo) => {
-                // Format the created_at date
                 let formattedDate = "-";
                 if (kudo.created_at) {
                     try {
@@ -120,7 +111,6 @@ function ProfessorView() {
                 };
             };
 
-            // filter cards by status 
             const sub = cardDetails
                 .filter(kudo => kudo.status === "PENDING")
                 .map(formatKudo);

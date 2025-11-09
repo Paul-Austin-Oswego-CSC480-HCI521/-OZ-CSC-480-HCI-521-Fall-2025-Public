@@ -19,6 +19,8 @@ services:
       timeout: 5s
       retries: 3
   backend: #backend service
+    env_file:
+      - .env
     build: 
       context: ./back-end
       dockerfile: Dockerfile
@@ -45,6 +47,8 @@ services:
       - JWT_EXPIRATION_HOURS=${JWT_EXPIRATION_HOURS}
       - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
   frontend: #frontend service
+    env_file:
+      - .env
     build:
       context: ./front-end
       dockerfile: Dockerfile
@@ -63,6 +67,7 @@ services:
     stdin_open: true
     tty: true
     
+
 
 volumes:
   postgres_data:

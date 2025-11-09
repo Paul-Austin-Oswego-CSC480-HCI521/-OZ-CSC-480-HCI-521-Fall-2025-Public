@@ -140,7 +140,6 @@ Delete a user.
 curl -X DELETE http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api/users/87654321-4321-4321-4321-987654321xyz
 ```
 
-
 ### `GET /kudo-app/api/users/{user_id}/classes`
 Retrieve a list of all classes which the user is enrolled in.
 
@@ -148,6 +147,8 @@ Call: GET http://kudos-backend-network:9080/kudo-app/api/users/{user_id}/classes
 
 **Parameters:**
 - `user_id` (path): the UUID of the user who's enrolled classes are to be queried
+- `enrollment_status` (query): the enrollment_status of the user in the classes to be queried (APPROVED (default), PENDING, DENIED)
+- `is_archived` (query): whether or not the given class is archived (default = false)
 
 **Example:**
 ```bash
@@ -167,6 +168,7 @@ Get list of card IDs sent by a user.
 
 **Parameters:**
 - `user_id` (query): User UUID
+- `values` : a list of values to get from the record
 
 **Example:**
 ```bash
@@ -175,12 +177,18 @@ curl "http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api/kudo-card/l
 
 **Response:**
 ```json
-{
-  "card_id": [
-    "abcd1234-1234-1234-1234-123456789def",
-    "abcd1234-1234-1234-1234-123456789ghi"
-  ]
-}
+[
+  {
+    card_id:"X-X-X-X-X",
+    ...
+  }
+
+  OR (when values is empty)
+  
+  {
+    "card_id":["X-X-X-X-X", ...]
+  }
+]
 ```
 
 ### `GET /api/kudo-card/list/received`
@@ -188,6 +196,8 @@ Get list of card IDs received by a user.
 
 **Parameters:**
 - `user_id` (query): User UUID
+- `values` : a list of values to get from the record
+```
 
 **Example:**
 ```bash
@@ -196,12 +206,18 @@ curl "http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api/kudo-card/l
 
 **Response:**
 ```json
+[
+  {
+    card_id:"X-X-X-X-X",
+    ...
+  }
+]
+
+OR (when values is empty) 
+
 {
-  "card_id": [
-    "abcd1234-1234-1234-1234-123456789jkl",
-    "abcd1234-1234-1234-1234-123456789mno"
-  ]
-}
+  "card_id":["X-X-X-X-X", ...]
+} 
 ```
 
 ### `GET /api/kudo-card/{card_id}`
@@ -330,9 +346,15 @@ curl -X PATCH http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api/kud
 
 Create a new class.
 
-**Parameters:**
+**Request:**
 
-- `class_name` (query): Name of the class
+```json
+{
+  "class_name": "Teaching 101",
+  "created_by": "Jonny",
+  "end_date": "2026-08-24T14:00:00"
+}
+```
 
 **Example:**
 
@@ -345,9 +367,84 @@ curl -X POST "http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api/cla
 ```json
 {
   "class_id": "12345678-1234-1234-1234-123456789abc",
-  "class_name": "Teaching 101"
+  "class_name": "Teaching 101",
+  "join_code": 123456
 }
 ```
+
+
+### `PATCH /api/class/{class_id}`
+
+Update a class’s values.
+
+**Parameters:**
+
+* `class_id` (path): Class UUID
+
+**Request Body:**
+
+```json
+{
+  "end_date": "2025-01-15T10:30:00"
+}
+```
+
+**Example:**
+
+```bash
+curl -X PATCH "http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api/class/abcd1234-1234-1234-1234-123456789def" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "end_date": "2025-01-15T10:30:00"
+  }'
+```
+
+**Response:**
+
+```json
+{
+  "class_id": "abcd1234-1234-1234-1234-123456789def",
+  "class_name": "Teaching 101",
+  "join_code": "123456"
+}
+```
+
+**Status Codes:**
+
+* `200 OK` – Successfully updated class
+* `500 Internal Server Error` – Database error
+
+
+
+### `PATCH /api/class/{class_id}/regenerateJoinCode`
+
+Regenerate a class’s join code (only if the class has not yet ended).
+
+**Parameters:**
+
+* `class_id` (path): Class UUID
+
+**Example:**
+
+```bash
+curl -X PATCH "http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api/class/abcd1234-1234-1234-1234-123456789def/regenerateJoinCode"
+```
+
+**Response:**
+
+```json
+{
+  "class_id": "abcd1234-1234-1234-1234-123456789def",
+  "join_code": "654321"
+}
+```
+
+**Status Codes:**
+
+* `200 OK` – Successfully regenerated join code
+* `404 Not Found` – Class not found or already ended
+* `500 Internal Server Error` – Database error
+
 
 ### `PUT /api/class/{class_id}`
 
@@ -457,19 +554,19 @@ curl -X DELETE http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api/cl
 200 OK
 ```
 
-### `DELETE /api/class/{class_id}`
+### `DELETE /api/class/{class_id}/{user_id}`
 
 Remove a user from a class.
 
 **Parameters:**
 
 - `class_id` (path): UUID of the class
-- `user_id` (query): UUID of user to delete
+- `user_id` (path): UUID of user to delete
 
 **Example:**
 
 ```bash
-curl -X DELETE "http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api/class/12345678-1234-1234-1234-123456789abc?user_id=87654321-4321-4321-4321-987654321xyz"
+curl -X DELETE "http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api/class/12345678-1234-1234-1234-123456789abc/87654321-4321-4321-4321-987654321xyz"
 ```
 
 **Response:**
@@ -477,3 +574,154 @@ curl -X DELETE "http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api/c
 ```
 200 OK
 ```
+
+## Enrollment API
+
+### `POST /api/class/enrollment/request`
+
+Submit a student enrollment request using a class join code.
+
+**Parameters:**
+
+* `join_code` (query): The join code for the class
+* `user_id` (query): The UUID of the student requesting enrollment
+
+**Example:**
+
+```bash
+curl -X POST "http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api/class/enrollment/request?join_code=123456&user_id=abcd1234-1234-1234-1234-123456789def"
+```
+
+**Response:**
+
+```json
+{
+  "message": "Enrollment request submitted successfully",
+  "class_name": "Teaching 101",
+  "status": "PENDING"
+}
+```
+
+**Status Codes:**
+
+* `201 Created` – Enrollment request successfully submitted
+* `400 Bad Request` – Missing parameters or class has ended / already enrolled
+* `404 Not Found` – Invalid or expired join code
+* `409 Conflict` – Student already has an enrollment or pending request
+* `500 Internal Server Error` – Database error
+
+---
+
+### `GET /api/class/pending-requests`
+
+Retrieve all pending enrollment requests for the instructor’s classes.
+
+**Parameters:**
+
+* `instructor_id` (query): The UUID of the instructor
+
+**Example:**
+
+```bash
+curl -X GET "http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api/class/pending-requests?instructor_id=abcd1234-1234-1234-1234-123456789def"
+```
+
+**Response:**
+
+```json
+[
+  {
+    "user_id": "12345678-1234-1234-1234-123456789abc",
+    "class_id": "87654321-4321-4321-4321-987654321xyz",
+    "student_name": "John Doe",
+    "student_email": "john@example.com",
+    "class_name": "Teaching 101"
+  }
+]
+```
+
+**Status Codes:**
+
+* `200 OK` – Successfully retrieved pending requests
+* `400 Bad Request` – Missing instructor ID
+* `500 Internal Server Error` – Database error
+
+---
+
+### `PATCH /api/class/enrollment/{user_id}/{class_id}`
+
+Approve or deny a pending student enrollment request.
+
+**Parameters:**
+
+* `user_id` (path): The UUID of the student
+* `class_id` (path): The UUID of the class
+* `action` (query): Either `approve` or `deny`
+* `instructor_id` (query): The UUID of the instructor performing the action
+
+**Example:**
+
+```bash
+curl -X PATCH "http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api/class/enrollment/abcd1234-1234-1234-1234-123456789def/87654321-4321-4321-4321-987654321xyz?action=approve&instructor_id=12345678-1234-1234-1234-123456789abc"
+```
+
+**Response:**
+
+```json
+{
+  "message": "Enrollment request approved successfully",
+  "student_name": "John Doe",
+  "class_name": "Teaching 101",
+  "status": "APPROVED"
+}
+```
+
+**Status Codes:**
+
+* `200 OK` – Enrollment request successfully updated
+* `400 Bad Request` – Invalid or missing action/instructor ID
+* `403 Forbidden` – Instructor not authorized to modify this class
+* `404 Not Found` – Pending enrollment request not found or class not found
+* `500 Internal Server Error` – Database error
+
+
+### `GET /api/class/{class_id}/users`
+
+Retrieve the roster (list of users) for a specific class.
+
+**Parameters:**
+
+* `class_id` (path): Class UUID
+* `enrollment_status` (query, optional): Filter users by enrollment status. Must be one of:
+
+    * `PENDING`
+    * `APPROVED`
+    * `DENIED`
+      If omitted, defaults to `APPROVED`.
+
+**Example:**
+
+```bash
+curl -X GET "http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api/class/abcd1234-1234-1234-1234-123456789def/users?enrollment_status=APPROVED"
+```
+
+**Response:**
+
+```json
+[
+  {
+    "id": "12345678-1234-1234-1234-123456789abc",
+    "name": "John Doe"
+  },
+  {
+    "id": "87654321-4321-4321-4321-987654321xyz",
+    "name": "Jane Smith"
+  }
+]
+```
+
+**Status Codes:**
+
+* `200 OK` – Successfully retrieved class roster
+* `400 Bad Request` – Invalid `enrollment_status` value
+* `500 Internal Server Error` – Database error

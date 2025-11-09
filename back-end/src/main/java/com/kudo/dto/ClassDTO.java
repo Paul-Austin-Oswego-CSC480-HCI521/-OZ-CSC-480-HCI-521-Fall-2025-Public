@@ -1,8 +1,12 @@
 package com.kudo.dto;
 
+import jakarta.json.bind.annotation.JsonbDateFormat;
 import jakarta.json.bind.annotation.JsonbProperty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.ws.rs.BadRequestException;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -55,6 +59,66 @@ public class ClassDTO {
             for(String str : class_id)
                 res+=str;
             return res + '}';
+        }
+    }
+
+    public static class ClassCreate {
+        @NotNull
+        private String class_name;
+        @JsonbDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+        private LocalDateTime end_date;
+
+        public ClassCreate() {}
+        public ClassCreate(String class_name) {
+            this.class_name = class_name;
+        }
+
+        public ClassCreate(String class_name, LocalDateTime end_date) {
+            this.class_name = class_name;
+            this.end_date = end_date;
+        }
+
+        public String getClass_name() {
+            return class_name;
+        }
+
+        public void setClass_name(String class_name) {
+            this.class_name = class_name;
+        }
+
+        public LocalDateTime getEnd_date() {
+            return end_date;
+        }
+
+        public void setEnd_date(LocalDateTime end_date) {
+            this.end_date = end_date;
+        }
+    }
+
+    public static class ClassUpdate {
+        @JsonbDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+        @NotNull
+        private LocalDateTime end_date;
+
+        public ClassUpdate() {}
+
+        public LocalDateTime getEnd_date() {
+            return end_date;
+        }
+
+        public void setEnd_date(LocalDateTime end_date) {
+            this.end_date = end_date;
+        }
+
+
+
+        public Timestamp getEndDateAsTimestamp() {
+            if (end_date == null) return null;
+            try {
+                return Timestamp.valueOf(end_date);
+            } catch (IllegalArgumentException e) {
+                throw new BadRequestException("Invalid closed_at format. Expected yyyy-MM-dd HH:mm:ss");
+            }
         }
     }
 }

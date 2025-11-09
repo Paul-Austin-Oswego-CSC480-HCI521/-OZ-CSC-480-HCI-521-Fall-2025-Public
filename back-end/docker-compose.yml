@@ -10,8 +10,7 @@ services:
       - "${POSTGRES_PORT}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./back-end/src/main/resources/db/migration:/docker-entrypoint-initdb.d:ro
-
+      - ./src/main/resources/db/migration:/docker-entrypoint-initdb.d:ro
     networks:
       - kudos-network
     healthcheck:
@@ -21,6 +20,8 @@ services:
       retries: 3
 
   app:
+    env_file:
+      - .env
     build: .
     container_name: kudos-back-end-app
     ports:

@@ -6,7 +6,6 @@ import jakarta.annotation.Resource;
 import jakarta.json.Json;
 import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonObjectBuilder;
-import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -21,7 +20,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 import java.sql.Timestamp;
 
 @Path("class")
@@ -44,62 +42,183 @@ public class ClassesResource {
      * Returns: 500 Internal Server Error for database issues
      *
      * Example response:
-     * {"class_id":"X-X-X-X-X","class_name":"Teaching 101","join_code":"ABC123"}
+     * {"class_id":"X-X-X-X-X","class_name":"Teaching 101","join_code":123456}
      */
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     public Response createClass(@QueryParam("class_name") String class_name,
-                                 @QueryParam("created_by") String created_by,
-                                 @QueryParam("end_date") String end_date) {
+                                @QueryParam("created_by") String created_by,
+                                @QueryParam("end_date") String end_date) {
         final String sql = """
         INSERT INTO CLASSES
-            (class_name, join_code, created_by, end_date)
-        VALUES (?, ?, ?, ?::timestamp)
+            (class_name, created_by, end_date)
+        VALUES (?, ?, ?::timestamp)
         RETURNING *
         """;
 
-        int maxRetries = 10;
-        for (int attempt = 0; attempt < maxRetries; attempt++) {
-            String joinCode = generateJoinCode();
+        final String addCreatorSql = """
+        INSERT INTO USER_CLASSES
+            (user_id, class_id, enrollment_status)
+        VALUES (?, ?, 'APPROVED')
+        """;
 
-            try (Connection conn = dataSource.getConnection();
-                 PreparedStatement stmt = conn.prepareStatement(sql)) {
-                stmt.setString(1, class_name);
-                stmt.setString(2, joinCode);
-                stmt.setObject(3, created_by != null ? UUID.fromString(created_by) : null);
-                stmt.setString(4, end_date);
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            conn.setAutoCommit(false);
+            stmt.setString(1, class_name);
+            UUID creatorUuid = created_by != null ? UUID.fromString(created_by) : null;
+            stmt.setObject(2, creatorUuid);
+            stmt.setString(3, end_date);
 
-                try (ResultSet rs = stmt.executeQuery()) {
-                    if (rs.next()) {
-                        JsonObjectBuilder jsonBuilder = Json.createObjectBuilder()
-                            .add("class_id", rs.getString("class_id"))
-                            .add("class_name", rs.getString("class_name"))
-                            .add("join_code", rs.getString("join_code"));
+            try  (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    JsonObjectBuilder jsonBuilder = Json.createObjectBuilder()
+                        .add("class_id", rs.getString("class_id"))
+                        .add("class_name", rs.getString("class_name"))
+                        .add("join_code", rs.getString("join_code"));
 
-                        if (rs.getString("end_date") != null) {
-                            jsonBuilder.add("end_date", rs.getString("end_date"));
+                    if (rs.getString("end_date") != null) {
+                        jsonBuilder.add("end_date", rs.getString("end_date"));
+                    }
+
+                    // add creator to the class if created_by is provided
+                    if (creatorUuid != null) {
+                        try (PreparedStatement addCreatorStmt = conn.prepareStatement(addCreatorSql)) {
+                            addCreatorStmt.setObject(1, creatorUuid);
+                            addCreatorStmt.setObject(2, UUID.fromString(rs.getString("class_id")));
+                            addCreatorStmt.executeUpdate();
                         }
+                    }
 
-                        return Response.ok(jsonBuilder.build()).build();
-                    }
+                    conn.commit();
+
+                    return Response.ok(jsonBuilder.build()).build();
                 }
+
             } catch (SQLException e) {
-                if ("23505".equals(e.getSQLState()) && e.getMessage().contains("join_code")) {
-                    if (attempt == maxRetries - 1) {
-                        throw new InternalServerErrorException("Failed to generate unique join code after " + maxRetries + " attempts");
-                    }
-                    continue;
-                }
                 throw new InternalServerErrorException("Database error: " + e.getMessage());
             }
+        } catch (SQLException e) {
+            throw new InternalServerErrorException("Database error: " + e.getMessage());
         }
         throw new InternalServerErrorException("Failed to create class");
     }
 
-    private String generateJoinCode() {
-        Random random = new Random();
-        int code = 100000 + random.nextInt(900000);
-        return String.valueOf(code);
+
+
+    /**
+     * Patch /kudo-app/api/class/X-X-X-X-X - Update a class's values
+     *
+     * Call: PATCH http://localhost:9080/kudo-app/api/class/X-X-X-X-X
+     *
+     * Query Parameters:
+     * - class_id: The id of the class to update
+     *
+     * Request Body:
+     *   {
+     *     "end_date":"2025-01-15T10:30:00"
+     *   }
+     *
+     * Returns: 200 OK with the JSON representation of the updated class
+     * Returns: 500 Internal Server Error for database issues
+     *
+     * Example response:
+     * {"class_id":"X-X-X-X-X","class_name":"Teaching 101","join_code":"123456"}
+     */
+    @PATCH
+    @Path("{class_id}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateClass(@PathParam("class_id") UUID class_id, ClassDTO.ClassUpdate update) {
+
+        final String sql = """
+        UPDATE CLASSES
+        SET end_date = ?
+        WHERE class_id = ? AND end_date > CURRENT_TIMESTAMP
+        RETURNING class_id, class_name, join_code, created_date, end_date
+        """;
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setTimestamp(1, update.getEndDateAsTimestamp());
+            stmt.setObject(2, class_id);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (!rs.next()) {
+                    throw new NotFoundException("Class not found");
+                }
+
+                // You already have a DTO for classes, so reuse it if available.
+                Classes updated = new Classes(
+                        (UUID) rs.getObject("class_id"),
+                        rs.getString("class_name"),
+                        rs.getInt("join_code"),
+                        rs.getTimestamp("created_date"),
+                        (UUID) rs.getObject("created_by"),
+                        rs.getTimestamp("end_date")
+                );
+
+                return Response.ok(updated).build();
+            }
+
+        } catch (SQLException e) {
+            throw new InternalServerErrorException("Database error: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Patch /kudo-app/api/class/X-X-X-X-X/regenerateJoinCode - regenerate a class's join code
+     *
+     * Call: PATCH http://localhost:9080/kudo-app/api/class/X-X-X-X-X/regenerateJoinCode
+     *
+     * Query Parameters:
+     * - class_id: The id of the class to update
+     *
+     * Request Body:
+     *   {
+     *     "end_date":"2025-01-15T10:30:00"
+     *   }
+     *
+     * Returns: 200 OK with the JSON representation of the updated class
+     * Returns: 500 Internal Server Error for database issues
+     *
+     * Example response:
+     * {"class_id":"X-X-X-X-X","class_name":"Teaching 101","join_code":"ABC123"}
+     */
+    @PATCH
+    @Path("{class_id}/regenerateJoinCode")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response regenerateJoinCode(@PathParam("class_id") UUID class_id) {
+
+        final String sql = """
+        UPDATE CLASSES
+        SET join_code = gen_unique_n_digit_code(6)
+        WHERE class_id = ? AND end_date > CURRENT_TIMESTAMP
+        RETURNING class_id, join_code
+        """;
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setObject(1, class_id);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (!rs.next()) {
+                    throw new NotFoundException("Class not found");
+                }
+
+                JsonObjectBuilder jsonBuilder = Json.createObjectBuilder()
+                        .add("class_id", rs.getString("class_id"))
+                        .add("join_code", rs.getString("join_code"));
+
+                return Response.ok(jsonBuilder.build()).build();
+            }
+
+        } catch (SQLException e) {
+            throw new InternalServerErrorException("Database error: " + e.getMessage());
+        }
     }
 
     /**
@@ -132,7 +251,7 @@ public class ClassesResource {
     public ClassDTO.ClassId addStudents(@PathParam("class_id") String class_id,ClassDTO.UserIdList user_ids) {
         //Do a query to confirm the existence of the given class
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement stmt = conn.prepareStatement("SELECT class_id FROM CLASSES WHERE class_id = ?;")) {
+             PreparedStatement stmt = conn.prepareStatement("SELECT class_id FROM CLASSES WHERE class_id = ? AND end_date > CURRENT_TIMESTAMP;")) {
             stmt.setObject(1, UUID.fromString(class_id));
             try  (ResultSet rs = stmt.executeQuery()) {
                 if (!rs.next()) {
@@ -185,7 +304,7 @@ public class ClassesResource {
     @POST
     @Path("enrollment/request")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response requestEnrollment(@QueryParam("join_code") String joinCode,
+    public Response requestEnrollment(@QueryParam("join_code") Integer joinCode,
                                       @QueryParam("user_id") String userId) {
         if (joinCode == null || userId == null) {
             return Response.status(Response.Status.BAD_REQUEST)
@@ -198,34 +317,25 @@ public class ClassesResource {
         final String validateSql = """
             SELECT class_id, class_name, end_date
             FROM CLASSES
-            WHERE join_code = ?
+            WHERE join_code = ? AND end_date > CURRENT_TIMESTAMP;
         """;
 
         try (Connection conn = dataSource.getConnection();
              PreparedStatement validateStmt = conn.prepareStatement(validateSql)) {
 
-            validateStmt.setString(1, joinCode);
+            validateStmt.setInt(1, joinCode);
 
             try (ResultSet rs = validateStmt.executeQuery()) {
                 if (!rs.next()) {
                     return Response.status(Response.Status.NOT_FOUND)
                         .entity(Json.createObjectBuilder()
-                            .add("error", "Invalid join code")
+                            .add("error", "Invalid or expired join code")
                             .build())
                         .build();
                 }
 
                 UUID classId = UUID.fromString(rs.getString("class_id"));
                 String className = rs.getString("class_name");
-                Timestamp endDate = rs.getTimestamp("end_date");
-
-                if (endDate != null && endDate.before(new Timestamp(System.currentTimeMillis()))) {
-                    return Response.status(Response.Status.BAD_REQUEST)
-                        .entity(Json.createObjectBuilder()
-                            .add("error", "This class has ended and is no longer accepting enrollments")
-                            .build())
-                        .build();
-                }
 
                 final String checkExistingSql = """
                     SELECT enrollment_status
@@ -417,7 +527,7 @@ public class ClassesResource {
             final String checkAuthSql = """
                 SELECT created_by, class_name
                 FROM CLASSES
-                WHERE class_id = ?
+                WHERE class_id = ? AND end_date > CURRENT_TIMESTAMP;
             """;
 
             String className = null;
@@ -574,7 +684,10 @@ public class ClassesResource {
                 JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
                 objectBuilder.add("class_id", rs.getString("class_id"));
                 objectBuilder.add("class_name", rs.getString("class_name"));
+                objectBuilder.add("created_date", rs.getTimestamp("created_date").toString());
+                objectBuilder.add("end_date", rs.getTimestamp("end_date").toString());
                 objectBuilder.add("join_code", rs.getString("join_code"));
+                objectBuilder.add("is_archived", rs.getTimestamp("end_date").before(new Timestamp(System.currentTimeMillis())));
                 arrayBuilder.add(objectBuilder);
             }
 
@@ -602,14 +715,14 @@ public class ClassesResource {
             String sql;
             if (enrollmentStatus != null && !enrollmentStatus.isEmpty()) {
                 sql = """
-                SELECT u.user_id, u.name
+                SELECT u.user_id, u.name, u.email, u.role
                 FROM USER_CLASSES uc
                 JOIN USERS u ON uc.user_id = u.user_id
                 WHERE uc.class_id = ? AND uc.enrollment_status = ?""";
             } else {
                 // Default to APPROVED for backward compatibility
                 sql = """
-                SELECT u.user_id, u.name
+                SELECT u.user_id, u.name, u.email, u.role
                 FROM USER_CLASSES uc
                 JOIN USERS u ON uc.user_id = u.user_id
                 WHERE uc.class_id = ? AND uc.enrollment_status = 'APPROVED'""";
@@ -627,6 +740,8 @@ public class ClassesResource {
                         Map<String, String> user = new HashMap<>();
                         user.put("id", rs.getString("user_id"));
                         user.put("name", rs.getString("name"));
+                        user.put("email", rs.getString("email"));
+                        user.put("role", rs.getString("role"));
                         users.add(user);
                     }
                     return users;
@@ -672,7 +787,7 @@ public class ClassesResource {
     /**
      * DELETE /kudo-app/api/class/{class_id} - Remove a user from a class
      *
-     * Call: DELETE http://localhost:9080/kudo-app/api/class/{class_id}
+     * Call: DELETE http://localhost:9080/kudo-app/api/class/{class_id}/(user_id}
      *
      * Path Parameters
      * - class_id: The UUID of the class
@@ -683,10 +798,22 @@ public class ClassesResource {
      * Returns: 500 Internal Server Error for database issues
      */
     @DELETE
-    @Path("{class_id}")
+    @Path("{class_id}/{user_id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response removeUserFromClass(@PathParam("class_id") UUID class_id,
-                                        @QueryParam("user_id") UUID user_id) {
+                                        @PathParam("user_id") UUID user_id) {
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement("SELECT class_id FROM CLASSES WHERE class_id = ? AND end_date > CURRENT_TIMESTAMP;")) {
+            stmt.setObject(1, class_id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (!rs.next()) {
+                    throw new NotFoundException();
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
         final String sql = "DELETE FROM USER_CLASSES WHERE class_id = ? AND user_id = ?";
 
         try (Connection conn = dataSource.getConnection();

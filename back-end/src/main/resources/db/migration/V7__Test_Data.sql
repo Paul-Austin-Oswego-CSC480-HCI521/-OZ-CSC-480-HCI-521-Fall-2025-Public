@@ -25,9 +25,13 @@ INSERT INTO USERS (user_id, email, name, google_id, role) VALUES
 
 -- Test classes with join codes and instructors
 INSERT INTO CLASSES (class_id, class_name, join_code, created_by, end_date) VALUES
-('c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c1c1c1', 'CSC 480 - Software Engineering', '123456', '11111111-1111-1111-1111-111111111111', CURRENT_TIMESTAMP + INTERVAL '4 months'),
-('c2c2c2c2-c2c2-c2c2-c2c2-c2c2c2c2c2c2', 'CSC 365 - Database Systems', '654321', '22222222-2222-2222-2222-222222222222', CURRENT_TIMESTAMP + INTERVAL '3 months'),
-('c3c3c3c3-c3c3-c3c3-c3c3-c3c3c3c3c3c3', 'CSC 321 - Data Structures', '789012', '11111111-1111-1111-1111-111111111111', CURRENT_TIMESTAMP + INTERVAL '5 months');
+('c1c1c1c1-c1c1-c1c1-c1c1-c1c1c1c1c1c1', 'CSC 480 - Software Engineering', 123456, '11111111-1111-1111-1111-111111111111', CURRENT_TIMESTAMP + INTERVAL '4 months'),
+('c2c2c2c2-c2c2-c2c2-c2c2-c2c2c2c2c2c2', 'CSC 365 - Database Systems', 654321, '22222222-2222-2222-2222-222222222222', CURRENT_TIMESTAMP + INTERVAL '3 months'),
+('c3c3c3c3-c3c3-c3c3-c3c3-c3c3c3c3c3c3', 'CSC 321 - Data Structures', 789012, '11111111-1111-1111-1111-111111111111', CURRENT_TIMESTAMP + INTERVAL '5 months');
+
+-- Test classes with classes that should be archived
+INSERT INTO CLASSES (class_id, class_name, created_by, end_date) VALUES
+('c4c4c4c4-c4c4-c4c4-c4c4-c4c4c4c4c4c4', 'MAT 101 - Math', '11111111-1111-1111-1111-111111111111', CURRENT_TIMESTAMP - INTERVAL '2 months');
 
 -- Instructor enrollments (APPROVED status)
 INSERT INTO USER_CLASSES (user_id, class_id, enrollment_status) VALUES
@@ -137,8 +141,10 @@ INSERT INTO KUDOS_CARDS (card_id, sender_id, recipient_id, class_id, title, cont
  'Hannah helped me understand database normalization. My schema is now in 3NF thanks to her!',
  false, 'APPROVED', '22222222-2222-2222-2222-222222222222', 'Excellent peer teaching', CURRENT_TIMESTAMP - INTERVAL '12 hours');
 
+
+
 -- Summary:
 -- - 3 instructors, 8 students
--- - 3 classes (with join codes: 123456, 654321, 789012)
+-- - 4 classes (with join codes: 123456, 654321, 789012, <random>)
 -- - 19 enrollments (15 APPROVED, 3 PENDING, 1 DENIED)
 -- - 13 kudos cards (various statuses)

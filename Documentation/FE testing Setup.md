@@ -1,4 +1,6 @@
 # FE Testing Setup
+### NOTE: Class creation & joining a class is now functional via the front-end. 
+
 #### Commands are for Windows CMD. For Mac and Linux, the command syntax may need to change slightly.
 
 ### 1. Add users to the db:
