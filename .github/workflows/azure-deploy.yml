@@ -58,8 +58,8 @@ jobs:
 
           echo "→ Pulling latest code from ${{ github.event.inputs.branch || 'azure-production' }}..."
           git fetch origin
+          git reset --hard origin/${{ github.event.inputs.branch || 'azure-production' }}
           git checkout ${{ github.event.inputs.branch || 'azure-production' }}
-          git pull origin ${{ github.event.inputs.branch || 'azure-production' }}
 
           echo "→ Stopping containers..."
           docker-compose down
@@ -68,7 +68,7 @@ jobs:
           docker-compose up --build -d
 
           echo "→ Waiting for startup..."
-          sleep 10
+          sleep 30
 
           docker-compose ps
           echo "✓ Deployment complete"
@@ -84,10 +84,30 @@ jobs:
           docker-compose ps
 
           echo ""
+          echo "=== Health Checks ==="
+          HEALTH_OK=false
+          for i in {1..6}; do
+            if curl -f -s http://localhost:9080/kudo-app/api/auth/health > /dev/null && \
+               curl -f -s http://localhost:9080/kudo-app/api/kudo-card/test > /dev/null; then
+              echo "✓ Health checks passed (attempt $i/6)"
+              HEALTH_OK=true
+              break
+            else
+              echo "⚠ Attempt $i/6 failed, waiting 10s..."
+              sleep 10
+            fi
+          done
+
+          if [ "$HEALTH_OK" = false ]; then
+            echo "✗ Health checks failed after 6 attempts"
+            exit 1
+          fi
+
+          echo ""
           echo "=== Recent Logs ==="
           docker-compose logs --tail=15 backend
           docker-compose logs --tail=15 frontend
-          docker-compose logs --tail=15 db
+          docker-compose logs --tail=15 postgres
           ENDSSH
 
       - name: Cleanup SSH key
