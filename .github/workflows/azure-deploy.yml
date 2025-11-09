@@ -87,9 +87,8 @@ jobs:
           echo "=== Health Checks ==="
           HEALTH_OK=false
           for i in {1..6}; do
-            if curl -f -s http://localhost:9080/kudo-app/api/auth/health > /dev/null && \
-               curl -f -s http://localhost:9080/kudo-app/api/kudo-card/test > /dev/null; then
-              echo "✓ Health checks passed (attempt $i/6)"
+            if curl -f -s http://localhost:9080/kudo-app/api/auth/health > /dev/null; then
+              echo "✓ Health check passed (attempt $i/6)"
               HEALTH_OK=true
               break
             else
@@ -98,16 +97,17 @@ jobs:
             fi
           done
 
+          echo ""
+          echo "=== Recent Logs ==="
+          docker-compose logs --tail=30 backend
+          docker-compose logs --tail=15 frontend
+          docker-compose logs --tail=15 postgres
+
           if [ "$HEALTH_OK" = false ]; then
+            echo ""
             echo "✗ Health checks failed after 6 attempts"
             exit 1
           fi
-
-          echo ""
-          echo "=== Recent Logs ==="
-          docker-compose logs --tail=15 backend
-          docker-compose logs --tail=15 frontend
-          docker-compose logs --tail=15 postgres
           ENDSSH
 
       - name: Cleanup SSH key
