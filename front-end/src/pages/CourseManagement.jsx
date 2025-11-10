@@ -95,14 +95,17 @@ function CourseManagement() {
 
   // Refetch to get latest student info
   await fetchClasses();
-};
+  };
 
+  const handleNewKudos = () => {
+    navigate('/professorView/new-kudos');
+  };
 
   const selectedClass = classes.find((c) => c.class_id === selectedClassId);
 
   return (
     <div className="app-container">
-      <Header showNav={true} />
+      <Header showNav={true} onCreateNew={handleNewKudos} />
 
       {/* Page header */}
       <div

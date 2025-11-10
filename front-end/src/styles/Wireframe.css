@@ -549,6 +549,21 @@
     padding-left: 50px;
 }
 
+.header-kudoSpace-text h2 {
+    display: flex;
+    background-color: #ffffff;
+    flex-direction: column;
+    justify-content: left;
+    align-items: stretch;
+    font-size: 2rem;
+    color: #093B3B;
+    margin-bottom: 2rem;
+    font-weight: bold;
+    font-family: 'Poppins', serif;
+    text-align: left;
+    padding-left: 15px;
+}
+
 @media (max-width: 768px) {
     .login-container {
         flex-direction: column; /* stack columns on mobile */
@@ -682,7 +697,7 @@
   align-items: center;     /* vertically center the arrow and text */
   gap: 10px;               /* space between arrow and header */
   width: 100%;
-  margin-bottom: 10px;
+  margin-bottom: 3px;
   padding-left: 20px;
 }
 
@@ -834,10 +849,12 @@
 }
 
 .title-button-group {
+    position: relative;
     display: flex;
+    align-items: center;
     gap: 20px;
+    margin-bottom: 1rem;
     flex-wrap: wrap;
-    margin-top: 8px;
 }
 
 .title-button {
@@ -1336,12 +1353,15 @@ td.reviewed-kudos-status {
     border: none;
     border-radius: 6px;
     padding: 14px 32px;
+    width: 280px;
     cursor: pointer;
     transition: background 0.3s ease, transform 0.2s ease;
     font-weight: bold;
     font-size: 2rem;
     display: flex;
+    justify-content: center;
     align-items: center;
+    position: relative;
     gap: 0.5rem; /* space between text and icon */
 }
 
@@ -1467,7 +1487,8 @@ select:focus {
     border-radius: 10px;
     background: linear-gradient(45deg, #a3ec79, #62d8cf);
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
-    max-height: fit-content;
+    height: 90%;
+    width: 90%;
 }
 
 .message-image-container .right-column img {
@@ -1493,14 +1514,23 @@ select:focus {
     width: 100%;
     text-align: left;
 }
+
+.image-preview-container-img {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .message-preview-container {
     position: absolute;
     color: #093B3B;
-    left: 43%;
+    left: 63%;
     top: 60%;
-    transform: translateY(-50%);
+    transform: translate(-50%, -50%);
     width: 55%;
-    height: 70%;
+    height: 80%;
     background-color: transparent;
     white-space: pre-wrap;
     word-wrap: break-word;
@@ -1650,6 +1680,12 @@ select:focus {
   color: white;
 } */
 
+.kudos-form {
+    display: flex;
+    gap: 2rem; /* adjust spacing between columns as needed */
+    align-items: stretch; /* makes both columns equal height */
+}
+
 
 /* login page */
 
@@ -1694,3 +1730,11 @@ select:focus {
     background-color: #fafdf2;
     font-family: 'Poppins', sans-serif;
 }
+
+.logo-title-group {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+}
+

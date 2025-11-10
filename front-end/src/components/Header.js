@@ -76,13 +76,16 @@ function Header({ onCreateNew, showNav = true }) {
 
   return (
     <header className="header">
-      <img
-        src="/updatedLogoV2.png"
-        alt="Kudo Space Logo"
-        className="logoSmall"
-        onClick={handleGoHome}
-        style={{ cursor: 'pointer' }}
-      />
+      <div className='logo-title-group' >
+        <img
+          src="/updatedLogoV2.png"
+          alt="Kudo Space Logo"
+          className="logoSmall"
+          onClick={handleGoHome}
+          style={{ cursor: 'pointer' }}
+        />
+        <div className="header-kudoSpace-text"><h2>KudoSpace</h2></div>
+      </div>
 
       {showNav && (
         <nav className="nav-buttons">
