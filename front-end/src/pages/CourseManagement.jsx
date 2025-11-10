@@ -6,9 +6,11 @@ import ToastMessage from "../components/Shared/ToastMessage";
 import { useUser, authFetch } from "../components/UserContext";
 import "../styles/Wireframe.css";
 import CreateCourseModal from "../components/CourseManagement/CreateCourseModal";
+import Footer from "../components/Footer";
 
 function CourseManagement() {
   const [classes, setClasses] = useState([]);
+  const [archivedClasses, setArchivedClasses] = useState([]);
   const [selectedClassId, setSelectedClassId] = useState(null);
   const [toast, setToast] = useState(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -22,24 +24,47 @@ function CourseManagement() {
       ? process.env.REACT_APP_API_BASE_URL
       : "http://backend:9080/kudo-app/api";
 
-  // Fetch classes (wrapped in useCallback to prevent unnecessary re-renders)
   const fetchClasses = useCallback(async () => {
     if (!userId) return;
 
     try {
       console.log("Fetching classes for user:", userId);
 
-      const res = await authFetch(`${BASE_URL}/users/${userId}/classes`);
-      if (!res.ok) throw new Error("Failed to fetch classes");
-      const data = await res.json();
-      console.log("User classes data:", data);
+        const [activeRes, archivedRes] = await Promise.all([
+        authFetch(`${BASE_URL}/users/${userId}/classes?is_archived=false`),
+        authFetch(`${BASE_URL}/users/${userId}/classes?is_archived=true`)
+      ]);
 
-      // Fetch each class and its students
-      const classDetails = await Promise.all(
-        data.class_id.map(async (id) => {
-          const clsRes = await authFetch(`${BASE_URL}/class/${id}`);
+      if (!activeRes.ok || !archivedRes.ok)
+        throw new Error("Failed to fetch class lists");
+
+      const [activeData, archivedData] = await Promise.all([
+        activeRes.json(),
+        archivedRes.json(),
+      ]);
+
+      console.log("Active class IDs:", activeData);
+      console.log("Archived class IDs:", archivedData);
+
+      const allClassIds = [
+        ...(activeData.class_id || []),
+        ...(archivedData.class_id || []),
+      ];
+
+      if (allClassIds.length === 0) {
+        setClasses([]);
+        setArchivedClasses([]);
+        return;
+      }
+
+      const detailedClasses = await Promise.all(
+        allClassIds.map(async (id) => {
+          const [clsRes, studentsRes] = await Promise.all([
+            authFetch(`${BASE_URL}/class/${id}`),
+            authFetch(`${BASE_URL}/class/${id}/users`),
+          ]);
+
           const clsData = await clsRes.json();
-          const studentsRes = await authFetch(`${BASE_URL}/class/${id}/users`);
           const studentsData = await studentsRes.json();
 
           return {
@@ -49,65 +74,64 @@ function CourseManagement() {
         })
       );
 
-      console.log("Detailed class info:", classDetails);
-      setClasses(classDetails);
+      const activeClasses = detailedClasses.filter((c) => !c.is_archived);
+      const archivedList = detailedClasses.filter((c) => c.is_archived);
 
-      // Safely set initial selection if none exists
+      setClasses(activeClasses);
+      setArchivedClasses(archivedList);
+
       setSelectedClassId((prev) => {
-        if (prev) {
-          console.log("Keeping current selected class:", prev);
-          return prev;
-        }
-        const firstActiveClass =
-          classDetails.find((cls) => new Date(cls.end_date) >= new Date()) ||
-          classDetails[0];
-        if (firstActiveClass) {
-          console.log("Setting initial selected class:", firstActiveClass.class_id);
-          return firstActiveClass.class_id;
-        }
-        return null;
+        if (prev && detailedClasses.some((c) => c.class_id === prev)) return prev;
+        const firstActive = activeClasses[0] || archivedList[0];
+        return firstActive ? firstActive.class_id : null;
       });
+
+      console.log("Detailed class info:", detailedClasses);
     } catch (err) {
       console.error("Error fetching classes:", err);
       setToast({ message: "Failed to load classes.", type: "error" });
     }
   }, [userId, BASE_URL]);
 
-  // Fetch classes once userId is available
   useEffect(() => {
     fetchClasses();
   }, [fetchClasses]);
 
-  const handleClassUpdated = async (updateInfo) => {
+const handleClassUpdated = (updateInfo) => {
   if (!updateInfo || !updateInfo.class_id) {
-    // If no updateInfo, just refetch classes
-    await fetchClasses();
     setToast({ message: "Updated successfully.", type: "success" });
     return;
   }
 
-  // Update local state first
-  setClasses((prev) =>
-    prev.map((c) => (c.class_id === updateInfo.class_id ? { ...c, ...updateInfo } : c))
+  if (updateInfo.deleted) {
+    setClasses(prev => prev.filter(c => c.class_id !== updateInfo.class_id));
+    setArchivedClasses(prev => prev.filter(c => c.class_id !== updateInfo.class_id));
+    setToast({ message: "Class deleted successfully.", type: "success" });
+    return;
+  }
+
+  setClasses(prev =>
+    prev.map(c => (c.class_id === updateInfo.class_id ? { ...c, ...updateInfo } : c))
+  );
+  setArchivedClasses(prev =>
+    prev.map(c => (c.class_id === updateInfo.class_id ? { ...c, ...updateInfo } : c))
   );
 
   setToast({ message: "Class updated successfully.", type: "success" });
+};
 
-  // Refetch to get latest student info
-  await fetchClasses();
-  };
 
   const handleNewKudos = () => {
-    navigate('/professorView/new-kudos');
+    navigate("/professorView/new-kudos");
   };
 
-  const selectedClass = classes.find((c) => c.class_id === selectedClassId);
+  const selectedClass =
+    [...classes, ...archivedClasses].find((c) => c.class_id === selectedClassId) || null;
 
   return (
     <div className="app-container">
       <Header showNav={true} onCreateNew={handleNewKudos} />
 
-      {/* Page header */}
       <div
         className="course-header-row"
         style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
@@ -122,51 +146,51 @@ function CourseManagement() {
         <button
           className="title-button"
           onClick={() => setShowCreateModal(true)}
-          style={{ padding: "5px 10px" }}
+          style={{ padding: "5px 5px" }}
         >
           Create New Course +
         </button>
       </div>
+
       <div className="course-subheaders">
         <h3>Current Courses</h3>
         <h3>Manage Courses</h3>
       </div>
+
       <div className="course-management-container">
         <div className="course-sidebar">
           <h3>Active Classes</h3>
           <ul className="course-list">
-            {classes
-              .filter((c) => new Date(c.end_date) >= new Date())
-              .map((cls) => (
+            {classes.length > 0 ? (
+              classes.map((cls) => (
                 <li
                   key={cls.class_id}
                   className={cls.class_id === selectedClassId ? "selected" : ""}
-                  onClick={() => {
-                    console.log("Class clicked:", cls.class_id);
-                    setSelectedClassId(cls.class_id);
-                  }}
+                  onClick={() => setSelectedClassId(cls.class_id)}
                 >
                   {cls.class_name}
                 </li>
-              ))}
+              ))
+            ) : (
+              <p>No active classes.</p>
+            )}
           </ul>
 
           <h3>Archived Classes</h3>
           <ul className="course-list">
-            {classes
-              .filter((c) => new Date(c.end_date) < new Date())
-              .map((cls) => (
+            {archivedClasses.length > 0 ? (
+              archivedClasses.map((cls) => (
                 <li
                   key={cls.class_id}
                   className={cls.class_id === selectedClassId ? "selected" : ""}
-                  onClick={() => {
-                    console.log("Class clicked:", cls.class_id);
-                    setSelectedClassId(cls.class_id);
-                  }}
+                  onClick={() => setSelectedClassId(cls.class_id)}
                 >
                   {cls.class_name}
                 </li>
-              ))}
+              ))
+            ) : (
+              <p>No archived classes.</p>
+            )}
           </ul>
         </div>
 
@@ -200,6 +224,7 @@ function CourseManagement() {
         onClose={() => setShowCreateModal(false)}
         onClassCreated={fetchClasses}
       />
+      <Footer/>
     </div>
   );
 }

@@ -5,7 +5,11 @@ import ToastMessage from "../Shared/ToastMessage";
 function StudentList({ students, isEditable, classId, professorId, onStudentRemoved }) {
   const [toast, setToast] = useState(null);
 
-  if (!students || students.length === 0) {
+  const filteredStudents = students.filter(
+    (student) => student.role?.toLowerCase() === "student"
+  );
+
+  if (!filteredStudents || filteredStudents.length === 0) {
     return <p>No students enrolled yet.</p>;
   }
 
@@ -48,13 +52,15 @@ function StudentList({ students, isEditable, classId, professorId, onStudentRemo
   return (
     <>
       <ul className="student-list">
-        {students.map((student) => (
-          <li key={student.id}>
-            {student.name}, {student.email} - {student.role}
+        {filteredStudents.map((student) => (
+          <li key={student.id} className="student-item">
+            <span>{student.name}</span>
             {isEditable && (
               <button
+                className="remove-btn"
                 onClick={() => handleRemove(student.id, student.name)}
                 disabled={professorId === student.id}
+                aria-label={`Remove ${student.name}`}
               >
                 Remove
               </button>

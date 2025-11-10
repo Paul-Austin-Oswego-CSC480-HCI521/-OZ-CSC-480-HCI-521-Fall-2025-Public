@@ -114,27 +114,64 @@ function ClassCard({ classData, isActive, onClassUpdated, professorId }) {
           ) : (
             <>
               {endDate ? new Date(endDate).toISOString().split("T")[0] : "N/A"}{" "}
-              <button onClick={() => setEditingName(true)} className="pencil-btn" aria-label="Edit name">
+              <button
+                onClick={() => setEditingEndDate(true)}
+                className="pencil-btn"
+                aria-label="Edit end date"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="lucide lucide-pencil"
-                  >
-                    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="lucide lucide-pencil"
+                >
+                  <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
                 </svg>
               </button>
-
             </>
           )}{" "}
-          | Course Code: {classData.join_code}
+          | Course Code:
+          <span className="course-code-section">
+            <input
+              type="text"
+              readOnly
+              value={classData.join_code}
+              className="course-code-input"
+              onFocus={(e) => e.target.select()}
+            />
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(classData.join_code);
+                setToast({ message: "Course code copied!", type: "success" });
+              }}
+              className="copy-btn"
+              aria-label="Copy course code"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 512 512"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="40"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="lucide lucide-copy"
+              >
+                <path d="M128 128v256a32 32 0 0 0 32 32h256a32 32 0 0 0 32-32V128a32 32 0 0 0-32-32H160a32 32 0 0 0-32 32z" />
+                <path d="M96 384H80a32 32 0 0 1-32-32V96a32 32 0 0 1 32-32h256a32 32 0 0 1 32 32v16" />
+              </svg>
+            </button>
+          </span>
         </p>
+
 
       </div>
 
@@ -159,7 +196,13 @@ function ClassCard({ classData, isActive, onClassUpdated, professorId }) {
           />
         </div>
       </div>
-      {isActive && <button className="edit-btn" onClick={handleDeleteClass}>Delete Course</button>}
+      {isActive && (
+        <div className="delete-btn-container">
+          <button className="edit-btn" onClick={handleDeleteClass}>
+            Delete Course
+          </button>
+        </div>
+      )}
 
       {toast && (
         <ToastMessage

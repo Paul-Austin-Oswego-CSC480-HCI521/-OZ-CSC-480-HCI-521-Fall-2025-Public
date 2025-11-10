@@ -62,11 +62,50 @@ function PendingRequests({ classId, userId, onStudentApproved }) {
       {pendingRequests.map((req) => (
         <div key={req.user_id} className="request-card">
           <p>
-            <strong>{req.student_name}</strong> ({req.student_email}) requested to join{" "}
-            <strong>{req.class_name}</strong>
+            <strong>{req.student_name}</strong>
           </p>
-          <button onClick={() => handleRequestUpdate(req.user_id, "approve")}>Approve</button>
-          <button onClick={() => handleRequestUpdate(req.user_id, "deny")}>Reject</button>
+          <div className="action-buttons">
+            <button
+              className="approve-pending-btn"
+              onClick={() => handleRequestUpdate(req.user_id, "approve")}
+              aria-label="Approve request"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="32"
+                height="32"
+                viewBox="0 0 512 512"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="40"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M128 256l80 80 176-176" />
+              </svg>
+            </button>
+
+            <button
+              className="reject-pending-btn"
+              onClick={() => handleRequestUpdate(req.user_id, "deny")}
+              aria-label="Reject request"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="32"
+                height="32"
+                viewBox="0 0 512 512"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="40"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M112 112l288 288M400 112L112 400" />
+              </svg>
+            </button>
+          </div>
+
         </div>
       ))}
     </div>

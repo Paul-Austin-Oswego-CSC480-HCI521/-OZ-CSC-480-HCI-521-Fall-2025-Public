@@ -14,11 +14,12 @@
 }
 
 .course-subheaders h3:first-child {
-  margin-left: 20px; /* Align over sidebar */
+  margin-left: 25px; /* Align over sidebar */
 }
 
 .course-subheaders h3:last-child {
-  padding-left: 50px;
+  margin-right: auto;
+  padding-left: 155px;
 }
 
 .class-students-container {
@@ -32,7 +33,7 @@
 .pending-list-column {
   /* flex: 1; */
   max-height: 400px;
-  /* width: 550px; */
+  width: 50%;
   overflow-y: auto;
   border: 1px solid #093b3b;
   padding: 10px;
@@ -55,6 +56,7 @@
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.2);
   font-family: 'Poppins', sans-serif;
+  margin: 0 20px;
 }
 
 /* Sidebar */
@@ -101,7 +103,7 @@
 }
 
 /* Course Details */
-.course-details {
+.course-details-section {
   flex: 1;
   background-color: #CCDDBE;
   border-radius: 6px;
@@ -139,12 +141,94 @@
   gap: 8px;
 }
 
-.edit-btn, .copy-btn {
+.delete-btn-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.edit-btn {
+  border-radius: 6px;
   background: none;
   border: none;
-  font-size: 1rem;
+  font-size: 1.5rem;
   cursor: pointer;
-  color: #093B3B;
+  background-color: #093B3B;
+  color: white;
+  font-family: 'Poppins', sans-serif;
+  padding: 10px 20px;
+}
+
+.edit-btn:hover {
+  background-color: #0b4f4f;
+  transform: scale(1.03);
+}
+
+.edit-btn:active {
+  transform: scale(0.98);
+}
+
+.remove-btn {
+    border: none;
+    color: black;
+    font-family: 'Poppins', sans-serif;
+    font-style: italic;
+}
+
+.remove-btn :disabled {
+    color: darkgray;
+}
+
+.request-card {
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.request-card p {
+  flex: 1;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.approve-pending-btn,
+.reject-pending-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.2s ease;
+}
+
+.approve-pending-btn {
+  background-color: #c8e6c9;
+  color: #2e7d32;
+}
+
+.reject-pending-btn {
+  background-color: #ffcdd2;
+  color: #c62828;
+}
+
+.approve-btn:hover,
+.reject-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.approve-btn:active,
+.reject-btn:active {
+  transform: scale(0.95);
 }
 
 .pencil-btn {
@@ -858,7 +942,7 @@
 }
 
 .title-button {
-    padding: 14px 28px;
+    /* padding: 14px 28px; */
     font-size: 18px;
     font-family: 'Poppins', sans-serif;
     font-weight: bold;
@@ -870,6 +954,9 @@
     transition: background-color 0.3s ease, color 0.3s ease;
     user-select: none;
     box-shadow: none;
+    text-wrap: auto;
+    width: 250px;
+    margin: 30px;
 }
 
 .title-button:hover:not(.selected) {
@@ -882,6 +969,36 @@
     border-color: #333;
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
 }
+
+.course-code-section {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 6px;
+}
+
+.course-code-input {
+  width: 60px;
+  text-align: center;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-family: monospace;
+  background-color: #f9f9f9;
+}
+
+.copy-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  transition: transform 0.1s;
+}
+
+.copy-btn:hover {
+  transform: scale(1.1);
+}
+
 
 /* footer layout */
 .footer {
