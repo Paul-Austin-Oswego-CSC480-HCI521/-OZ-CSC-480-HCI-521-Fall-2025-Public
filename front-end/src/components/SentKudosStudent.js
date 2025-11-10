@@ -43,7 +43,8 @@ function SentKudosStudent( {messages = []} ) {
         <div className="filter-sort-controls">
             <div className = "filter-dropdown-container">
                 <button onClick={() => setShowFilter((prev) => !prev)} 
-                className={`icon-btn ${showFilter ? "selected" : ""}`}>
+                className={`icon-btn sort-btn ${showFilter ? "selected" : ""}`}>
+                    <span className="sort-icon-label">Filter</span>
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="24"
@@ -58,7 +59,6 @@ function SentKudosStudent( {messages = []} ) {
                     >
                         <path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z" />
                     </svg>
-                    <span className="icon-label">Filter</span>
                 </button>
 
                 {showFilter && (
@@ -147,12 +147,13 @@ function SentKudosStudent( {messages = []} ) {
             )}
           </div>
 
-          <div className="sort-dropdown-container"></div>
+          <div className="sort-dropdown-container">
           <button onClick={() => {
             setShowSort((prev) => !prev);
             setShowFilter(false);
-          }} className={`icon-btn ${showSort ? "selected" : ""}`}>
-            <svg
+          }} className={`icon-btn sort-btn ${showSort ? "selected" : ""}`}>
+              <span className="sort-icon-label">| Sort</span>
+              <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
               height="24"
@@ -170,7 +171,6 @@ function SentKudosStudent( {messages = []} ) {
               <path d="M3 17l3 3 3-3" />
               <path d="M6 4v16" />
             </svg>
-            <span className="icon-label">Sort</span>
           </button>
           {showSort && (
             <div className="sort-dropdown">
@@ -203,11 +203,13 @@ function SentKudosStudent( {messages = []} ) {
                     >Status
                     </li>
                 </ul>
-                </div>
+            </div>
             )}
         </div>
       </div>
+    </div>
 
+    <div className = "table-container">
       <table>
         <thead>
           <tr>
@@ -280,6 +282,7 @@ function SentKudosStudent( {messages = []} ) {
           )}
         </tbody>
       </table>
+    </div>
 
       {selectedImage && (
         <div className="modal-overlay" onClick={() => setSelectedImage(null)}>
