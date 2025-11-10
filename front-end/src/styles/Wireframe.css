@@ -1521,6 +1521,9 @@ select:focus {
     display: flex;
     justify-content: center;
     align-items: center;
+    max-width: 900px; 
+    margin: 0 auto;
+
 }
 
 .message-preview-container {
@@ -1543,7 +1546,6 @@ select:focus {
     align-items: center;
     justify-content: center;
 }
-
 
 /* ----------<> Approve / Review Page <>---------- */
 
@@ -1736,5 +1738,12 @@ select:focus {
     align-items: center;
     gap: 1rem;
     cursor: pointer;
+}
+
+.form-group .close-btn {
+    font-size: 1.5rem;
+    padding: 16px 60px;
+    border-radius: 8px;
+    margin-bottom: 25px;
 }
 

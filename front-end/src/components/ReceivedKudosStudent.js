@@ -1,11 +1,17 @@
 import React, { useState } from "react";
+import AutoFitText from '../components/AutoFitText';
 
 function ReceivedKudosStudent( { received }) {
-    const [selectedImage, setSelectedImage] = useState(null);
+    const [selectedCard, setSelectedCard] = useState(null);
     const [selectedRows, setSelectedRows] = useState([]);
-
     const [showSort, setShowSort] = useState(false);
     const [selectedSort, setSelectedSort] = useState("newest");
+    
+    const imageMap = {
+      'Well Done!': '/images/welldone2.png',
+      'Nice Job!': '/images/nicejob2.png',
+      'Great Work!': '/images/greatwork2.png',
+    };
     
     const sortedKudos = [...received].sort((a, b) => {
         if (selectedSort === "newest") {
@@ -97,21 +103,21 @@ function ReceivedKudosStudent( { received }) {
               ) : (
                 sortedKudos.map((k, i) => (
                   <tr
-                    key={k.card_id}
+                    key={k.id}
                     role="button"
                     tabIndex={0}
                     onClick={() => {
                       setSelectedRows((prev) =>
                         prev.includes(i) ? prev : [...prev, i]
                       );
-                      setSelectedImage(k.imageUrl);
+                      setSelectedCard(k);
                     }}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {
                         setSelectedRows((prev) =>
                           prev.includes(i) ? prev : [...prev, i]
                         );
-                        setSelectedImage(k.imageUrl);
+                        setSelectedCard(k);
                       }
                     }}
                     className={selectedRows.includes(i) ? "selected-row" : ""}
@@ -132,23 +138,30 @@ function ReceivedKudosStudent( { received }) {
           </table>
         </div>
 
-      {selectedImage && (
-        <div
-          className="modal-overlay"
-          onClick={() => setSelectedImage(null)}
-        >
-          <div
-            className="modal-content"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              className="close-btn"
-              onClick={() => setSelectedImage(null)}
-              aria-label="Close image modal"
-            >
-              ✖
-            </button>
-            <img src={selectedImage} alt="Kudos Card" />
+      {selectedCard && (
+        <div className="modal-overlay-rev" onClick={() => setSelectedCard(null)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          
+            <div className="form-group">
+              <button
+                className="close-btn"
+                onClick={() => setSelectedCard(null)}
+                aria-label="Close image modal">
+                ✖
+              </button>
+            </div>
+
+            <div className="image-preview-container-img">
+              <img src={imageMap[selectedCard.title]} alt={selectedCard.title} style={{ width: '95%' }} />
+              <div className="message-preview-container">
+                  <AutoFitText
+                      text={selectedCard.message}
+                      maxFontSize={32}
+                      minFontSize={10}
+                  />
+              </div>
+            </div>  
+      
           </div>
         </div>
       )}

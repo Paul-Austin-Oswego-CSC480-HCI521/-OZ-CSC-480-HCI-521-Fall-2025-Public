@@ -1,25 +1,27 @@
 import React, { useState } from "react";
 import { useUser } from "./UserContext";
+import AutoFitText from '../components/AutoFitText';
 
 function SentKudosStudent( {messages = []} ) {
-    const [selectedImage, setSelectedImage] = useState(null);
+    const [selectedCard, setSelectedCard] = useState(null);
     const [selectedRows, setSelectedRows] = useState([]);
-
     const [showFilter, setShowFilter] = useState(false);
-
     const [selectedClass, setSelectedClass] = useState("");
     const [selectedRecipient, setSelectedRecipient] = useState("");
     const [selectedStatus, setSelectedStatus] = useState("");
     const [selectedTimePeriod, setSelectedTimePeriod] = useState("");
-
     const [showSort, setShowSort] = useState(false);
     const [selectedSort, setSelectedSort] = useState("newest");
-
     const { user } = useUser();
+
+    const imageMap = {
+      'Well Done!': '/images/welldone2.png',
+      'Nice Job!': '/images/nicejob2.png',
+      'Great Work!': '/images/greatwork2.png',
+    };
 
     const availableClasses = user?.classes || ["ABC101"];
     const availableRecipients = ["Santa", "Mrs. Clause", "Santa's 'Assistant'"];
-
     const sentKudos = [...messages];
 
     const sortedKudos = [...sentKudos].sort((a, b) => {
@@ -232,7 +234,7 @@ function SentKudosStudent( {messages = []} ) {
                 className={`received-kudos-row ${
                   selectedRows.includes(i) ? "selected-row" : ""
                 }`}
-                key={k.card_id}
+                key={k.id}
                 role="button"
                 tabIndex={0}
                 onClick={() => {
@@ -241,7 +243,7 @@ function SentKudosStudent( {messages = []} ) {
                       ? prev.filter((idx) => idx !== i)
                       : [...prev, i]
                   );
-                  setSelectedImage(k.imageUrl);
+                  setSelectedCard(k);
                 }}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
@@ -250,7 +252,7 @@ function SentKudosStudent( {messages = []} ) {
                         ? prev.filter((idx) => idx !== i)
                         : [...prev, i]
                     );
-                    setSelectedImage(k.imageUrl);
+                    setSelectedCard(k);
                   }
                 }}
               >
@@ -284,19 +286,30 @@ function SentKudosStudent( {messages = []} ) {
       </table>
     </div>
 
-      {selectedImage && (
-        <div className="modal-overlay" onClick={() => setSelectedImage(null)}>
-          <div
-            className="modal-content"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              className="close-btn"
-              onClick={() => setSelectedImage(null)}
-            >
-              ✖
-            </button>
-            <img src={selectedImage} alt="Kudos" />
+      {selectedCard && (
+        <div className="modal-overlay-rev" onClick={() => setSelectedCard(null)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          
+            <div className="form-group">
+              <button
+                className="close-btn"
+                onClick={() => setSelectedCard(null)}
+                aria-label="Close image modal">
+                ✖
+              </button>
+            </div>
+
+            <div className="image-preview-container-img">
+              <img src={imageMap[selectedCard.title]} alt={selectedCard.title} style={{ width: '95%' }} />
+              <div className="message-preview-container">
+                  <AutoFitText
+                      text={selectedCard.message}
+                      maxFontSize={32}
+                      minFontSize={10}
+                  />
+              </div>
+            </div>  
+      
           </div>
         </div>
       )}

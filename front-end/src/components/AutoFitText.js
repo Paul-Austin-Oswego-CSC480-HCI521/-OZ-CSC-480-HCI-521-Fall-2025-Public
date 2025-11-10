@@ -29,20 +29,23 @@ function AutoFitText({ text, maxFontSize = 36, minFontSize = 10 }) {
 
     adjustSize();
     window.addEventListener("resize", adjustSize);
-    return () => window.removeEventListener("resize", adjustSize);
+    const timeout = setTimeout(adjustSize, 50);
+    return () => {
+      window.removeEventListener("resize", adjustSize);
+      clearTimeout(timeout);
+    };
   }, [text, maxFontSize, minFontSize]);
 
   return (
     <div
       ref={containerRef}
       style={{
-        position: "absolute",
-        inset: "0",
+        width: "100%",
+        height: "100%",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         textAlign: "center",
-        padding: "1rem",
         overflow: "hidden",
       }}
     >
