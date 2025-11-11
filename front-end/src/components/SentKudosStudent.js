@@ -13,6 +13,7 @@ function SentKudosStudent( {messages = []} ) {
     const [showSort, setShowSort] = useState(false);
     const [selectedSort, setSelectedSort] = useState("newest");
     const { user } = useUser();
+    const [rejectionReason, setRejectionReason] = useState(null);
 
     const imageMap = {
       'Well Done!': '/images/welldone2.png',
@@ -36,6 +37,23 @@ function SentKudosStudent( {messages = []} ) {
         }
         return 0;
     });
+
+    const closeModal = () => {
+        setSelectedCard(null);
+        setRejectionReason(null);
+    };
+
+    const handleCardClick = (kudo, index) => {
+        setSelectedCard(null);
+        setRejectionReason(null);
+        
+        if (kudo.status === "DENIED") {
+            setRejectionReason(kudo.professor_note || "No rejection reason provided.");
+        } 
+        else {
+            setSelectedCard(kudo);
+        }
+    };
 
     return (
     <section className="sent-kudos">
@@ -237,23 +255,11 @@ function SentKudosStudent( {messages = []} ) {
                 key={k.id}
                 role="button"
                 tabIndex={0}
-                onClick={() => {
-                  setSelectedRows((prev) =>
-                    prev.includes(i)
-                      ? prev.filter((idx) => idx !== i)
-                      : [...prev, i]
-                  );
-                  setSelectedCard(k);
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    setSelectedRows((prev) =>
-                      prev.includes(i)
-                        ? prev.filter((idx) => idx !== i)
-                        : [...prev, i]
-                    );
-                    setSelectedCard(k);
-                  }
+                onClick={() => handleCardClick(k, i)}
+                  onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                          handleCardClick(k, i);
+                      }
                 }}
               >
                 <td className="reviewed-kudos-table-data">{k.recipient}</td>
@@ -286,35 +292,60 @@ function SentKudosStudent( {messages = []} ) {
       </table>
     </div>
 
-      {selectedCard && (
-        <div className="modal-overlay-rev" onClick={() => setSelectedCard(null)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-          
-            <div className="form-group">
-              <button
-                className="close-btn"
-                onClick={() => setSelectedCard(null)}
-                aria-label="Close image modal">
-                ✖
-              </button>
+
+    {selectedCard && (
+            <div className="modal-overlay-rev" onClick={closeModal}>
+                <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                
+                    <div className="form-group">
+                        <button
+                            className="close-btn"
+                            onClick={closeModal}
+                            aria-label="Close kudos modal">
+                            ✖
+                        </button>
+                    </div>
+
+                    <div className="image-preview-container-img">
+                        <img src={imageMap[selectedCard.title]} alt={selectedCard.title} style={{ width: '95%' }} />
+                        <div className="message-preview-container">
+                            <AutoFitText
+                                text={selectedCard.message}
+                                maxFontSize={32}
+                                minFontSize={10}
+                            />
+                        </div>
+                    </div> 
+                
+                </div>
             </div>
-
-            <div className="image-preview-container-img">
-              <img src={imageMap[selectedCard.title]} alt={selectedCard.title} style={{ width: '95%' }} />
-              <div className="message-preview-container">
-                  <AutoFitText
-                      text={selectedCard.message}
-                      maxFontSize={32}
-                      minFontSize={10}
-                  />
-              </div>
-            </div>  
-      
-          </div>
-        </div>
-      )}
+        )}
+        
+        {rejectionReason && (
+            <div className="modal-overlay-rev" onClick={closeModal}>
+                <div className="modal-content rejection-modal" onClick={(e) => e.stopPropagation()}>
+                    <div className="form-group">
+                        <button
+                            className="close-btn"
+                            onClick={closeModal}
+                            aria-label="Close rejection reason modal">
+                            ✖
+                        </button>
+                    </div>
+                    
+                    <blockquote style={{
+                        padding: '15px',
+                        borderLeft: '5px solid #d9534f',
+                        backgroundColor: '#f9e6e6',
+                        margin: '15px 0',
+                        whiteSpace: 'pre-wrap'
+                    }}>
+                        **{rejectionReason}**
+                    </blockquote>
+                </div>
+            </div>
+        )}
     </section>
-  );
-}
-
+    );
+}        
 export default SentKudosStudent;
