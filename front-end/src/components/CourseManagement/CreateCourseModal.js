@@ -60,8 +60,9 @@ function CreateCourseModal({ open, onClose, onClassCreated }) {
   }
 };
 
-  return (
-    <div className="review-page">
+return (
+  <div className="modal-overlay-class">
+    <div className="create-class-modal">
       <div className="header-row">
         <button onClick={onClose} className="icon-btn">
           <svg
@@ -133,7 +134,9 @@ function CreateCourseModal({ open, onClose, onClassCreated }) {
         </div>
       </form>
     </div>
-  );
+  </div>
+);
+  
 }
 
 export default CreateCourseModal;
