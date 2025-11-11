@@ -13,10 +13,7 @@ function StudentList({ students, isEditable, classId, professorId, onStudentRemo
     return <p>No students enrolled yet.</p>;
   }
 
-  const BASE_URL =
-    window.location.hostname === "localhost"
-      ? process.env.REACT_APP_API_BASE_URL
-      : "http://backend:9080/kudo-app/api";
+  const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
   const showToast = (message, type = "success") => {
     setToast({ message, type });

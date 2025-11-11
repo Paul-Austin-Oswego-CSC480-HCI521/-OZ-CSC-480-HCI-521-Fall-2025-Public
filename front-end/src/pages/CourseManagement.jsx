@@ -19,10 +19,7 @@ function CourseManagement() {
 
   const userId = user?.user_id;
 
-  const BASE_URL =
-    window.location.hostname === "localhost"
-      ? process.env.REACT_APP_API_BASE_URL
-      : "http://backend:9080/kudo-app/api";
+  const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
   const fetchClasses = useCallback(async () => {
     if (!userId) return;

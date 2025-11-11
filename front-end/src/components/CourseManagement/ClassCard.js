@@ -16,10 +16,7 @@ function ClassCard({ classData, isActive, onClassUpdated, professorId }) {
     setEndDate(classData.end_date || "");
   }, [classData]);
 
-  const BASE_URL =
-    window.location.hostname === "localhost"
-      ? process.env.REACT_APP_API_BASE_URL
-      : "http://backend:9080/kudo-app/api";
+  const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
   const isArchived = classData.end_date && new Date(classData.end_date) < new Date();
 
