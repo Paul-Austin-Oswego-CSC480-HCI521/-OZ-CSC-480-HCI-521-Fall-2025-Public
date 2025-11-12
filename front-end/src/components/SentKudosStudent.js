@@ -25,7 +25,26 @@ function SentKudosStudent( {messages = []} ) {
     const availableRecipients = ["Santa", "Mrs. Clause", "Santa's 'Assistant'"];
     const sentKudos = [...messages];
 
-    const sortedKudos = [...sentKudos].sort((a, b) => {
+    const filteredKudos = sentKudos.filter(k => {
+      if (selectedStatus && k.status !== selectedStatus) return false;
+
+      if (selectedTimePeriod) {
+          const now = new Date();
+          const kDate = new Date(k.date);
+          const diff = now - kDate;
+
+          if (selectedTimePeriod === "24h" && diff > 24 * 60 * 60 * 1000) return false;
+          if (selectedTimePeriod === "1w" && diff > 7 * 24 * 60 * 60 * 1000) return false;
+          if (selectedTimePeriod === "1m" && diff > 30 * 24 * 60 * 60 * 1000) return false;
+          if (selectedTimePeriod === "3m" && diff > 90 * 24 * 60 * 60 * 1000) return false;
+          if (selectedTimePeriod === "6m" && diff > 180 * 24 * 60 * 60 * 1000) return false;
+          if (selectedTimePeriod === "1y" && diff > 365 * 24 * 60 * 60 * 1000) return false;
+      }
+
+      return true;
+  });
+
+    const sortedKudos = [...filteredKudos].sort((a, b) => {
         if (selectedSort === "newest") {
             return new Date(b.date) - new Date(a.date);
         } else if (selectedSort === "oldest") {
@@ -37,6 +56,7 @@ function SentKudosStudent( {messages = []} ) {
         }
         return 0;
     });
+
 
     const closeModal = () => {
         setSelectedCard(null);
@@ -58,8 +78,7 @@ function SentKudosStudent( {messages = []} ) {
     return (
     <section className="sent-kudos">
       <div className="section-header">
-        <h2>Sent Kudos - {sentKudos.length}</h2>
-
+        <h2>Sent Kudos - {filteredKudos.length}</h2>
         <div className="filter-sort-controls">
             <div className = "filter-dropdown-container">
                 <button onClick={() => setShowFilter((prev) => !prev)} 
@@ -240,7 +259,7 @@ function SentKudosStudent( {messages = []} ) {
           </tr>
         </thead>
         <tbody>
-          {sentKudos.length === 0 ? (
+          {filteredKudos.length === 0 ? (
             <tr>
               <td colSpan={4} className="emptyTable">
                 No sent Kudos yet.
@@ -250,8 +269,7 @@ function SentKudosStudent( {messages = []} ) {
             sortedKudos.map((k, i) => (
               <tr
                 className={`received-kudos-row ${
-                  selectedRows.includes(i) ? "selected-row" : ""
-                }`}
+                  selectedRows.includes(i) ? "selected-row" : ""}`}
                 key={k.id}
                 role="button"
                 tabIndex={0}

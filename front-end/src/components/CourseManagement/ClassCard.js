@@ -27,7 +27,7 @@ function ClassCard({ classData, isActive, onClassUpdated, professorId }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...(field === "class_name" && { class_name: value }),
-          ...(field === "end_date" && { end_date: value ? new Date(value).toISOString() : null }),
+          ...(field === "end_date" && { end_date: value ? value + "T00:00:00" : null }),
         }),
       });
 

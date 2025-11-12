@@ -855,6 +855,7 @@
     padding: 20px 40px;
     border-radius: 8px;
     background-color: #fafdf2;
+    min-height: 325px;
 }
 
 .received-kudos h2,
