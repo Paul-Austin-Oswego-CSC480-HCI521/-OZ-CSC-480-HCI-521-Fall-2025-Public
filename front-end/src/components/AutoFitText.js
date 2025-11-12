@@ -29,7 +29,7 @@ function AutoFitText({ text, maxFontSize = 36, minFontSize = 10 }) {
 
     adjustSize();
     window.addEventListener("resize", adjustSize);
-    const timeout = setTimeout(adjustSize, 50);
+    const timeout = setTimeout(adjustSize, 150);
     return () => {
       window.removeEventListener("resize", adjustSize);
       clearTimeout(timeout);
