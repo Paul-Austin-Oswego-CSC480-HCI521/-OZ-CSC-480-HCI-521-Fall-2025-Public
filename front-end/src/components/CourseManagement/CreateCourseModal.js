@@ -61,34 +61,26 @@ return (
   <div className="modal-overlay-class">
     <div className="create-class-modal">
       <div className="header-row">
-        <button onClick={onClose} className="icon-btn">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="m12 19-7-7 7-7" />
-            <path d="M19 12H5" />
-          </svg>
-        </button>
-        <h2>Create New Course</h2>
+          <h2>Create Class</h2>
+          <button onClick={onClose} className="close-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                   className="lucide lucide-x-icon lucide-x">
+                  <path d="M18 6 6 18"/>
+                  <path d="m6 6 12 12"/>
+              </svg>
+          </button>
       </div>
 
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Class Name</label>
-          <input
-            type="text"
-            className="textBox"
-            value={className}
-            onChange={(e) => setClassName(e.target.value)}
-            placeholder="Enter class name"
+        <form onSubmit={handleSubmit}>
+            <div className="form-group">
+                <label>Class Name</label>
+                <input
+                    type="text"
+                    className="textBox"
+                    value={className}
+                    onChange={(e) => setClassName(e.target.value)}
+            placeholder="Class Name"
             required
             disabled={submitting}
           />
@@ -117,17 +109,17 @@ return (
         )}
 
         <div className="button-row">
-          <button type="submit" className="submit-btn" disabled={submitting}>
-            {submitting ? "Creating..." : "Create Course"}
-          </button>
-          <button
-            type="button"
-            className="submit-btn"
-            onClick={onClose}
-            disabled={submitting}
-          >
-            Cancel
-          </button>
+            <button
+                type="button"
+                className="cancel-btn"
+                onClick={onClose}
+                disabled={submitting}
+            >
+                Cancel
+            </button>
+            <button type="submit" className="submit-btn" disabled={submitting}>
+                {submitting ? "Creating..." : "Create Course"}
+            </button>
         </div>
       </form>
     </div>
