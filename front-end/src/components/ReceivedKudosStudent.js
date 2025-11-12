@@ -1,11 +1,17 @@
 import React, { useState } from "react";
+import AutoFitText from '../components/AutoFitText';
 
 function ReceivedKudosStudent( { received }) {
-    const [selectedImage, setSelectedImage] = useState(null);
+    const [selectedCard, setSelectedCard] = useState(null);
     const [selectedRows, setSelectedRows] = useState([]);
-
     const [showSort, setShowSort] = useState(false);
     const [selectedSort, setSelectedSort] = useState("newest");
+    
+    const imageMap = {
+      'Well Done!': '/images/welldone2.png',
+      'Nice Job!': '/images/nicejob2.png',
+      'Great Work!': '/images/greatwork2.png',
+    };
     
     const sortedKudos = [...received].sort((a, b) => {
         if (selectedSort === "newest") {
@@ -23,10 +29,11 @@ function ReceivedKudosStudent( { received }) {
       <div className="section-header">
         <h2>Received Kudos - {received.length}</h2>
 
-        <div className="sort-dropdown-container"></div>
+        <div className="sort-dropdown-container">
           <button onClick={() => {
             setShowSort((prev) => !prev);
-          }} className={`icon-btn ${showSort ? "selected" : ""}`}>
+          }} className={`icon-btn sort-btn ${showSort ? "selected" : ""}`}>
+          <span className="sort-icon-label">Sort</span>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -45,7 +52,6 @@ function ReceivedKudosStudent( { received }) {
               <path d="M3 17l3 3 3-3" />
               <path d="M6 4v16" />
             </svg>
-            <span className="icon-label">Sort</span>
           </button>
           
           {showSort && (
@@ -75,77 +81,87 @@ function ReceivedKudosStudent( { received }) {
                 </div>
             )}
             </div>
+      </div>
 
-      <table>
-        <thead>
-          <tr>
-            <th>Sender</th>
-            <th>Title</th>
-            <th>Message</th>
-            <th>Date</th>
-          </tr>
-        </thead>
-        <tbody>
-          {received.length === 0 ? (
-            <tr>
-              <td colSpan={4} className="emptyTable">
-                No Received Kudos yet.
-              </td>
-            </tr>
-          ) : (
-            sortedKudos.map((k, i) => (
-              <tr
-                key={k.card_id}
-                role="button"
-                tabIndex={0}
-                onClick={() => {
-                  setSelectedRows((prev) =>
-                    prev.includes(i) ? prev : [...prev, i]
-                  );
-                  setSelectedImage(k.imageUrl);
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    setSelectedRows((prev) =>
-                      prev.includes(i) ? prev : [...prev, i]
-                    );
-                    setSelectedImage(k.imageUrl);
-                  }
-                }}
-                className={selectedRows.includes(i) ? "selected-row" : ""}
-              >
-                <td className="default-kudos-table-data">
-                  {!selectedRows.includes(i) && (
-                    <span className="unread-indicator" />
-                  )}
-                  {k.sender}
-                </td>
-                <td className="default-kudos-table-data">{k.title}</td>
-                <td className="default-kudos-table-data">{k.message}</td>
-                <td className="default-kudos-table-data">{k.date}</td>
+        <div className = "table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Sender</th>
+                <th>Title</th>
+                <th>Message</th>
+                <th>Date</th>
               </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+            </thead>
+            <tbody>
+              {received.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="emptyTable">
+                    No Received Kudos yet.
+                  </td>
+                </tr>
+              ) : (
+                sortedKudos.map((k, i) => (
+                  <tr
+                    key={k.id}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => {
+                      setSelectedRows((prev) =>
+                        prev.includes(i) ? prev : [...prev, i]
+                      );
+                      setSelectedCard(k);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        setSelectedRows((prev) =>
+                          prev.includes(i) ? prev : [...prev, i]
+                        );
+                        setSelectedCard(k);
+                      }
+                    }}
+                    className={selectedRows.includes(i) ? "selected-row" : ""}
+                  >
+                    <td className="default-kudos-table-data">
+                      {!selectedRows.includes(i) && (
+                        <span className="unread-indicator" />
+                      )}
+                      {k.sender}
+                    </td>
+                    <td className="default-kudos-table-data">{k.title}</td>
+                    <td className="default-kudos-table-data">{k.message}</td>
+                    <td className="default-kudos-table-data">{k.date}</td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
 
-      {selectedImage && (
-        <div
-          className="modal-overlay"
-          onClick={() => setSelectedImage(null)}
-        >
-          <div
-            className="modal-content"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              className="close-btn"
-              onClick={() => setSelectedImage(null)}
-              aria-label="Close image modal"
-            >
-              ✖
-            </button>
-            <img src={selectedImage} alt="Kudos Card" />
+      {selectedCard && (
+        <div className="modal-overlay-rev" onClick={() => setSelectedCard(null)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          
+            <div className="form-group">
+              <button
+                className="close-btn"
+                onClick={() => setSelectedCard(null)}
+                aria-label="Close image modal">
+                ✖
+              </button>
+            </div>
+
+            <div className="image-preview-container-img">
+              <img src={imageMap[selectedCard.title]} alt={selectedCard.title} style={{ width: '95%' }} />
+              <div className="message-preview-container">
+                  <AutoFitText
+                      text={selectedCard.message}
+                      maxFontSize={32}
+                      minFontSize={10}
+                  />
+              </div>
+            </div>  
+      
           </div>
         </div>
       )}

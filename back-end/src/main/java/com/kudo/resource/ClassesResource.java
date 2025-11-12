@@ -132,21 +132,24 @@ public class ClassesResource {
     public Response updateClass(@PathParam("class_id") UUID class_id, ClassDTO.ClassUpdate update) {
 
         final String sql = """
-        UPDATE CLASSES
-        SET end_date = ?
-        WHERE class_id = ? AND end_date > CURRENT_TIMESTAMP
-        RETURNING class_id, class_name, join_code, created_date, end_date
+            UPDATE CLASSES
+            SET 
+                class_name = COALESCE(?, class_name),
+                end_date = COALESCE(?::timestamp, end_date)
+            WHERE class_id = ? & end_date > CURRENT_TIMESTAMP
+            RETURNING class_id, class_name, join_code, created_date, created_by, end_date
         """;
 
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setTimestamp(1, update.getEndDateAsTimestamp());
-            stmt.setObject(2, class_id);
+            stmt.setString(1, update.getClass_name());
+            stmt.setTimestamp(2, update.getEndDateAsTimestamp());
+            stmt.setObject(3, class_id);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (!rs.next()) {
-                    throw new NotFoundException("Class not found");
+                    throw new NotFoundException("Update failed");
                 }
 
                 // You already have a DTO for classes, so reuse it if available.

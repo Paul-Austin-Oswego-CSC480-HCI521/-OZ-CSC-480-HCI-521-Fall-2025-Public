@@ -16,28 +16,32 @@ function ClassCard({ classData, isActive, onClassUpdated, professorId }) {
     setEndDate(classData.end_date || "");
   }, [classData]);
 
-  const BASE_URL =
-    window.location.hostname === "localhost"
-      ? process.env.REACT_APP_API_BASE_URL
-      : "http://backend:9080/kudo-app/api";
+  const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
   const isArchived = classData.end_date && new Date(classData.end_date) < new Date();
 
   const handleUpdateField = async (field, value) => {
+    if (value == null) { throw new Error("Failed to update class");}
     try {
+
+      const body = {};
+      if (field === "class_name") {
+        body.class_name = value;}
+      else if (field === "end_date") {
+        body.end_date = value ? value.replace(" ", "T").replace(".0", "") : null;}
+      console.log(body);
+
       const res = await authFetch(`${BASE_URL}/class/${classData.class_id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...(field === "class_name" && { class_name: value }),
-          ...(field === "end_date" && { end_date: value ? new Date(value).toISOString() : null }),
-        }),
+        body: JSON.stringify(body),
       });
 
       if (!res.ok) throw new Error("Failed to update class");
       const updatedClass = await res.json();
       onClassUpdated(updatedClass);
       setToast({ message: `${field === "class_name" ? "Name" : "End date"} updated!`, type: "success" });
+
     } catch (err) {
       console.error(err);
       setToast({ message: "Failed to update class.", type: "error" });
@@ -114,27 +118,64 @@ function ClassCard({ classData, isActive, onClassUpdated, professorId }) {
           ) : (
             <>
               {endDate ? new Date(endDate).toISOString().split("T")[0] : "N/A"}{" "}
-              <button onClick={() => setEditingName(true)} className="pencil-btn" aria-label="Edit name">
+              <button
+                onClick={() => setEditingEndDate(true)}
+                className="pencil-btn"
+                aria-label="Edit end date"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="lucide lucide-pencil"
-                  >
-                    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="lucide lucide-pencil"
+                >
+                  <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
                 </svg>
               </button>
-
             </>
           )}{" "}
-          | Course Code: {classData.join_code}
+          | Course Code:
+          <span className="course-code-section">
+            <input
+              type="text"
+              readOnly
+              value={classData.join_code}
+              className="course-code-input"
+              onFocus={(e) => e.target.select()}
+            />
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(classData.join_code);
+                setToast({ message: "Course code copied!", type: "success" });
+              }}
+              className="copy-btn"
+              aria-label="Copy course code"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 512 512"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="40"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="lucide lucide-copy"
+              >
+                <path d="M128 128v256a32 32 0 0 0 32 32h256a32 32 0 0 0 32-32V128a32 32 0 0 0-32-32H160a32 32 0 0 0-32 32z" />
+                <path d="M96 384H80a32 32 0 0 1-32-32V96a32 32 0 0 1 32-32h256a32 32 0 0 1 32 32v16" />
+              </svg>
+            </button>
+          </span>
         </p>
+
 
       </div>
 
@@ -146,7 +187,10 @@ function ClassCard({ classData, isActive, onClassUpdated, professorId }) {
             isEditable={isActive}
             classId={classData.class_id}
             professorId={professorId}
-            onStudentRemoved={onClassUpdated}
+            onStudentRemoved={({class_id, student_id, message}) => {
+              const updatedStudents = classData.students.filter(s => s.id !== student_id);
+              onClassUpdated({ class_id, students: updatedStudents });
+            }}
           />
         </div>
 
@@ -159,7 +203,13 @@ function ClassCard({ classData, isActive, onClassUpdated, professorId }) {
           />
         </div>
       </div>
-      {isActive && <button className="edit-btn" onClick={handleDeleteClass}>Delete Course</button>}
+      {isActive && (
+        <div className="delete-btn-container">
+          <button className="edit-btn" onClick={handleDeleteClass}>
+            Delete Course
+          </button>
+        </div>
+      )}
 
       {toast && (
         <ToastMessage

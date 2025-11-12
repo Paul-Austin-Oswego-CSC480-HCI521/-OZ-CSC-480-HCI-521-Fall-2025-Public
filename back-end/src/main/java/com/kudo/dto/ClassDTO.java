@@ -96,29 +96,26 @@ public class ClassDTO {
     }
 
     public static class ClassUpdate {
-        @JsonbDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-        @NotNull
-        private LocalDateTime end_date;
 
-        public ClassUpdate() {}
+    private String class_name;  // optional
+    @JsonbDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime end_date;  // optional
 
-        public LocalDateTime getEnd_date() {
-            return end_date;
-        }
+    public ClassUpdate() {}
 
-        public void setEnd_date(LocalDateTime end_date) {
-            this.end_date = end_date;
-        }
+    public String getClass_name() { return class_name; }
+    public void setClass_name(String class_name) { this.class_name = class_name; }
 
+    public LocalDateTime getEnd_date() { return end_date; }
+    public void setEnd_date(LocalDateTime end_date) { this.end_date = end_date; }
 
-
-        public Timestamp getEndDateAsTimestamp() {
-            if (end_date == null) return null;
-            try {
-                return Timestamp.valueOf(end_date);
-            } catch (IllegalArgumentException e) {
-                throw new BadRequestException("Invalid closed_at format. Expected yyyy-MM-dd HH:mm:ss");
-            }
+    public Timestamp getEndDateAsTimestamp() {
+        if (end_date == null) return null;
+        try {
+            return Timestamp.valueOf(end_date);
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException("Invalid end_date format. Expected yyyy-MM-dd HH:mm:ss");
         }
     }
+}
 }

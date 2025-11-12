@@ -22,65 +22,69 @@ function SubmittedKudosProf({ submitted, onSelect}) {
 
     return (
         <section className="received-kudos">
-        <h2>Submitted Kudos - {submitted.length}</h2>
-        <div className="sort-dropdown-container"></div>
-          <button onClick={() => {
-            setShowSort((prev) => !prev);
-          }} className={`icon-btn ${showSort ? "selected" : ""}`}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="lucide lucide-sort-desc"
-            >
-              <path d="M11 5h10" />
-              <path d="M11 9h7" />
-              <path d="M11 13h4" />
-              <path d="M3 17l3 3 3-3" />
-              <path d="M6 4v16" />
-            </svg>
-            <span className="icon-label">Sort</span>
-          </button>
-          
-          {showSort && (
-            <div className="sort-dropdown">
-                <ul>
-                    <li onClick={() => {
-                        setSelectedSort("newest");
-                        setShowSort(false);
-                    }}
-                    className={selectedSort === "newest" ? "active" : ""}>
-                        Date Submitted (Newest First)
-                    </li>
-                    <li onClick={() => {
-                        setSelectedSort("oldest");
-                        setShowSort(false);
-                    }} className={selectedSort === "oldest" ? "active" : ""}>
-                        Date Submitted (Oldest First)
-                    </li>
-                    <li onClick={() => {
-                        setSelectedSort("sender");
-                        setShowSort(false);
-                    }}
-                    className={selectedSort === "sender" ? "active" : ""}>
-                        Sender Last Name (A-Z)
-                    </li>
-                    <li onClick={() => {
-                        setSelectedSort("recipient");
-                        setShowSort(false);
-                    }}
-                    className={selectedSort === "recipient" ? "active" : ""}>
-                        Recipient Last Name (A-Z)
-                    </li>
-                </ul>
+            <div className="table-header">
+            <h2>Submitted Kudos - {submitted.length}</h2>
+            <div className="sort-dropdown-container">
+              <button onClick={() => {
+                setShowSort((prev) => !prev);
+              }} className={`icon-btn sort-btn ${showSort ? "selected" : ""}`}>
+                  <span className="sort-icon-label">Sort</span>
+                  <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="lucide lucide-sort-desc"
+                >
+                  <path d="M11 5h10" />
+                  <path d="M11 9h7" />
+                  <path d="M11 13h4" />
+                  <path d="M3 17l3 3 3-3" />
+                  <path d="M6 4v16" />
+                </svg>
+              </button>
+
+              {showSort && (
+                <div className="sort-dropdown">
+                    <ul>
+                        <li onClick={() => {
+                            setSelectedSort("newest");
+                            setShowSort(false);
+                        }}
+                        className={selectedSort === "newest" ? "active" : ""}>
+                            Date Submitted (Newest First)
+                        </li>
+                        <li onClick={() => {
+                            setSelectedSort("oldest");
+                            setShowSort(false);
+                        }} className={selectedSort === "oldest" ? "active" : ""}>
+                            Date Submitted (Oldest First)
+                        </li>
+                        <li onClick={() => {
+                            setSelectedSort("sender");
+                            setShowSort(false);
+                        }}
+                        className={selectedSort === "sender" ? "active" : ""}>
+                            Sender Last Name (A-Z)
+                        </li>
+                        <li onClick={() => {
+                            setSelectedSort("recipient");
+                            setShowSort(false);
+                        }}
+                        className={selectedSort === "recipient" ? "active" : ""}>
+                            Recipient Last Name (A-Z)
+                        </li>
+                    </ul>
                 </div>
-            )}
+                )}
+                </div>
+            </div>
+
             <div className="table-container">
                 <table>
                     <thead>

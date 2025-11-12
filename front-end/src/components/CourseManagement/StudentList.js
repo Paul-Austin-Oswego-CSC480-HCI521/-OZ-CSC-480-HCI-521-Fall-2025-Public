@@ -5,14 +5,15 @@ import ToastMessage from "../Shared/ToastMessage";
 function StudentList({ students, isEditable, classId, professorId, onStudentRemoved }) {
   const [toast, setToast] = useState(null);
 
-  if (!students || students.length === 0) {
+  const filteredStudents = students.filter(
+    (student) => student.role?.toLowerCase() === "student"
+  );
+
+  if (!filteredStudents || filteredStudents.length === 0) {
     return <p>No students enrolled yet.</p>;
   }
 
-  const BASE_URL =
-    window.location.hostname === "localhost"
-      ? process.env.REACT_APP_API_BASE_URL
-      : "http://backend:9080/kudo-app/api";
+  const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
   const showToast = (message, type = "success") => {
     setToast({ message, type });
@@ -24,7 +25,7 @@ function StudentList({ students, isEditable, classId, professorId, onStudentRemo
       return;
     }
     try {
-      const res = await authFetch(`${BASE_URL}/class/${classId}?user_id=${studentId}`, {
+      const res = await authFetch(`${BASE_URL}/class/${classId}/${studentId}`, {
         method: "DELETE",
       });
 
@@ -34,7 +35,7 @@ function StudentList({ students, isEditable, classId, professorId, onStudentRemo
       }
 
       if (onStudentRemoved) {
-        onStudentRemoved({ class_id: classId, message: `${studentName} removed successfully.` });
+        onStudentRemoved({class_id: classId, student_id: studentId, message: `${studentName} removed successfully.` });
       }
 
       showToast(`${studentName} removed successfully!`, "success");
@@ -48,13 +49,15 @@ function StudentList({ students, isEditable, classId, professorId, onStudentRemo
   return (
     <>
       <ul className="student-list">
-        {students.map((student) => (
-          <li key={student.id}>
-            {student.name}, {student.email} - {student.role}
+        {filteredStudents.map((student) => (
+          <li key={student.id} className="student-item">
+            <span>{student.name}</span>
             {isEditable && (
               <button
+                className="remove-btn"
                 onClick={() => handleRemove(student.id, student.name)}
                 disabled={professorId === student.id}
+                aria-label={`Remove ${student.name}`}
               >
                 Remove
               </button>

@@ -9,10 +9,7 @@ function CreateCourseModal({ open, onClose, onClassCreated }) {
   const [submitting, setSubmitting] = useState(false);
   const { user } = useUser();
 
-  const BASE_URL =
-    window.location.hostname === "localhost"
-      ? process.env.REACT_APP_API_BASE_URL
-      : "http://backend:9080/kudo-app/api";
+  const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
   if (!open) return null;
 
@@ -60,8 +57,9 @@ function CreateCourseModal({ open, onClose, onClassCreated }) {
   }
 };
 
-  return (
-    <div className="review-page">
+return (
+  <div className="modal-overlay-class">
+    <div className="create-class-modal">
       <div className="header-row">
         <button onClick={onClose} className="icon-btn">
           <svg
@@ -133,7 +131,9 @@ function CreateCourseModal({ open, onClose, onClassCreated }) {
         </div>
       </form>
     </div>
-  );
+  </div>
+);
+  
 }
 
 export default CreateCourseModal;

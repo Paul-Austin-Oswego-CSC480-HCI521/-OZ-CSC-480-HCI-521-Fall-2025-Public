@@ -102,7 +102,6 @@ function Login() {
 
     } catch (error) {
       setMode("SU");
-      setErrorMessage(error.message || 'Authentication failed');
     } finally {
       setLoading(false);
     }
@@ -141,7 +140,9 @@ function Login() {
                   {mode === "SU" && (
                     <form className='login-form' onSubmit={handleNewAuth}>
                     <div className="su-header">
-                      <button type='button' className='back-button' onClick={() => setMode("LG")}>←</button>
+                      <button type='button' className='back-button' onClick={() => {
+                        setMode("LG");
+                        navigate(0); }}>←</button>
                       <h2>Create Account</h2>
                     </div>
                       <label className='role-label'>I am a . . .</label>
