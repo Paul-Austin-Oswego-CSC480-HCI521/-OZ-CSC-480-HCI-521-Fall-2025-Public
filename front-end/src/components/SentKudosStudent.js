@@ -13,6 +13,7 @@ function SentKudosStudent( {messages = []} ) {
     const [showSort, setShowSort] = useState(false);
     const [selectedSort, setSelectedSort] = useState("newest");
     const { user } = useUser();
+    const [rejectionReason, setRejectionReason] = useState(null);
 
     const imageMap = {
       'Well Done!': '/images/welldone2.png',
@@ -24,7 +25,26 @@ function SentKudosStudent( {messages = []} ) {
     const availableRecipients = ["Santa", "Mrs. Clause", "Santa's 'Assistant'"];
     const sentKudos = [...messages];
 
-    const sortedKudos = [...sentKudos].sort((a, b) => {
+    const filteredKudos = sentKudos.filter(k => {
+      if (selectedStatus && k.status !== selectedStatus) return false;
+
+      if (selectedTimePeriod) {
+          const now = new Date();
+          const kDate = new Date(k.date);
+          const diff = now - kDate;
+
+          if (selectedTimePeriod === "24h" && diff > 24 * 60 * 60 * 1000) return false;
+          if (selectedTimePeriod === "1w" && diff > 7 * 24 * 60 * 60 * 1000) return false;
+          if (selectedTimePeriod === "1m" && diff > 30 * 24 * 60 * 60 * 1000) return false;
+          if (selectedTimePeriod === "3m" && diff > 90 * 24 * 60 * 60 * 1000) return false;
+          if (selectedTimePeriod === "6m" && diff > 180 * 24 * 60 * 60 * 1000) return false;
+          if (selectedTimePeriod === "1y" && diff > 365 * 24 * 60 * 60 * 1000) return false;
+      }
+
+      return true;
+  });
+
+    const sortedKudos = [...filteredKudos].sort((a, b) => {
         if (selectedSort === "newest") {
             return new Date(b.date) - new Date(a.date);
         } else if (selectedSort === "oldest") {
@@ -37,11 +57,28 @@ function SentKudosStudent( {messages = []} ) {
         return 0;
     });
 
+
+    const closeModal = () => {
+        setSelectedCard(null);
+        setRejectionReason(null);
+    };
+
+    const handleCardClick = (kudo, index) => {
+        setSelectedCard(null);
+        setRejectionReason(null);
+        
+        if (kudo.status === "DENIED") {
+            setRejectionReason(kudo.professor_note || "No rejection reason provided.");
+        } 
+        else {
+            setSelectedCard(kudo);
+        }
+    };
+
     return (
     <section className="sent-kudos">
       <div className="section-header">
-        <h2>Sent Kudos - {sentKudos.length}</h2>
-
+        <h2>Sent Kudos - {filteredKudos.length}</h2>
         <div className="filter-sort-controls">
             <div className = "filter-dropdown-container">
                 <button onClick={() => setShowFilter((prev) => !prev)} 
@@ -222,7 +259,7 @@ function SentKudosStudent( {messages = []} ) {
           </tr>
         </thead>
         <tbody>
-          {sentKudos.length === 0 ? (
+          {filteredKudos.length === 0 ? (
             <tr>
               <td colSpan={4} className="emptyTable">
                 No sent Kudos yet.
@@ -232,28 +269,15 @@ function SentKudosStudent( {messages = []} ) {
             sortedKudos.map((k, i) => (
               <tr
                 className={`received-kudos-row ${
-                  selectedRows.includes(i) ? "selected-row" : ""
-                }`}
+                  selectedRows.includes(i) ? "selected-row" : ""}`}
                 key={k.id}
                 role="button"
                 tabIndex={0}
-                onClick={() => {
-                  setSelectedRows((prev) =>
-                    prev.includes(i)
-                      ? prev.filter((idx) => idx !== i)
-                      : [...prev, i]
-                  );
-                  setSelectedCard(k);
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    setSelectedRows((prev) =>
-                      prev.includes(i)
-                        ? prev.filter((idx) => idx !== i)
-                        : [...prev, i]
-                    );
-                    setSelectedCard(k);
-                  }
+                onClick={() => handleCardClick(k, i)}
+                  onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                          handleCardClick(k, i);
+                      }
                 }}
               >
                 <td className="reviewed-kudos-table-data">{k.recipient}</td>
@@ -286,35 +310,60 @@ function SentKudosStudent( {messages = []} ) {
       </table>
     </div>
 
-      {selectedCard && (
-        <div className="modal-overlay-rev" onClick={() => setSelectedCard(null)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-          
-            <div className="form-group">
-              <button
-                className="close-btn"
-                onClick={() => setSelectedCard(null)}
-                aria-label="Close image modal">
-                ✖
-              </button>
+
+    {selectedCard && (
+            <div className="modal-overlay-rev" onClick={closeModal}>
+                <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                
+                    <div className="form-group">
+                        <button
+                            className="close-btn"
+                            onClick={closeModal}
+                            aria-label="Close kudos modal">
+                            ✖
+                        </button>
+                    </div>
+
+                    <div className="image-preview-container-img">
+                        <img src={imageMap[selectedCard.title]} alt={selectedCard.title} style={{ width: '95%' }} />
+                        <div className="message-preview-container">
+                            <AutoFitText
+                                text={selectedCard.message}
+                                maxFontSize={32}
+                                minFontSize={10}
+                            />
+                        </div>
+                    </div> 
+                
+                </div>
             </div>
-
-            <div className="image-preview-container-img">
-              <img src={imageMap[selectedCard.title]} alt={selectedCard.title} style={{ width: '95%' }} />
-              <div className="message-preview-container">
-                  <AutoFitText
-                      text={selectedCard.message}
-                      maxFontSize={32}
-                      minFontSize={10}
-                  />
-              </div>
-            </div>  
-      
-          </div>
-        </div>
-      )}
+        )}
+        
+        {rejectionReason && (
+            <div className="modal-overlay-rev" onClick={closeModal}>
+                <div className="modal-content rejection-modal" onClick={(e) => e.stopPropagation()}>
+                    <div className="form-group">
+                        <button
+                            className="close-btn"
+                            onClick={closeModal}
+                            aria-label="Close rejection reason modal">
+                            ✖
+                        </button>
+                    </div>
+                    
+                    <blockquote style={{
+                        padding: '15px',
+                        borderLeft: '5px solid #d9534f',
+                        backgroundColor: '#f9e6e6',
+                        margin: '15px 0',
+                        whiteSpace: 'pre-wrap'
+                    }}>
+                        **{rejectionReason}**
+                    </blockquote>
+                </div>
+            </div>
+        )}
     </section>
-  );
-}
-
+    );
+}        
 export default SentKudosStudent;

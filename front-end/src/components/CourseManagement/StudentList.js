@@ -13,10 +13,7 @@ function StudentList({ students, isEditable, classId, professorId, onStudentRemo
     return <p>No students enrolled yet.</p>;
   }
 
-  const BASE_URL =
-    window.location.hostname === "localhost"
-      ? process.env.REACT_APP_API_BASE_URL
-      : "http://backend:9080/kudo-app/api";
+  const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
   const showToast = (message, type = "success") => {
     setToast({ message, type });
@@ -28,7 +25,7 @@ function StudentList({ students, isEditable, classId, professorId, onStudentRemo
       return;
     }
     try {
-      const res = await authFetch(`${BASE_URL}/class/${classId}?user_id=${studentId}`, {
+      const res = await authFetch(`${BASE_URL}/class/${classId}/${studentId}`, {
         method: "DELETE",
       });
 
@@ -38,7 +35,7 @@ function StudentList({ students, isEditable, classId, professorId, onStudentRemo
       }
 
       if (onStudentRemoved) {
-        onStudentRemoved({ class_id: classId, message: `${studentName} removed successfully.` });
+        onStudentRemoved({class_id: classId, student_id: studentId, message: `${studentName} removed successfully.` });
       }
 
       showToast(`${studentName} removed successfully!`, "success");

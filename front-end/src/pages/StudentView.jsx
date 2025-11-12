@@ -20,6 +20,13 @@ function StudentView() {
     const [error, setError] = useState(null);
     const { user } = useUser();
 
+    const [rejectionInfo, setRejectionInfo] = useState(null);
+    const handleRejectedCardClick = (rejectionReason) => {
+        setRejectionInfo(rejectionReason);
+    };
+    const closeRejectionModal = () => {
+        setRejectionInfo(null);
+    };
     const handleReceivedSort = () => {
         setReceivedSortOrder((prev) => (prev === "desc" ? "asc" : "desc"));
     }
@@ -183,7 +190,7 @@ function StudentView() {
                 {!loading && !error && (
                     <>
                     <ReceivedKudosStudent received = {sortedReceived} />
-                    <SentKudosStudent messages = {sortedSent} />
+                    <SentKudosStudent messages = {sortedSent} onRejectedCardClick={handleRejectedCardClick}/>
                     </>                 
                 )}
 

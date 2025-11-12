@@ -855,6 +855,7 @@
     padding: 20px 40px;
     border-radius: 8px;
     background-color: #fafdf2;
+    min-height: 325px;
 }
 
 .received-kudos h2,
@@ -981,6 +982,32 @@
     text-wrap: auto;
     width: 250px;
     margin: 30px;
+}
+
+.title-button-CC {
+    padding: 14px 28px;
+    font-size: 18px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: bold;
+    border-radius: 6px;
+    border: 2px solid #093B3B;
+    background-color: white;
+    color: black;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    user-select: none;
+    box-shadow: none;
+}
+
+.title-button-CC:hover:not(.selected) {
+    background-color: white;
+}
+
+.title-button-CC.selected {
+    background-color: #093b3b;
+    color: white;
+    border-color: #333;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
 }
 
 .title-button:hover:not(.selected) {

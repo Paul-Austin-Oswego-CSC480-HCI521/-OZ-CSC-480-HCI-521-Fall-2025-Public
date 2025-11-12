@@ -19,10 +19,7 @@ function CourseManagement() {
 
   const userId = user?.user_id;
 
-  const BASE_URL =
-    window.location.hostname === "localhost"
-      ? process.env.REACT_APP_API_BASE_URL
-      : "http://backend:9080/kudo-app/api";
+  const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
   const fetchClasses = useCallback(async () => {
     if (!userId) return;
@@ -111,11 +108,16 @@ const handleClassUpdated = (updateInfo) => {
   }
 
   setClasses(prev =>
-    prev.map(c => (c.class_id === updateInfo.class_id ? { ...c, ...updateInfo } : c))
+  prev.map(c => c.class_id === updateInfo.class_id
+    ? { ...c, ...updateInfo }
+    : c)
   );
   setArchivedClasses(prev =>
-    prev.map(c => (c.class_id === updateInfo.class_id ? { ...c, ...updateInfo } : c))
+    prev.map(c => c.class_id === updateInfo.class_id
+      ? { ...c, ...updateInfo }
+      : c)
   );
+
 
   setToast({ message: "Class updated successfully.", type: "success" });
 };
@@ -150,11 +152,6 @@ const handleClassUpdated = (updateInfo) => {
         >
           Create New Course +
         </button>
-      </div>
-
-      <div className="course-subheaders">
-        <h3>Current Courses</h3>
-        <h3>Manage Courses</h3>
       </div>
 
       <div className="course-management-container">

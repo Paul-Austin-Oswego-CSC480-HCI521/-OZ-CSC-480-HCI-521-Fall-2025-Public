@@ -9,10 +9,7 @@ function CreateCourseModal({ open, onClose, onClassCreated }) {
   const [submitting, setSubmitting] = useState(false);
   const { user } = useUser();
 
-  const BASE_URL =
-    window.location.hostname === "localhost"
-      ? process.env.REACT_APP_API_BASE_URL
-      : "http://backend:9080/kudo-app/api";
+  const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
   if (!open) return null;
 
