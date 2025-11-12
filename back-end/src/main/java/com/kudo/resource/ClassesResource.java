@@ -136,8 +136,8 @@ public class ClassesResource {
             SET 
                 class_name = COALESCE(?, class_name),
                 end_date = COALESCE(?::timestamp, end_date)
-            WHERE class_id = ?
-            RETURNING class_id, class_name, join_code, created_date, end_date
+            WHERE class_id = ? & end_date > CURRENT_TIMESTAMP
+            RETURNING class_id, class_name, join_code, created_date, created_by, end_date
         """;
 
         try (Connection conn = dataSource.getConnection();
@@ -149,7 +149,7 @@ public class ClassesResource {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (!rs.next()) {
-                    throw new NotFoundException("Class not found");
+                    throw new NotFoundException("Update failed");
                 }
 
                 // You already have a DTO for classes, so reuse it if available.
