@@ -21,20 +21,27 @@ function ClassCard({ classData, isActive, onClassUpdated, professorId }) {
   const isArchived = classData.end_date && new Date(classData.end_date) < new Date();
 
   const handleUpdateField = async (field, value) => {
+    if (value == null) { throw new Error("Failed to update class");}
     try {
+
+      const body = {};
+      if (field === "class_name") {
+        body.class_name = value;}
+      else if (field === "end_date") {
+        body.end_date = value ? value.replace(" ", "T").replace(".0", "") : null;}
+      console.log(body);
+
       const res = await authFetch(`${BASE_URL}/class/${classData.class_id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...(field === "class_name" && { class_name: value }),
-          ...(field === "end_date" && { end_date: value ? value + "T00:00:00" : null }),
-        }),
+        body: JSON.stringify(body),
       });
 
       if (!res.ok) throw new Error("Failed to update class");
       const updatedClass = await res.json();
       onClassUpdated(updatedClass);
       setToast({ message: `${field === "class_name" ? "Name" : "End date"} updated!`, type: "success" });
+
     } catch (err) {
       console.error(err);
       setToast({ message: "Failed to update class.", type: "error" });
@@ -180,7 +187,10 @@ function ClassCard({ classData, isActive, onClassUpdated, professorId }) {
             isEditable={isActive}
             classId={classData.class_id}
             professorId={professorId}
-            onStudentRemoved={onClassUpdated}
+            onStudentRemoved={({class_id, student_id, message}) => {
+              const updatedStudents = classData.students.filter(s => s.id !== student_id);
+              onClassUpdated({ class_id, students: updatedStudents });
+            }}
           />
         </div>
 

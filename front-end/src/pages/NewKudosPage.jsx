@@ -210,7 +210,7 @@ function NewKudosPage({ onSubmit }) {
                                         <button
                                             key={index}
                                             type="button"
-                                            className={`title-button ${formData.title === option ? 'selected' : ''}`}
+                                            className={`title-button-CC ${formData.title === option ? 'selected' : ''}`}
                                             onClick={() => {
                                                 setFormData(prev => ({ ...prev, title: option }));
                                                 const img = imageMap[option];

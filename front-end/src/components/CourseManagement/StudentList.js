@@ -25,7 +25,7 @@ function StudentList({ students, isEditable, classId, professorId, onStudentRemo
       return;
     }
     try {
-      const res = await authFetch(`${BASE_URL}/class/${classId}?user_id=${studentId}`, {
+      const res = await authFetch(`${BASE_URL}/class/${classId}/${studentId}`, {
         method: "DELETE",
       });
 
@@ -35,7 +35,7 @@ function StudentList({ students, isEditable, classId, professorId, onStudentRemo
       }
 
       if (onStudentRemoved) {
-        onStudentRemoved({ class_id: classId, message: `${studentName} removed successfully.` });
+        onStudentRemoved({class_id: classId, student_id: studentId, message: `${studentName} removed successfully.` });
       }
 
       showToast(`${studentName} removed successfully!`, "success");

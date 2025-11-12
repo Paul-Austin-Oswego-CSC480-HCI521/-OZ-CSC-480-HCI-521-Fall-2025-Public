@@ -108,11 +108,16 @@ const handleClassUpdated = (updateInfo) => {
   }
 
   setClasses(prev =>
-    prev.map(c => (c.class_id === updateInfo.class_id ? { ...c, ...updateInfo } : c))
+  prev.map(c => c.class_id === updateInfo.class_id
+    ? { ...c, ...updateInfo }
+    : c)
   );
   setArchivedClasses(prev =>
-    prev.map(c => (c.class_id === updateInfo.class_id ? { ...c, ...updateInfo } : c))
+    prev.map(c => c.class_id === updateInfo.class_id
+      ? { ...c, ...updateInfo }
+      : c)
   );
+
 
   setToast({ message: "Class updated successfully.", type: "success" });
 };
@@ -147,11 +152,6 @@ const handleClassUpdated = (updateInfo) => {
         >
           Create New Course +
         </button>
-      </div>
-
-      <div className="course-subheaders">
-        <h3>Current Courses</h3>
-        <h3>Manage Courses</h3>
       </div>
 
       <div className="course-management-container">
