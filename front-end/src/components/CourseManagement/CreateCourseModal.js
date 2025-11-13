@@ -30,8 +30,7 @@ function CreateCourseModal({ open, onClose, onClassCreated }) {
         setSubmitting(true);
 
         try {
-            const formattedEndDate = `${endDate}T23:59:59`;
-
+            const formattedEndDate = `${endDate} 00:00:00`;
             const res = await authFetch(
                 `${BASE_URL}/class?class_name=${encodeURIComponent(
                     className.trim()
