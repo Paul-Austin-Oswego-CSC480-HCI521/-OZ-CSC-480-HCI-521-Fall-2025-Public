@@ -247,6 +247,27 @@ curl "http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api/kudo-card/a
 }
 ```
 
+### `PATCH /api/kudo-card/{card_id}/markAsRead`
+
+Mark a card as read values.
+
+**Parameters:**
+
+* `card_id` (path): card UUID
+
+
+**Example:**
+
+```bash
+curl -X PATCH "http://kudos-backend-network:${BACKEND_HTTP_PORT}/kudo-app/api/kudo-card/abcd1234-1234-1234-1234-123456789def/markAsRead" \
+```
+
+**Response:**
+```
+202 Accepted
+```
+
+
 ### `POST /api/kudo-card`
 Create a new kudo card.
 

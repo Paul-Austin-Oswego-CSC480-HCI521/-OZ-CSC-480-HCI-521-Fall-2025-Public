@@ -49,6 +49,7 @@ public class ClassesResource {
     public Response createClass(@QueryParam("class_name") String class_name,
                                 @QueryParam("created_by") String created_by,
                                 @QueryParam("end_date") String end_date) {
+
         final String sql = """
         INSERT INTO CLASSES
             (class_name, created_by, end_date)
@@ -62,26 +63,51 @@ public class ClassesResource {
         VALUES (?, ?, 'APPROVED')
         """;
 
+
+        if (end_date != null && !end_date.isBlank()) {
+            try {
+                Timestamp endTimestamp = Timestamp.valueOf(end_date);
+                Timestamp now = new Timestamp(System.currentTimeMillis());
+                if (endTimestamp.before(now)) {
+                    // end_date is in the past — reject request
+                    return Response.status(Response.Status.BAD_REQUEST)
+                            .entity("End date cannot be prior to current date/time")
+                            .build();
+                }
+            } catch (IllegalArgumentException e) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity("arguments are malformed")
+                        .build();
+            }
+        }
+
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             conn.setAutoCommit(false);
+
             stmt.setString(1, class_name);
+
             UUID creatorUuid = created_by != null ? UUID.fromString(created_by) : null;
             stmt.setObject(2, creatorUuid);
-            stmt.setString(3, end_date);
 
-            try  (ResultSet rs = stmt.executeQuery()) {
+            // Set timestamp parameter (or null if not provided)
+            if (end_date != null) {
+                stmt.setString(3, end_date);
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     JsonObjectBuilder jsonBuilder = Json.createObjectBuilder()
-                        .add("class_id", rs.getString("class_id"))
-                        .add("class_name", rs.getString("class_name"))
-                        .add("join_code", rs.getString("join_code"));
+                            .add("class_id", rs.getString("class_id"))
+                            .add("class_name", rs.getString("class_name"))
+                            .add("join_code", rs.getString("join_code"));
 
                     if (rs.getString("end_date") != null) {
                         jsonBuilder.add("end_date", rs.getString("end_date"));
                     }
 
-                    // add creator to the class if created_by is provided
+                    // Add creator to the class if created_by is provided
                     if (creatorUuid != null) {
                         try (PreparedStatement addCreatorStmt = conn.prepareStatement(addCreatorSql)) {
                             addCreatorStmt.setObject(1, creatorUuid);
@@ -91,16 +117,18 @@ public class ClassesResource {
                     }
 
                     conn.commit();
-
                     return Response.ok(jsonBuilder.build()).build();
                 }
 
             } catch (SQLException e) {
+                conn.rollback();
                 throw new InternalServerErrorException("Database error: " + e.getMessage());
             }
+
         } catch (SQLException e) {
             throw new InternalServerErrorException("Database error: " + e.getMessage());
         }
+
         throw new InternalServerErrorException("Failed to create class");
     }
 
@@ -132,27 +160,39 @@ public class ClassesResource {
     public Response updateClass(@PathParam("class_id") UUID class_id, ClassDTO.ClassUpdate update) {
 
         final String sql = """
-            UPDATE CLASSES
-            SET 
-                class_name = COALESCE(?, class_name),
-                end_date = COALESCE(?::timestamp, end_date)
-            WHERE class_id = ? & end_date > CURRENT_TIMESTAMP
-            RETURNING class_id, class_name, join_code, created_date, created_by, end_date
-        """;
+        UPDATE CLASSES
+        SET 
+            class_name = COALESCE(?, class_name),
+            end_date = COALESCE(?::timestamp, end_date)
+        WHERE class_id = ? AND end_date > CURRENT_TIMESTAMP
+        RETURNING class_id, class_name, join_code, created_date, created_by, end_date
+    """;
+
+        // --- Validate the new end_date (if provided) before updating ---
+        Timestamp newEndDate = update.getEndDateAsTimestamp();
+        if (newEndDate != null) {
+            Timestamp now = new Timestamp(System.currentTimeMillis());
+            if (newEndDate.before(now)) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity("end_date must be in the future")
+                        .build();
+            }
+        }
 
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, update.getClass_name());
-            stmt.setTimestamp(2, update.getEndDateAsTimestamp());
+            stmt.setTimestamp(2, newEndDate);
             stmt.setObject(3, class_id);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (!rs.next()) {
-                    throw new NotFoundException("Update failed");
+                    return Response.status(Response.Status.NOT_FOUND)
+                            .entity("Class not found or cannot be updated (may be closed)")
+                            .build();
                 }
 
-                // You already have a DTO for classes, so reuse it if available.
                 Classes updated = new Classes(
                         (UUID) rs.getObject("class_id"),
                         rs.getString("class_name"),

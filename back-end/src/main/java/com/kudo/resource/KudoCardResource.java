@@ -38,6 +38,14 @@ public class KudoCardResource {
         return "Hello World!";
     }
 
+
+    @PATCH
+    @Path("{card_id}/markAsRead")
+    public Response markAsRead(@PathParam("card_id") UUID card_id) {
+        kudoService.setCardStatus(card_id, "RECEIVED");
+        return Response.accepted().build();
+    }
+
     @GET
     @Path("list/submitted")
     @Produces(MediaType.APPLICATION_JSON)
@@ -55,8 +63,6 @@ public class KudoCardResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Object getReviewedKudos(@QueryParam("professor_id") UUID professorId
                                        /*@QueryParam("values") Optional<ArrayList<String>> values*/) {
-
-
 //        return kudoService.getReviewedCards(professorId, values.orElseGet(ArrayList::new)).stream()
 //                .map(FlexibleDTO::getFields)
 //                .toList();
