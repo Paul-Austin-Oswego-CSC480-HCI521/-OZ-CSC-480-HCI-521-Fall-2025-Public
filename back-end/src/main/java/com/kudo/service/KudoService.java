@@ -4,7 +4,6 @@ import com.kudo.dto.FlexibleDTO;
 import com.kudo.dto.KudocardDTO;
 import com.kudo.model.CardIdList;
 import com.kudo.model.Kudocard;
-import com.kudo.model.Pair;
 import jakarta.annotation.Resource;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.InternalServerErrorException;
@@ -23,25 +22,6 @@ public class KudoService {
     @Resource(lookup = "jdbc/kudosdb")
     private DataSource dataSource;
 
-//    public CardIdList getCardListBySender(UUID sender_id) {
-//        try (Connection conn = dataSource.getConnection(); //establish database connection
-//             PreparedStatement stmt = conn.prepareStatement("SELECT card_id FROM KUDOS_CARDS WHERE sender_id = ?;");){//Static elements of query
-//            stmt.setObject(1,sender_id); //form the query
-//            ResultSet rs = stmt.executeQuery(); //execute query to obtain list of IDs
-//            List<String> cardIds = new ArrayList<>(); //List which will be filled with card_ids from the result set
-//            while (rs.next()) {
-//                cardIds.add(rs.getString("card_id")); //add ids to list
-//            }
-//            //Wrap list as CardIdList
-//            //CardIdList is automatically converted to JSON due to the MIME type
-//            return new CardIdList(cardIds);
-//
-//        } catch (SQLException e) {
-//            throw new InternalServerErrorException("Database error");
-//        }
-//    }
-
-
     public List<FlexibleDTO> getCardListBy(ArrayList<String> select, Map<String, Object> match) {
         //Get intersection of provided values
         ArrayList<String> validSelect =  intersect(select, VALID_VAL_SET_1);
@@ -54,7 +34,7 @@ public class KudoService {
         String sql = (validMatch.isEmpty()) ? SqlGenerator.getSelect(validSelect, "KUDOS_CARDS")
                 : SqlGenerator.getSelect(validSelect, "KUDOS_CARDS", validMatch);//Static elements of query
         try(Connection conn = dataSource.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql);) {
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
             for(int i = 0; i < validMatch.size(); i++) {
                 stmt.setObject(i+1,match.get(validMatch.get(i))); //form the query
             }
@@ -100,7 +80,7 @@ public class KudoService {
         }
     }
 
-    // Get all submitted kudos for a professor (status = PENDING)
+    // Get all reviewed kudos for a professor (status != PENDING)
     public CardIdList getReviewedCards(UUID professor_id) {
         try (Connection conn = dataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(
@@ -126,204 +106,64 @@ public class KudoService {
     }
 
     public CardIdList getCardListBySender(UUID sender_id) {
-        try (Connection conn = dataSource.getConnection(); //establish database connection
-             PreparedStatement stmt = conn.prepareStatement("SELECT card_id FROM KUDOS_CARDS WHERE sender_id = ?;");){//Static elements of query
-            stmt.setObject(1,sender_id); //form the query
-            ResultSet rs = stmt.executeQuery(); //execute query to obtain list of IDs
-            List<String> cardIds = new ArrayList<>(); //List which will be filled with card_ids from the result set
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement("SELECT card_id FROM KUDOS_CARDS WHERE sender_id = ?;")) {
+            stmt.setObject(1,sender_id);
+            ResultSet rs = stmt.executeQuery();
+            List<String> cardIds = new ArrayList<>();
             while (rs.next()) {
-                cardIds.add(rs.getString("card_id")); //add ids to list
+                cardIds.add(rs.getString("card_id"));
             }
-            //Wrap list as CardIdList
-            //CardIdList is automatically converted to JSON due to the MIME type
             return new CardIdList(cardIds);
 
         } catch (SQLException e) {
             throw new InternalServerErrorException("Database error");
         }
     }
-
 
     public CardIdList getCardListByReceived(UUID received_id) {
-        try (Connection conn = dataSource.getConnection(); //establish database connection
-             PreparedStatement stmt = conn.prepareStatement("SELECT card_id FROM KUDOS_CARDS WHERE recipient_id = ?;");){//Static elements of query
-            stmt.setObject(1,received_id); //form the query
-            ResultSet rs = stmt.executeQuery(); //execute query to obtain list of IDs
-            List<String> cardIds = new ArrayList<>(); //List which will be filled with card_ids from the result set
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement("SELECT card_id FROM KUDOS_CARDS WHERE recipient_id = ?;")) {
+            stmt.setObject(1,received_id);
+            ResultSet rs = stmt.executeQuery();
+            List<String> cardIds = new ArrayList<>();
             while (rs.next()) {
-                cardIds.add(rs.getString("card_id")); //add ids to list
+                cardIds.add(rs.getString("card_id"));
             }
-            //Wrap list as CardIdList
-            //CardIdList is automatically converted to JSON due to the MIME type
             return new CardIdList(cardIds);
 
         } catch (SQLException e) {
             throw new InternalServerErrorException("Database error");
         }
     }
-
-//    // Get all submitted kudos for a professor (status = PENDING)
-//    public List<FlexibleDTO> getSubmittedCards(UUID professor_id, ArrayList<String> select) {
-//        //Get intersection of provided values
-//        ArrayList<String> validSelect =  intersect(select, VALID_VAL_SET_1);
-//        if(validSelect.isEmpty()) {
-//            validSelect.add("card_id"); //Default value
-//        }
-//
-//        try (Connection conn = dataSource.getConnection();
-//             PreparedStatement stmt = conn.prepareStatement(
-//
-//                     SqlGenerator.getSelect(validSelect, "KUDOS_CARDS") +
-//                             """
-//                             c JOIN USERS u ON c.sender_id = u.user_id
-//                            JOIN USER_CLASSES uc ON u.user_id = uc.user_id
-//                            WHERE uc.class_id IN (
-//                                SELECT class_id FROM USER_CLASSES WHERE user_id = ?
-//                            )
-//                            AND c.status = 'PENDING';
-//                            """
-//             )) {
-//            stmt.setObject(1, professor_id);
-//            ResultSet rs = stmt.executeQuery();
-//            List<FlexibleDTO> cards = new ArrayList<>();
-//            while (rs.next()) {
-//                FlexibleDTO card = new FlexibleDTO();
-//                for (String col : validSelect) {
-//                    card.set(col, rs.getObject(col));
-//                }
-//                cards.add(card);
-//            }
-//            return cards;
-//        } catch (SQLException e) {
-//            throw new InternalServerErrorException("Database error");
-//        }
-//    }
-
-//    // Get all reviewed kudos for a professor (status != PENDING)
-//    public List<FlexibleDTO> getReviewedCards(UUID professor_id, ArrayList<String> select) {
-//
-//        //Get intersection of provided values
-//        ArrayList<String> validSelect =  intersect(select, VALID_VAL_SET_1);
-//        if(validSelect.isEmpty()) {
-//            validSelect.add("card_id"); //Default value
-//        }
-//        try (Connection conn = dataSource.getConnection();
-//            PreparedStatement stmt = conn.prepareStatement(
-//
-//                SqlGenerator.getSelect(validSelect, "KUDOS_CARDS") +
-//                 """
-//                 c JOIN USERS u ON c.sender_id = u.user_id
-//                JOIN USER_CLASSES uc ON u.user_id = uc.user_id
-//                WHERE uc.class_id IN (
-//                    SELECT class_id FROM USER_CLASSES WHERE user_id = ?
-//                )
-//                AND c.status != 'PENDING';
-//                """
-//            )) {
-//
-//            stmt.setObject(1, professor_id);
-//            ResultSet rs = stmt.executeQuery();
-//            List<FlexibleDTO> cards = new ArrayList<>();
-//            while (rs.next()) {
-//                FlexibleDTO card = new FlexibleDTO();
-//                for (String col : validSelect) {
-//                    card.set(col, rs.getObject(col));
-//                }
-//                cards.add(card);
-//            }
-//            return cards;
-//        } catch (SQLException e) {
-//            throw new InternalServerErrorException("Database error");
-//        }
-//    }
-
-//    //TODO: make this actually work
-//    public List<FlexibleDTO> getProfessorCardListBy(UUID professorId, ArrayList<String> selectColumns, Map<String, Object> filters) {
-//        //Ensure the columns to select are valid
-//        ArrayList<String> validSelect = intersect(selectColumns, VALID_VAL_SET_1);
-//        if (validSelect.isEmpty()) {
-//            validSelect.add("card_id");
-//        }
-//
-////        if(!isInstructor(professorId))  {
-////            throw new NotFoundException();
-////        }
-//
-//
-//        HashMap<String, Object> combinedFilters = new HashMap<>();
-//        if (filters != null) combinedFilters.putAll(filters);
-//
-//        //Add condition to check the professor ID
-//        //combinedFilters.put("USER_CLASSES.user_id",  professorId);
-//
-//        //Only allow the allowed columns
-//        ArrayList<String> validMatch = intersect(new ArrayList<>(combinedFilters.keySet()), VALID_VAL_SET_1);
-//        String sql = SqlGenerator.getSelect(validSelect,
-//                List.of("KUDOS_CARDS", "USER_CLASSES"),
-//                List.of(new Pair<String,String>("KUDOS_CARDS.sender_id", "USER_CLASSES.user_id")),
-//                validMatch, filters);
-//
-//
-//
-//        //+ "AND USER_CLASSES.class_id IN (SELECT class_id FROM USER_CLASSES WHERE USER_CLASSES.user_id = ?)"
-//        try (Connection conn = dataSource.getConnection();
-//             PreparedStatement stmt1 = conn.prepareStatement(sql + "SELECT class_id FROM USER_CLASSES WHERE user_id = ?");
-//
-//
-//             PreparedStatement stmt = conn.prepareStatement(sql + " AND USER_CLASSES.class_id IN (?)")){
-//            stmt1.setObject(1,professorId);
-//            ResultSet rs = stmt1.executeQuery();
-//            while(rs.next())
-//
-//
-//            int i;
-//            for(i = 0; i<validMatch.size(); i++) {
-//                stmt.setObject(i+1,combinedFilters.get(validMatch.get(i)));
-//            }
-//
-//            stmt.setObject(i+1,professorId);
-//
-//            ResultSet rs = stmt.executeQuery();
-//            List<FlexibleDTO> cards = new ArrayList<>();
-//            while (rs.next()) {
-//                FlexibleDTO card = new FlexibleDTO();
-//                for (String col : validSelect) {
-//                    card.set(col, rs.getObject(col));
-//                }
-//                cards.add(card);
-//            }
-//            return cards;
-//        } catch (SQLException e) {
-//            throw new InternalServerErrorException("Database error");
-//        }
-//    }
-
-
 
     public Kudocard getCard(UUID card_id,  UUID user_id) {
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement stmtCard = conn.prepareStatement("SELECT * FROM KUDOS_CARDS WHERE card_id = ?;");){ //establish database connection
+             PreparedStatement stmtCard = conn.prepareStatement("SELECT * FROM KUDOS_CARDS WHERE card_id = ?;")) { //establish database connection
             stmtCard.setObject(1,card_id); //form the query
             ResultSet rs = stmtCard.executeQuery(); //execute query to obtain the kudo if it exists
             if (rs.next()) {
                 Kudocard kudocard = ResultSetToKudocard(rs);
 
-                //Check if the user is the recipient
-                //(assume that the user is not their professor if they are the recipient)
-                //Putting the most likely case first
-                // if(user_id.equals(kudocard.getRecipient_id())) {
-                //     if(kudocard.isIs_anonymous()) { //hide the sender if the card is anonymous
-                //         kudocard.setSender_id(null);
-                //     }
-                //     return kudocard;
-                // }
-                // Check if the user is the sender or recipient 
-                // only the sender, recipient and professor are given access
-                if( user_id.equals(kudocard.getSender_id()) || user_id.equals(kudocard.getRecipient_id())) {
+                // Check access: sender or recipient can see; otherwise professor of sender can see
+                if (user_id.equals(kudocard.getSender_id()) || user_id.equals(kudocard.getRecipient_id())) {
+
+                    // --- NEW: If the caller is the RECIPIENT and the card is not yet RECEIVED, mark it RECEIVED (idempotent) ---
+                    if (user_id.equals(kudocard.getRecipient_id())
+                            && kudocard.getStatus() != Kudocard.Status.RECEIVED) {
+                        try (PreparedStatement up = conn.prepareStatement(
+                                "UPDATE KUDOS_CARDS SET status = 'RECEIVED' WHERE card_id = ? AND status <> 'RECEIVED'")) {
+                            up.setObject(1, kudocard.getCard_id());
+                            up.executeUpdate();
+                        }
+                        // reflect change in the returned object
+                        kudocard.setStatus(Kudocard.Status.RECEIVED);
+                    }
+
                     return kudocard;
                 } else {
                     //Check if the user is the professor of the sender
-                    if(isInstructorOf(user_id, kudocard.getSender_id())) {
+                    if (isInstructorOf(user_id, kudocard.getSender_id())) {
                         return kudocard;
                     } else {
                         throw new NotFoundException();
@@ -357,8 +197,6 @@ public class KudoService {
             stmt.setString(4, req.getTitle());
             stmt.setString(5, req.getContent());
             stmt.setString(6, outStatus);
-            // stmt.setBoolean(6, Boolean.TRUE.equals(req.getIs_anonymous()));
-            //stmt.setTimestamp(7, Timestamp.from(Instant.now()));
             try  (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return ResultSetToKudocard(rs);
@@ -370,16 +208,15 @@ public class KudoService {
         }
     }
 
-
     public void updateCard(KudocardDTO.UpdateStatusRequest req) {
-        //Update the card status to approved
+        //Update the card status to approved/denied/received & notes/approver
         final String sql = """
         UPDATE KUDOS_CARDS
         SET status = ?, approved_by = ?, professor_note = ?
         WHERE card_id = ?;
         """;
         try (Connection conn = dataSource.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setObject(1, req.getStatus());
             stmt.setObject(2, req.getApproved_by());
             stmt.setObject(3, req.getProfessor_note());
@@ -408,20 +245,18 @@ public class KudoService {
     }
 
     public void deleteCard(UUID card_id, UUID user_id) {
-        try (Connection conn = dataSource.getConnection();) {
+        try (Connection conn = dataSource.getConnection()) {
             PreparedStatement stmt = conn.prepareStatement("DELETE FROM KUDOS_CARDS WHERE card_id = ? AND recipient_id = ?;");
             stmt.setObject(1, card_id);
             stmt.setObject(2, user_id);
-
             stmt.executeUpdate();
         } catch (SQLException e) {
             throw new InternalServerErrorException("Database error");
         }
-
     }
 
     //Takes a ResultSet from a query and returns a Kudocard object created from the current result in the set.
-    //Current result must be well-formed and my not be empty
+    //Current result must be well-formed and may not be empty
     public Kudocard ResultSetToKudocard(ResultSet rs) throws SQLException {
         return new Kudocard(
                 UUID.fromString(rs.getString("card_id")),
@@ -446,7 +281,7 @@ public class KudoService {
 
     //returns true if instructor_id is an instructor and is in the same class as user_id
     public boolean inSameClass(UUID user_1, UUID user_2) throws InternalServerErrorException {
-        try (Connection conn = dataSource.getConnection();) {
+        try (Connection conn = dataSource.getConnection()) {
             //Check if they are both in the class
             PreparedStatement stmt1 = conn.prepareStatement("""
                     SELECT COUNT(DISTINCT user_id) AS cnt
@@ -464,7 +299,7 @@ public class KudoService {
 
     //returns true if instructor_id is an instructor
     public boolean isInstructor(UUID instructor_id) throws InternalServerErrorException {
-        try (Connection conn = dataSource.getConnection();) {
+        try (Connection conn = dataSource.getConnection()) {
             //Check if they are both in the class
             PreparedStatement stmt1 = conn.prepareStatement("""
                     SELECT user_id
@@ -480,11 +315,10 @@ public class KudoService {
         }
     }
 
-    //Interset values with a set of valid values. Invalid values are removed
+    //Intersect values with a set of valid values. Invalid values are removed
     private ArrayList<String> intersect(List<String> values, final Set<String> valid) {
-        return new ArrayList<String>(values.stream()
+        return new ArrayList<>(values.stream()
                 .filter(valid::contains)
                 .toList());
     }
-
 }
