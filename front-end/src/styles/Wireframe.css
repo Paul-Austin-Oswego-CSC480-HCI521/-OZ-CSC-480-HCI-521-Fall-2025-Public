@@ -16,11 +16,156 @@
   background: #fff;
   border-radius: 12px;
   padding: 2rem;
-  width: 90%;
-  max-width: 600px;
+  width: 50%;
+  max-width: 400px;
   max-height: 80vh;
   overflow-y: auto;
   box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  font-family: Poppins, sans-serif;
+}
+
+.success-modal {
+    background: #fff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    height:auto;
+    width: 520px;
+    max-width: 100%;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    font-family: Poppins, sans-serif;
+}
+
+.success-modal label {
+    min-width:100px;
+    font-weight: bold;
+    line-height:2;
+    position: relative;
+    align-items:center;
+    color: #093B3B;
+}
+
+.success-modal .cancel-btn {
+    background-color: #EBEBEB;
+    color: black;
+    border: 1px solid #093B3B;
+    font-family: 'Poppins', sans-serif;
+    border-radius: 12px;
+    padding: 10px 14px;
+    width: 275px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+    font-weight: normal;
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    gap: 0.5rem;
+}
+
+.success-modal .close-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 1px;
+    width: auto;   /* make it wider for text */
+    height: 50px;  /* adjust as needed */
+    border-radius: 8px;
+    color: black;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.create-class-modal .header-row {
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.create-class-modal h2{
+    font-family: 'Merriweather', serif;
+    margin: 0;
+}
+
+.create-class-modal .close-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 1px;
+    width: auto;   /* make it wider for text */
+    height: 50px;  /* adjust as needed */
+    border-radius: 8px;
+    color: black;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.create-class-modal .close-icon svg {
+    width: auto;
+    height: 50px;
+}
+
+.create-class-modal label{
+    font-size: 20px;
+    font-weight: normal;
+    color: #093B3B;
+    margin:0;
+}
+
+.create-class-modal .textBox {
+    background-color: #FAFDF2;
+    border: 1px solid #093B3B;
+}
+
+.create-class-modal .cancel-btn {
+    background-color: #EBEBEB;
+    color: black;
+    border: 1px solid #093B3B;
+    font-family: 'Poppins', sans-serif;
+    border-radius: 12px;
+    padding: 10px 14px;
+    width: 175px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+    font-weight: normal;
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    gap: 0.5rem;
+}
+
+.create-class-modal .submit-btn {
+    background-color: #CCDDBE;
+    border: none;
+    color: #093B3B;
+    font-family: 'Poppins', sans-serif;
+    border-radius: 12px;
+    padding: 10px 14px;
+    width: 175px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+    font-weight: normal;
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    gap: 0.5rem;
+}
+
+.create-class-modal .submit-btn:hover {
+    background-color: #093B3B;
+    color: white;
+}
+
+.create-class-modal .cancel-btn:hover {
+    background-color: #FAFDF2;
 }
 
 .course-management-container {

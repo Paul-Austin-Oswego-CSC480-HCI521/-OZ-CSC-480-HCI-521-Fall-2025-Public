@@ -227,6 +227,23 @@ public class KudoService {
         }
     }
 
+    public void setCardStatus(UUID card_id, String status) {
+        //Update the card status to approved
+        final String sql = """
+        UPDATE KUDOS_CARDS
+        SET status = ?
+        WHERE card_id = ?;
+        """;
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setObject(1,status);
+            stmt.setObject(2,card_id);
+            stmt.executeUpdate();
+        } catch  (SQLException e) {
+            throw new InternalServerErrorException("Database error");
+        }
+    }
+
     public void deleteCard(UUID card_id, UUID user_id) {
         try (Connection conn = dataSource.getConnection()) {
             PreparedStatement stmt = conn.prepareStatement("DELETE FROM KUDOS_CARDS WHERE card_id = ? AND recipient_id = ?;");
