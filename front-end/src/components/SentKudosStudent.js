@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useUser } from "./UserContext";
+import React, { useState, useEffect } from "react";
+import { useUser, authFetch } from "./UserContext";
 import AutoFitText from '../components/AutoFitText';
 
 function SentKudosStudent( {messages = []} ) {
@@ -14,6 +14,8 @@ function SentKudosStudent( {messages = []} ) {
     const [selectedSort, setSelectedSort] = useState("newest");
     const { user } = useUser();
     const [rejectionReason, setRejectionReason] = useState(null);
+    const [availableRecipients, setAvailableRecipients] = useState([]);
+    const [availableClasses, setAvailableClasses] = useState([]);
 
     const imageMap = {
       'Well Done!': '/images/welldone2.png',
@@ -21,59 +23,120 @@ function SentKudosStudent( {messages = []} ) {
       'Great Work!': '/images/greatwork2.png',
     };
 
-    const availableClasses = user?.classes || ["ABC101"];
-    const availableRecipients = ["Santa", "Mrs. Clause", "Santa's 'Assistant'"];
+    useEffect(() => {
+      const fetchClasses = async () => {
+        if (!user?.user_id) return;
+        try {
+          const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
+          const [activeRes, archivedRes] = await Promise.all([
+            authFetch(`${BASE_URL}/users/${user.user_id}/classes?is_archived=false`),
+            authFetch(`${BASE_URL}/users/${user.user_id}/classes?is_archived=true`),
+          ]);
+
+          if (!activeRes.ok || !archivedRes.ok) throw new Error("Failed to fetch classes");
+
+          const [activeData, archivedData] = await Promise.all([
+            activeRes.json(),
+            archivedRes.json(),
+          ]);
+
+          const allClassIds = [
+            ...(activeData.class_id || []),
+            ...(archivedData.class_id || []),
+          ];
+
+          if (allClassIds.length === 0) {
+            setAvailableClasses([]);
+            return;
+          }
+
+          const detailedClasses = await Promise.all(
+            allClassIds.map(async (id) => {
+              const classRes = await authFetch(`${BASE_URL}/class/${id}`);
+              const classData = await classRes.json();
+              const cls = classData.class[0];
+
+              const usersRes = await authFetch(`${BASE_URL}/class/${id}/users`);
+              const students = (await usersRes.json()) || [];
+              return { ...cls, students };
+            })
+          );
+          setAvailableClasses(detailedClasses);
+        } catch (err) {
+          console.error(err);
+          setAvailableClasses([]);
+        }
+      };
+
+      fetchClasses();
+    }, [user]);
+
     const sentKudos = [...messages];
 
-    const filteredKudos = sentKudos.filter(k => {
-      if (selectedStatus && k.status !== selectedStatus) return false;
+    useEffect(() => {
+    if (!selectedClass) {
+      setAvailableRecipients([]);
+      return;
+    }
+    const cls = availableClasses.find(c => c.class_id === selectedClass);
+    if (!cls || !cls.students) {
+      setAvailableRecipients([]);
+      return;
+    }
 
-      if (selectedTimePeriod) {
-          const now = new Date();
-          const kDate = new Date(k.date);
-          const diff = now - kDate;
+    const students = cls.students
+      .filter(s => s.role?.toLowerCase() === "student")
+      .map(s => s.name);
 
-          if (selectedTimePeriod === "24h" && diff > 24 * 60 * 60 * 1000) return false;
-          if (selectedTimePeriod === "1w" && diff > 7 * 24 * 60 * 60 * 1000) return false;
-          if (selectedTimePeriod === "1m" && diff > 30 * 24 * 60 * 60 * 1000) return false;
-          if (selectedTimePeriod === "3m" && diff > 90 * 24 * 60 * 60 * 1000) return false;
-          if (selectedTimePeriod === "6m" && diff > 180 * 24 * 60 * 60 * 1000) return false;
-          if (selectedTimePeriod === "1y" && diff > 365 * 24 * 60 * 60 * 1000) return false;
-      }
+    setAvailableRecipients(students);
+    setSelectedRecipient("");
+  }, [selectedClass, availableClasses]);
 
-      return true;
+  const filteredKudos = sentKudos.filter(k => {
+    if (selectedClass && String(k.class_id) !== selectedClass) return false;
+    if (selectedRecipient && k.recipient !== selectedRecipient) return false;
+    if (selectedStatus && k.status !== selectedStatus) return false;
+
+    if (selectedTimePeriod) {
+      const now = new Date();
+      const kDate = new Date(k.date);
+      const diff = now - kDate;
+
+      if (selectedTimePeriod === "24h" && diff > 24 * 60 * 60 * 1000) return false;
+      if (selectedTimePeriod === "1w" && diff > 7 * 24 * 60 * 60 * 1000) return false;
+      if (selectedTimePeriod === "1m" && diff > 30 * 24 * 60 * 60 * 1000) return false;
+      if (selectedTimePeriod === "3m" && diff > 90 * 24 * 60 * 60 * 1000) return false;
+      if (selectedTimePeriod === "6m" && diff > 180 * 24 * 60 * 60 * 1000) return false;
+      if (selectedTimePeriod === "1y" && diff > 365 * 24 * 60 * 60 * 1000) return false;
+    }
+
+    return true;
   });
 
-    const sortedKudos = [...filteredKudos].sort((a, b) => {
-        if (selectedSort === "newest") {
-            return new Date(b.date) - new Date(a.date);
-        } else if (selectedSort === "oldest") {
-            return new Date(a.date) - new Date(b.date);
-        } else if (selectedSort === "recipient") {
-            return a.recipient.localeCompare(b.recipient);
-        } else if (selectedSort === "status") {
-            return a.status.localeCompare(b.status);
-        }
-        return 0;
-    });
+  const sortedKudos = [...filteredKudos].sort((a, b) => {
+    if (selectedSort === "newest") return new Date(b.date) - new Date(a.date);
+    if (selectedSort === "oldest") return new Date(a.date) - new Date(b.date);
+    if (selectedSort === "recipient") return a.recipient.localeCompare(b.recipient);
+    if (selectedSort === "status") return a.status.localeCompare(b.status);
+    return 0;
+  });
 
+  const closeModal = () => {
+    setSelectedCard(null);
+    setRejectionReason(null);
+  };
 
-    const closeModal = () => {
-        setSelectedCard(null);
-        setRejectionReason(null);
-    };
+  const handleCardClick = (kudo, index) => {
+    setSelectedCard(null);
+    setRejectionReason(null);
 
-    const handleCardClick = (kudo, index) => {
-        setSelectedCard(null);
-        setRejectionReason(null);
-        
-        if (kudo.status === "DENIED") {
-            setRejectionReason(kudo.professor_note || "No rejection reason provided.");
-        } 
-        else {
-            setSelectedCard(kudo);
-        }
-    };
+    if (kudo.status === "DENIED") {
+      setRejectionReason(kudo.professor_note || "No rejection reason provided.");
+    } else {
+      setSelectedCard(kudo);
+    }
+  };
 
     return (
     <section className="sent-kudos">
@@ -113,8 +176,8 @@ function SentKudosStudent( {messages = []} ) {
                   >
                     <option value="">All Classes</option>
                     {availableClasses.map((cls) => (
-                      <option key={cls} value={cls}>
-                        {cls}
+                      <option key={cls.class_id} value={cls.class_id}>
+                        {cls.class_name}
                       </option>
                     ))}
                   </select>
@@ -252,6 +315,7 @@ function SentKudosStudent( {messages = []} ) {
       <table>
         <thead>
           <tr>
+            <th>Class</th>
             <th>Recipient</th>
             <th>Title</th>
             <th>Kudos Status (Approved, Rejected, Pending)</th>
@@ -280,6 +344,7 @@ function SentKudosStudent( {messages = []} ) {
                       }
                 }}
               >
+                <td className="reviewed-kudos-table-data">{k.class_name}</td>
                 <td className="reviewed-kudos-table-data">{k.recipient}</td>
                 <td className="reviewed-kudos-table-data">{k.title}</td>
                 <td

@@ -195,8 +195,8 @@ function ReviewedKudosProf( {reviewedKudos = [], onSelect} ) {
                   >
                     <option value="">All</option>
                     <option value="APPROVED">Approved</option>
-                    <option value="PENDING">Pending</option>
                     <option value="DENIED">Denied</option>
+                    <option value="RECEIVED">Received</option>
                   </select>
                 </div>
 
@@ -347,7 +347,7 @@ function ReviewedKudosProf( {reviewedKudos = [], onSelect} ) {
                               }
                             }}
                           >
-                            <td className="reviewed-kudos-table-data">{className}</td> {/* New class cell */}
+                            <td className="reviewed-kudos-table-data">{k.class_name}</td> {/* New class cell */}
                             <td className="reviewed-kudos-table-data">{k.sender}</td>
                             <td className="reviewed-kudos-table-data">{k.recipient}</td>
                             <td className="reviewed-kudos-table-data">{k.title}</td>

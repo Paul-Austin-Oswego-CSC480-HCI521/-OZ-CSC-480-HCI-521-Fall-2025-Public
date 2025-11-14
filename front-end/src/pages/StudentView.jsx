@@ -105,6 +105,21 @@ function StudentView() {
                 })
             );
 
+            const classNamesMap = {};
+                await Promise.all(
+                Array.from(new Set(cardDetails.map(k => k.class_id))).map(async (classId) => {
+                    try {
+                    const res = await authFetch(`${BASE_URL}/class/${classId}`);
+                    if (!res.ok) throw new Error(`Class fetch failed: ${res.status}`);
+                    const data = await res.json();
+                    classNamesMap[classId] = data.class[0]?.class_name || "Unknown Class";
+                    } catch (err) {
+                    console.error(err);
+                    classNamesMap[classId] = "Unknown Class";
+                    }
+                })
+            );
+
             // format cards for display 
             const formatKudo = (kudo) => {
                 // Format the created_at date
@@ -129,6 +144,8 @@ function StudentView() {
                 } 
                 return {
                     id: kudo.card_id,
+                    class_id: kudo.class_id,
+                    class_name: classNamesMap[kudo.class_id] || "Unknown class",
                     recipient: userNamesMap[kudo.recipient_id] || kudo.recipient_id,
                     sender: userNamesMap[kudo.sender_id] || kudo.sender_id,
                     title: kudo.title,
