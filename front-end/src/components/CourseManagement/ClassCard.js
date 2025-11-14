@@ -62,6 +62,28 @@ function ClassCard({ classData, isActive, onClassUpdated, professorId }) {
     }
   };
 
+  const handleCopyCode = async (code) => {
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(code);
+      } else {
+        // fallback for HTTP / older browsers
+        const tempInput = document.createElement("input");
+        tempInput.value = code;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand("copy");
+        document.body.removeChild(tempInput);
+      }
+
+      setToast({ message: "Course code copied!", type: "success" });
+    } catch (err) {
+      console.error("Copy failed", err);
+      setToast({ message: "Failed to copy course code.", type: "error" });
+    }
+  };
+
+
   return (
     <div className={`class-card ${isArchived ? "archived" : ""}`}>
       <div className="class-info">
@@ -151,7 +173,7 @@ function ClassCard({ classData, isActive, onClassUpdated, professorId }) {
             />
             <button
               onClick={() => {
-                navigator.clipboard.writeText(classData.join_code);
+                handleCopyCode(classData.join_code)
                 setToast({ message: "Course code copied!", type: "success" });
               }}
               className="copy-btn"
