@@ -315,7 +315,7 @@ function SentKudosStudent( {messages = []} ) {
       <table>
         <thead>
           <tr>
-            <th>Class</th>
+            {/* <th>Class</th> */}
             <th>Recipient</th>
             <th>Title</th>
             <th>Kudos Status (Approved, Rejected, Received, Pending)</th>
@@ -344,7 +344,7 @@ function SentKudosStudent( {messages = []} ) {
                       }
                 }}
               >
-                <td className="reviewed-kudos-table-data">{k.class_name}</td>
+                {/* <td className="reviewed-kudos-table-data">{k.class_name}</td> */}
                 <td className="reviewed-kudos-table-data">{k.recipient}</td>
                 <td className="reviewed-kudos-table-data">{k.title}</td>
                 <td

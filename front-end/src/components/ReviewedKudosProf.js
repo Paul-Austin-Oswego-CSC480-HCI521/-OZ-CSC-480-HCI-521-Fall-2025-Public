@@ -308,11 +308,11 @@ function ReviewedKudosProf( {reviewedKudos = [], onSelect} ) {
                 <table>
                   <thead>
                     <tr>
-                      <th>Class</th> {/* New column */}
+                      {/* <th>Class</th> */}
                       <th>Sender</th>
                       <th>Recipient</th>
                       <th>Title</th>
-                      <th>Kudos Status (Approved, Rejected, Received, etc.)</th>
+                      <th>Kudos Status (Approved, Rejected, etc.)</th>
                       <th>Date</th>
                     </tr>
                   </thead>
@@ -347,19 +347,18 @@ function ReviewedKudosProf( {reviewedKudos = [], onSelect} ) {
                               }
                             }}
                           >
-                            <td className="reviewed-kudos-table-data">{k.class_name}</td> {/* New class cell */}
+                            {/* <td className="reviewed-kudos-table-data">{k.class_name}</td> */}
                             <td className="reviewed-kudos-table-data">{k.sender}</td>
                             <td className="reviewed-kudos-table-data">{k.recipient}</td>
                             <td className="reviewed-kudos-table-data">{k.title}</td>
 
                             <td
                               className={`reviewed-kudos-status ${
-                                k.status === "APPROVED" ? "approved" 
-                                : k.status === "RECEIVED" ? "receieved"
+                                k.status === "APPROVED" || k.status === "RECEIVED" ? "approved"
                                 : "denied"
                               } ${selectedRows.includes(i) ? "row-read" : ""}`}
                             >
-                              {k.status === "APPROVED" || "RECEIVED" ? (
+                              {k.status === "APPROVED" || k.status === "RECEIVED" ? (
                                 <span>Approved</span>
                               ) : (
                                 <>
