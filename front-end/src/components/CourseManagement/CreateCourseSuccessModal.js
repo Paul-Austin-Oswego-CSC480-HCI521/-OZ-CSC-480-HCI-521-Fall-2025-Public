@@ -5,11 +5,25 @@ function CreateCourseSuccessModal({ open, onClose, className, joinCode }) {
     const navigate = useNavigate();
     if (!open) return null;
 
-    const handleCopy = () => {
-        if (joinCode) {
-            navigator.clipboard.writeText(joinCode);
+    const handleCopy = async () => {
+        try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                await navigator.clipboard.writeText(joinCode);
+            } else {
+                const tempInput = document.createElement("input");
+                tempInput.value = joinCode;
+                document.body.appendChild(tempInput);
+                tempInput.select();
+                document.execCommand("copy");
+                document.body.removeChild(tempInput);
+            }
+
+            console.log("Copied!");
+        } catch (error) {
+            console.error("Copy failed", error);
         }
     };
+
 
     const handleGoToManageCourses = () => {
         onClose();
