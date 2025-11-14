@@ -43,7 +43,12 @@ function PendingRequests({ classId, userId, onStudentApproved }) {
 
       setPendingRequests((prev) => prev.filter((r) => r.user_id !== studentId));
 
-      if (onStudentApproved) onStudentApproved({class_id : classId});
+      if (onStudentApproved) {
+        const clsRes = await authFetch(`${BASE_URL}/class/${classId}/users`);
+        const students = await clsRes.json();
+        console.log("Students updated:", students);
+        onStudentApproved({class_id : classId, students});
+      }
     } catch (err) {
       console.error(err);
       setErrorMessage(`Failed to ${action} student.`);
