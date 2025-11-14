@@ -11,25 +11,51 @@ function ClassCard({ classData, isActive, onClassUpdated, professorId }) {
   const [endDate, setEndDate] = useState(classData.end_date || "");
   const [toast, setToast] = useState(null);
 
-  useEffect(() => {
+  const parseServerDateToDate = (dateStr) => {
+    if (!dateStr) return null;
+    try {
+      let s = dateStr.replace(/\[.*\]$/, "").trim();
+
+      s = s.replace(" ", "T");
+
+      s = s.split(".")[0];
+
+      if (!/[Z+-]/.test(s.slice(-1)) && !s.endsWith("Z")) {
+        s = `${s}Z`;
+      }
+
+      const d = new Date(s);
+      if (isNaN(d.getTime())) return null;
+      return d;
+    } catch (err) {
+      return null;
+    }
+  };
+
+useEffect(() => {
     setClassName(classData.class_name);
-    setEndDate(classData.end_date || "");
+
+    const parsed = parseServerDateToDate(classData.end_date);
+    setEndDate(parsed ? parsed.toISOString().split("T")[0] : "");
   }, [classData]);
+
 
   const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-  const isArchived = classData.end_date && new Date(classData.end_date) < new Date();
+  const isArchived =
+    endDate && !isNaN(new Date(endDate).getTime()) && new Date(endDate) < new Date();
 
   const handleUpdateField = async (field, value) => {
-    if (value == null) { throw new Error("Failed to update class");}
     try {
-
       const body = {};
+
       if (field === "class_name") {
-        body.class_name = value;}
-      else if (field === "end_date") {
-        body.end_date = value ? value.replace(" ", "T").replace(".0", "") : null;}
-      console.log(body);
+        body.class_name = value;
+      } else if (field === "end_date") {
+        body.end_date = value ? `${value}T00:00:00` : null;
+      }
+
+      console.log("PATCH body:", body);
 
       const res = await authFetch(`${BASE_URL}/class/${classData.class_id}`, {
         method: "PATCH",
@@ -37,16 +63,25 @@ function ClassCard({ classData, isActive, onClassUpdated, professorId }) {
         body: JSON.stringify(body),
       });
 
-      if (!res.ok) throw new Error("Failed to update class");
+      if (!res.ok) {
+        const text = await res.text();
+        console.error("PATCH failed:", res.status, text);
+        throw new Error(`Failed to update class:", ${text}`);
+      }
+
       const updatedClass = await res.json();
       onClassUpdated(updatedClass);
-      setToast({ message: `${field === "class_name" ? "Name" : "End date"} updated!`, type: "success" });
 
+      setToast({
+        message: `${field === "class_name" ? "Name" : "End date"} updated!`,
+        type: "success",
+      });
     } catch (err) {
       console.error(err);
       setToast({ message: "Failed to update class.", type: "error" });
     }
   };
+
 
   const handleDeleteClass = async () => {
     try {
@@ -81,22 +116,22 @@ function ClassCard({ classData, isActive, onClassUpdated, professorId }) {
       setToast({ message: "Failed to copy course code.", type: "error" });
     }
   };
-
+  
   return (
     <div className={`class-card ${isArchived ? "archived" : ""}`}>
       <div className="class-info">
         <h2>
           {editingName ? (
             <input
-              value={className}
-              onChange={(e) => setClassName(e.target.value)}
-              onBlur={() => { handleUpdateField("class_name", className); setEditingName(false); }}
-              onKeyDown={(e) => { if (e.key === "Enter") { handleUpdateField("class_name", className); setEditingName(false); } }}
+              value={classData.class_name}
+              onChange={(e) => onClassUpdated({ class_id: classData.class_id, class_name: e.target.value})}
+              onBlur={() => setEditingName(false)}
+              onKeyDown={(e) => { if (e.key === "Enter") setEditingName(false)}}
               autoFocus
             />
           ) : (
             <>
-              {className} <button onClick={() => setEditingName(true)} className="pencil-btn" aria-label="Edit name">
+              {classData.class_name} <button onClick={() => setEditingName(true)} className="pencil-btn" aria-label="Edit name">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="20"
@@ -137,7 +172,7 @@ function ClassCard({ classData, isActive, onClassUpdated, professorId }) {
             />
           ) : (
             <>
-              {endDate ? new Date(endDate).toISOString().split("T")[0] : "N/A"}{" "}
+                {endDate || "N/A"}
               <button
                 onClick={() => setEditingEndDate(true)}
                 className="pencil-btn"

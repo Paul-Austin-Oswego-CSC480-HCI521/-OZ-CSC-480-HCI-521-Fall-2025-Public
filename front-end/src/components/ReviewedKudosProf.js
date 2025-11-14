@@ -220,12 +220,12 @@ function ReviewedKudosProf( {reviewedKudos = [], onSelect} ) {
                   <button
                     className="apply-btn"
                     onClick={() => {
-                      console.log({
-                        selectedClass,
-                        selectedRecipient,
-                        selectedStatus,
-                        selectedTimePeriod,
-                      });
+                      // console.log({
+                      //   selectedClass,
+                      //   selectedRecipient,
+                      //   selectedStatus,
+                      //   selectedTimePeriod,
+                      // });
                       setShowFilter(false);
                     }}
                   >
@@ -326,9 +326,9 @@ function ReviewedKudosProf( {reviewedKudos = [], onSelect} ) {
                     ) : (
                       sortedKudos.map((k, i) => {
                         const cls = availableClasses.find(c => c.class_id === k.class_id);
-                        console.log("k:", k);
+                        // console.log("k:", k);
                         const className = cls?.class_name;
-                        console.log("className: ", className);
+                        // console.log("className: ", className);
 
                         return (
                           <tr

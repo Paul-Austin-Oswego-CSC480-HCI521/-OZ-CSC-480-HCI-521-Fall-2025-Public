@@ -9,8 +9,8 @@ public class Classes {
     @JsonbProperty("class_id")
     private UUID class_id;
 
-    @JsonbProperty("name")
-    private String name;
+    @JsonbProperty("class_name")
+    private String class_name;
 
     @JsonbProperty("join_code")
     private Integer join_code;
@@ -29,14 +29,14 @@ public class Classes {
     public Classes(UUID class_id, String name,  Integer join_code, Timestamp created_date, UUID created_by) {
         this.created_date = created_date;
         this.join_code = join_code;
-        this.name = name;
+        this.class_name = class_name;
         this.class_id = class_id;
         this.created_by = created_by;
     }
 
     public Classes(UUID class_id, String name, Integer join_code, Timestamp created_date, UUID created_by, Timestamp end_date) {
         this.class_id = class_id;
-        this.name = name;
+        this.class_name = class_name;
         this.join_code = join_code;
         this.created_date = created_date;
         this.end_date = end_date;
@@ -52,11 +52,11 @@ public class Classes {
     }
 
     public String getName() {
-        return name;
+        return class_name;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.class_name = class_name;
     }
 
     public Integer getJoin_code() {

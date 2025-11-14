@@ -95,10 +95,6 @@ function CourseManagement() {
   }, [fetchClasses]);
 
 const handleClassUpdated = (updateInfo) => {
-  if (!updateInfo || !updateInfo.class_id) {
-    setToast({ message: "Updated successfully.", type: "success" });
-    return;
-  }
 
   if (updateInfo.deleted) {
     setClasses(prev => prev.filter(c => c.class_id !== updateInfo.class_id));
@@ -117,9 +113,6 @@ const handleClassUpdated = (updateInfo) => {
       ? { ...c, ...updateInfo }
       : c)
   );
-
-
-  setToast({ message: "Class updated successfully.", type: "success" });
 };
 
 
