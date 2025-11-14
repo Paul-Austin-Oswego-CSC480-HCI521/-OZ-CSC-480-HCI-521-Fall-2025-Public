@@ -160,7 +160,12 @@ function ProfReview({ initialData, onClose }) {
                                 onChange={handleChange}
                                 placeholder="Message to sender . . . (optional)"
                                 rows={4}
+                                maxLength={500}
                             />
+                            </div>
+
+                            <div style={{ fontSize: "0.85rem", opacity: 0.7 }}>
+                                {formData.note.length}/500
                             </div>
                         </div>   
                     )}
