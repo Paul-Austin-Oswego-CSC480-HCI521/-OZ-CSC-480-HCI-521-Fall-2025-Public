@@ -22,9 +22,9 @@ function NewKudosPage({ onSubmit }) {
 
     const titleOptions = ['Well Done!', 'Nice Job!', 'Great Work!'];
     const imageMap = {
-        'Well Done!': '/images/welldone2.png',
-        'Nice Job!': '/images/nicejob2.png',
-        'Great Work!': '/images/greatwork2.png',
+        'Well Done!': '/images/wellDoneNew.png',
+        'Nice Job!': '/images/niceJobNew.png',
+        'Great Work!': '/images/greatWorkNew.png',
     };
 
     const [selectedImage, setSelectedImage] = useState(imageMap[titleOptions[0]]);
@@ -194,34 +194,31 @@ function NewKudosPage({ onSubmit }) {
             <Header onCreateNew={handleCreateNew} />
             <div className="main-content">
                 <form onSubmit={handleSubmit} className="kudos-form">
+                    
+                        <div className="create-new-header">
+                            <button type='button' className='back-button' onClick={() => navigate(-1)}>←</button>
+                            <h2>{editCardId ? "Edit & Resend Kudo" : "Create a Kudo Card"}</h2>
+                        </div>
+                        <label htmlFor='title' className='title-label'>Choose a Title</label>
+                        <div className="title-options-full">
+                            {titleOptions.map((option, index) => (
+                                <button
+                                    key={index}
+                                    type="button"
+                                    className={`title-button-CC ${formData.title === option ? 'selected' : ''}`}
+                                    onClick={() => {
+                                        setFormData(prev => ({ ...prev, title: option }));
+                                        const img = imageMap[option];
+                                        if (img) setSelectedImage(img);
+                                    }}
+                                >
+                                    {option}
+                                </button>
+                            ))}
+                        </div>
                     <div className="message-image-container">
                         <div className="left-column">
-
-                            <div className="create-new-header">
-                                <button type='button' className='back-button' onClick={() => navigate(-1)}>←</button>
-                                <h2>{editCardId ? "Edit & Resend Kudo" : "Create a Kudo Card"}</h2>
-                            </div>
-
                             <div className="form-group">
-
-                                <div className="title-button-group">
-                                    <label htmlFor="title">Choose a Title</label>
-                                    {titleOptions.map((option, index) => (
-                                        <button
-                                            key={index}
-                                            type="button"
-                                            className={`title-button-CC ${formData.title === option ? 'selected' : ''}`}
-                                            onClick={() => {
-                                                setFormData(prev => ({ ...prev, title: option }));
-                                                const img = imageMap[option];
-                                                if (img) setSelectedImage(img);
-                                            }}
-                                        >
-                                            {option}
-                                        </button>
-                                    ))}
-                                </div>
-
                                 <div className="form-group" >
                                     <label htmlFor="class">Select a Class</label>
                                     <select
@@ -289,8 +286,25 @@ function NewKudosPage({ onSubmit }) {
                                         </span>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
 
-                                <div className="button-row">
+                        <div className="right-column">
+                            {selectedImage && (
+                                <div className="image-preview-container-img">
+                                    <img src={selectedImage} alt={formData.title} style={{ width: '100%' }} />
+                                    <div className="message-preview-container">
+                                        <AutoFitText
+                                            text={formData.message || "Your message will appear here..."}
+                                            maxFontSize={32}
+                                            minFontSize={10}
+                                        />
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                        </div>
+                            <div className="button-row">
                                     <button type="submit" className="submit-discard-btn">
                                         {editCardId ? "Resend Kudo" : "Send Kudo"}
                                         <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35"
@@ -313,26 +327,6 @@ function NewKudosPage({ onSubmit }) {
                                         Discard
                                     </button>
                                 </div>
-
-                            </div>
-                        </div>
-
-                        <div className="right-column">
-                            {selectedImage && (
-                                <div className="image-preview-container-img">
-                                    <img src={selectedImage} alt={formData.title} style={{ width: '100%' }} />
-                                    <div className="message-preview-container">
-                                        <AutoFitText
-                                            text={formData.message || "Your message will appear here..."}
-                                            maxFontSize={32}
-                                            minFontSize={10}
-                                        />
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-
-                    </div>
 
                 </form>
             </div>

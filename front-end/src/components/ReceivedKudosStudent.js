@@ -16,9 +16,9 @@ function ReceivedKudosStudent({ received }) {
   }, [localReceived]);
 
   const imageMap = {
-    'Well Done!': '/images/welldone2.png',
-    'Nice Job!': '/images/nicejob2.png',
-    'Great Work!': '/images/greatwork2.png',
+    'Well Done!': '/images/wellDoneNew.png',
+    'Nice Job!': '/images/niceJobNew.png',
+    'Great Work!': '/images/greatWorkNew.png',
   };
 
   const handleCardClick = async (kudo) => {

@@ -1102,13 +1102,21 @@
     color: black;
 }
 
-.title-button-group {
-    position: relative;
+.title-options-full {
+    width: 100%;
     display: flex;
-    align-items: center;
+    justify-content: center;
     gap: 20px;
-    margin-bottom: 1rem;
+    padding: 10px 0 20px;
     flex-wrap: wrap;
+}
+
+.title-label {
+    display: block;
+    width: 100%;
+    font-weight: bold;
+    margin-bottom: 8px;
+    text-align: center;
 }
 
 .title-button {
@@ -1211,7 +1219,6 @@
         flex-direction: column;
     }
 }
-
 .message-footer {
     display: flex;
     justify-content: space-between;
@@ -1789,10 +1796,11 @@ select:focus {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+    max-width: 40%;
 }
 
 .message-image-container .left-column .textBox {
-    width: 100%;
+    width: 95%;
     resize: vertical;
 }
 
@@ -1810,7 +1818,7 @@ select:focus {
 }
 
 .message-image-container .right-column img {
-    width: 100%;
+    width: 90%;
     height: 100%;
     max-width: 780px;
     border-radius: 8px;
@@ -1850,8 +1858,8 @@ select:focus {
     left: 63%;
     top: 60%;
     transform: translate(-50%, -50%);
-    width: 55%;
-    height: 80%;
+    width: 60%;
+    height: 70%;
     background-color: transparent;
     white-space: pre-wrap;
     word-wrap: break-word;
@@ -2001,7 +2009,7 @@ select:focus {
 } */
 
 .kudos-form {
-    display: flex;
+    /* display: flex; */
     gap: 2rem; /* adjust spacing between columns as needed */
     align-items: stretch; /* makes both columns equal height */
 }
