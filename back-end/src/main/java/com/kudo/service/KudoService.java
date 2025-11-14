@@ -123,7 +123,7 @@ public class KudoService {
 
     public CardIdList getCardListByReceived(UUID received_id) {
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement stmt = conn.prepareStatement("SELECT card_id FROM KUDOS_CARDS WHERE recipient_id = ?;")) {
+             PreparedStatement stmt = conn.prepareStatement("SELECT card_id FROM KUDOS_CARDS WHERE recipient_id = ? AND status IN ('APPROVED', 'RECEIVED');")) {
             stmt.setObject(1,received_id);
             ResultSet rs = stmt.executeQuery();
             List<String> cardIds = new ArrayList<>();
@@ -148,17 +148,17 @@ public class KudoService {
                 // Check access: sender or recipient can see; otherwise professor of sender can see
                 if (user_id.equals(kudocard.getSender_id()) || user_id.equals(kudocard.getRecipient_id())) {
 
-                    // --- NEW: If the caller is the RECIPIENT and the card is not yet RECEIVED, mark it RECEIVED (idempotent) ---
-                    if (user_id.equals(kudocard.getRecipient_id())
-                            && kudocard.getStatus() != Kudocard.Status.RECEIVED) {
-                        try (PreparedStatement up = conn.prepareStatement(
-                                "UPDATE KUDOS_CARDS SET status = 'RECEIVED' WHERE card_id = ? AND status <> 'RECEIVED'")) {
-                            up.setObject(1, kudocard.getCard_id());
-                            up.executeUpdate();
-                        }
-                        // reflect change in the returned object
-                        kudocard.setStatus(Kudocard.Status.RECEIVED);
-                    }
+                    // // --- NEW: If the caller is the RECIPIENT and the card is not yet RECEIVED, mark it RECEIVED (idempotent) ---
+                    // if (user_id.equals(kudocard.getRecipient_id())
+                    //         && kudocard.getStatus() != Kudocard.Status.RECEIVED) {
+                    //     try (PreparedStatement up = conn.prepareStatement(
+                    //             "UPDATE KUDOS_CARDS SET status = 'RECEIVED' WHERE card_id = ? AND status <> 'RECEIVED'")) {
+                    //         up.setObject(1, kudocard.getCard_id());
+                    //         up.executeUpdate();
+                    //     }
+                    //     // reflect change in the returned object
+                    //     kudocard.setStatus(Kudocard.Status.RECEIVED);
+                    // }
 
                     return kudocard;
                 } else {

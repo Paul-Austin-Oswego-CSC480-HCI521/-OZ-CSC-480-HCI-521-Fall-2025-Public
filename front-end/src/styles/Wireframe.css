@@ -1383,7 +1383,7 @@ td.default-kudos-table-data {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    font-weight: bold;
+    /* font-weight: bold; */
 }
 
 td.reviewed-kudos-table-data {
@@ -1407,13 +1407,14 @@ td.reviewed-kudos-table-data {
     border-radius: 50%;
     margin-right: 12px;
     vertical-align: middle;
+    font-style: bold;
 }
 
 /* on click formatted */
 tr.selected-row td.default-kudos-table-data {
     background-color: white;
     color: black;
-    font-weight: normal !important;
+    /* font-weight: normal !important; */
 }
 
 /*reviewed table data formatting */
@@ -1443,6 +1444,10 @@ td.reviewed-kudos-status {
 
 .reviewed-kudos-status.denied {
     color: red;
+}
+
+.received-kudos-status.pending, .received-kudos-status.received {
+  color: black;
 }
 /*end of table formatting */
 

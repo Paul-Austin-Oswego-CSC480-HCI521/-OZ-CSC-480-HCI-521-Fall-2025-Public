@@ -1,39 +1,64 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AutoFitText from '../components/AutoFitText';
+import { authFetch } from "./UserContext";
 
-function ReceivedKudosStudent( { received }) {
-    const [selectedCard, setSelectedCard] = useState(null);
-    const [selectedRows, setSelectedRows] = useState([]);
-    const [showSort, setShowSort] = useState(false);
-    const [selectedSort, setSelectedSort] = useState("newest");
-    
-    const imageMap = {
-      'Well Done!': '/images/welldone2.png',
-      'Nice Job!': '/images/nicejob2.png',
-      'Great Work!': '/images/greatwork2.png',
-    };
-    
-    const sortedKudos = [...received].sort((a, b) => {
-        if (selectedSort === "newest") {
-            return new Date(b.date) - new Date(a.date);
-        } else if (selectedSort === "oldest") {
-            return new Date(a.date) - new Date(b.date);
-        } else if (selectedSort === "sender") {
-            return a.sender.localeCompare(b.sender);
-        }
-        return 0;
+function ReceivedKudosStudent({ received }) {
+  const [selectedCard, setSelectedCard] = useState(null);
+  const [showSort, setShowSort] = useState(false);
+  const [selectedSort, setSelectedSort] = useState("newest");
+  const [localReceived, setLocalReceived] = useState(received);
+
+  useEffect(() => {
+    console.log("Initial kudos statuses:");
+    localReceived.forEach(k => {
+      console.log(`Kudo ID ${k.id}: status = ${k.status}`);
     });
+  }, [localReceived]);
 
-    return (
+  const imageMap = {
+    'Well Done!': '/images/welldone2.png',
+    'Nice Job!': '/images/nicejob2.png',
+    'Great Work!': '/images/greatwork2.png',
+  };
+
+  const handleCardClick = async (kudo) => {
+    setSelectedCard(kudo);
+
+    if (kudo.status === 'APPROVED') {
+      setLocalReceived(prev =>
+        prev.map(k => k.id === kudo.id ? { ...k, status: "RECEIVED" } : k)
+      );
+
+      try {
+        const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+        await authFetch(`${BASE_URL}/kudo-card/${kudo.id}/markAsRead`, {
+          method: "PATCH",
+        });
+        console.log(`Kudo ${kudo.id} marked as RECEIVED`);
+      } catch (err) {
+        console.error(`Error updating kudo ${kudo.id} as RECEIVED:`, err);
+      }
+    }
+  };
+
+  const sortedKudos = [...localReceived].sort((a, b) => {
+    if (selectedSort === "newest") return new Date(b.date) - new Date(a.date);
+    if (selectedSort === "oldest") return new Date(a.date) - new Date(b.date);
+    if (selectedSort === "sender") return a.sender.localeCompare(b.sender);
+    return 0;
+  });
+
+  return (
     <section className="received-kudos">
       <div className="section-header">
-        <h2>Received Kudos - {received.length}</h2>
+        <h2>Received Kudos - {localReceived.length}</h2>
 
         <div className="sort-dropdown-container">
-          <button onClick={() => {
-            setShowSort((prev) => !prev);
-          }} className={`icon-btn sort-btn ${showSort ? "selected" : ""}`}>
-          <span className="sort-icon-label">Sort</span>
+          <button
+            onClick={() => setShowSort(prev => !prev)}
+            className={`icon-btn sort-btn ${showSort ? "selected" : ""}`}
+          >
+            <span className="sort-icon-label">Sort</span>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -53,115 +78,107 @@ function ReceivedKudosStudent( { received }) {
               <path d="M6 4v16" />
             </svg>
           </button>
-          
+
           {showSort && (
             <div className="sort-dropdown">
-                <ul>
-                    <li onClick={() => {
-                        setSelectedSort("newest");
-                        setShowSort(false);
-                    }}
-                    className={selectedSort === "newest" ? "active" : ""}>
-                        Date Submitted (Newest First)
-                    </li>
-                    <li onClick={() => {
-                        setSelectedSort("oldest");
-                        setShowSort(false);
-                    }} className={selectedSort === "oldest" ? "active" : ""}>
-                        Date Submitted (Oldest First)
-                    </li>
-                    <li onClick={() => {
-                        setSelectedSort("sender");
-                        setShowSort(false);
-                    }}
-                    className={selectedSort === "sender" ? "active" : ""}>
-                        Sender Last Name (A-Z)
-                    </li>
-                </ul>
-                </div>
-            )}
+              <ul>
+                <li
+                  onClick={() => { setSelectedSort("newest"); setShowSort(false); }}
+                  className={selectedSort === "newest" ? "active" : ""}
+                >
+                  Date Submitted (Newest First)
+                </li>
+                <li
+                  onClick={() => { setSelectedSort("oldest"); setShowSort(false); }}
+                  className={selectedSort === "oldest" ? "active" : ""}
+                >
+                  Date Submitted (Oldest First)
+                </li>
+                <li
+                  onClick={() => { setSelectedSort("sender"); setShowSort(false); }}
+                  className={selectedSort === "sender" ? "active" : ""}
+                >
+                  Sender Last Name (A-Z)
+                </li>
+              </ul>
             </div>
+          )}
+        </div>
       </div>
 
-        <div className = "table-container">
-          <table>
-            <thead>
+      <div className="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Sender</th>
+              <th>Title</th>
+              <th>Message</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {localReceived.length === 0 ? (
               <tr>
-                <th>Sender</th>
-                <th>Title</th>
-                <th>Message</th>
-                <th>Date</th>
+                <td colSpan={4} className="emptyTable">
+                  No Received Kudos yet.
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {received.length === 0 ? (
-                <tr>
-                  <td colSpan={4} className="emptyTable">
-                    No Received Kudos yet.
+            ) : (
+              sortedKudos.map((k) => (
+                <tr
+                  key={k.id}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => {
+                    console.log("card status:", k.status);
+                    handleCardClick(k);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") handleCardClick(k);
+                  }}
+                  className={k.status === "RECEIVED" ? "selected-row" : ""}
+                >
+                  <td className="default-kudos-table-data">
+                    {k.status === "APPROVED" && <span className="unread-indicator" />}
+                    {k.sender}
                   </td>
+                  <td className="default-kudos-table-data">{k.title}</td>
+                  <td className="default-kudos-table-data">{k.message}</td>
+                  <td className="default-kudos-table-data">{k.date}</td>
                 </tr>
-              ) : (
-                sortedKudos.map((k, i) => (
-                  <tr
-                    key={k.id}
-                    role="button"
-                    tabIndex={0}
-                    onClick={() => {
-                      setSelectedRows((prev) =>
-                        prev.includes(i) ? prev : [...prev, i]
-                      );
-                      setSelectedCard(k);
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        setSelectedRows((prev) =>
-                          prev.includes(i) ? prev : [...prev, i]
-                        );
-                        setSelectedCard(k);
-                      }
-                    }}
-                    className={selectedRows.includes(i) ? "selected-row" : ""}
-                  >
-                    <td className="default-kudos-table-data">
-                      {!selectedRows.includes(i) && (
-                        <span className="unread-indicator" />
-                      )}
-                      {k.sender}
-                    </td>
-                    <td className="default-kudos-table-data">{k.title}</td>
-                    <td className="default-kudos-table-data">{k.message}</td>
-                    <td className="default-kudos-table-data">{k.date}</td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
 
       {selectedCard && (
         <div className="modal-overlay-rev" onClick={() => setSelectedCard(null)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-          
             <div className="form-group">
               <button
                 className="close-btn"
                 onClick={() => setSelectedCard(null)}
-                aria-label="Close image modal">
+                aria-label="Close image modal"
+              >
                 ✖
               </button>
             </div>
 
             <div className="image-preview-container-img">
-              <img src={imageMap[selectedCard.title]} alt={selectedCard.title} style={{ width: '95%' }} />
+              <img
+                src={imageMap[selectedCard.title]}
+                alt={selectedCard.title}
+                style={{ width: '95%' }}
+              />
               <div className="message-preview-container">
-                  <AutoFitText
-                      text={selectedCard.message}
-                      maxFontSize={32}
-                      minFontSize={10}
-                  />
+                <AutoFitText
+                  text={selectedCard.message}
+                  maxFontSize={32}
+                  minFontSize={10}
+                />
               </div>
-            </div>  
-      
+            </div>
           </div>
         </div>
       )}

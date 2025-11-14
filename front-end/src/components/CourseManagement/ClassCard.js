@@ -123,15 +123,15 @@ useEffect(() => {
         <h2>
           {editingName ? (
             <input
-              value={classData.class_name}
-              onChange={(e) => onClassUpdated({ class_id: classData.class_id, class_name: e.target.value})}
-              onBlur={() => setEditingName(false)}
-              onKeyDown={(e) => { if (e.key === "Enter") setEditingName(false)}}
+              value={className}
+              onChange={(e) => setClassName(e.target.value)}
+              onBlur={() => { handleUpdateField("class_name", className); setEditingName(false); }}
+              onKeyDown={(e) => { if (e.key === "Enter") { handleUpdateField("class_name", className); setEditingName(false); } }}
               autoFocus
             />
           ) : (
             <>
-              {classData.class_name} <button onClick={() => setEditingName(true)} className="pencil-btn" aria-label="Edit name">
+              {className} <button onClick={() => setEditingName(true)} className="pencil-btn" aria-label="Edit name">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="20"

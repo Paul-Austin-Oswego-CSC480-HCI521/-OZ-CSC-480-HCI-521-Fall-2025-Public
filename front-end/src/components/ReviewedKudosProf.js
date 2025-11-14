@@ -354,10 +354,12 @@ function ReviewedKudosProf( {reviewedKudos = [], onSelect} ) {
 
                             <td
                               className={`reviewed-kudos-status ${
-                                k.status === "APPROVED" ? "approved" : "denied"
+                                k.status === "APPROVED" ? "approved" 
+                                : k.status === "RECEIVED" ? "receieved"
+                                : "denied"
                               } ${selectedRows.includes(i) ? "row-read" : ""}`}
                             >
-                              {k.status === "APPROVED" ? (
+                              {k.status === "APPROVED" || "RECEIVED" ? (
                                 <span>Approved</span>
                               ) : (
                                 <>

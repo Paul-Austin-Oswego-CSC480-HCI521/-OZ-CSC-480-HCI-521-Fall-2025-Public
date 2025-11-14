@@ -318,7 +318,7 @@ function SentKudosStudent( {messages = []} ) {
             <th>Class</th>
             <th>Recipient</th>
             <th>Title</th>
-            <th>Kudos Status (Approved, Rejected, Pending)</th>
+            <th>Kudos Status (Approved, Rejected, Received, Pending)</th>
             <th>Date</th>
           </tr>
         </thead>
@@ -353,6 +353,8 @@ function SentKudosStudent( {messages = []} ) {
                       ? "approved"
                       : k.status === "DENIED"
                       ? "denied"
+                      : k.status === "RECEIVED" 
+                      ? "received" 
                       : "pending"
                   } ${selectedRows.includes(i) ? "row-read" : ""}`}
                 >
@@ -363,6 +365,8 @@ function SentKudosStudent( {messages = []} ) {
                       <span>Rejected:</span>{" "}
                       {k.professor_note || "No reason provided"}
                     </>
+                  ) : k.status === "RECEIVED" ? (
+                    <span>Received</span>
                   ) : (
                     <span>Pending</span>
                   )}
