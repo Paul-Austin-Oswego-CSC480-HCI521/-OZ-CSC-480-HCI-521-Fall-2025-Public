@@ -28,11 +28,11 @@ function App(){
                         : <Login />}/>
                 <Route path = "/login" element = {<Navigate to="/home" replace />} />
                 <Route path = "/studentView" 
-                    element={user && user.role === 'STUDENT' ? <StudentView/> : <Navigate to ="/login" />} />
+                    element={user && (user.role === 'STUDENT' || user.role === 'INSTRUCTOR') ? <StudentView/> : <Navigate to ="/login" />} />
                 <Route path = "/professorView" 
                     element={user && user.role === 'INSTRUCTOR' ? <ProfessorView /> : <Navigate to ="/login" />} />
                 <Route path = "/course-management" element={user && user.role === 'INSTRUCTOR' ? <CourseManagement /> : <Navigate to="/login" />} />
-                <Route path="/studentView/new-kudos" element={user && user.role === 'STUDENT' ? <NewKudosPage /> : <Navigate to="/login" />} />
+                <Route path="/studentView/new-kudos" element={user && (user.role === 'STUDENT' || user.role === 'INSTRUCTOR') ? <NewKudosPage /> : <Navigate to="/login" />} />
                 <Route path="/professorView/new-kudos" element={user && user.role === 'INSTRUCTOR' ? <NewKudosPage /> : <Navigate to="/login" />} />
                 <Route path="/course-management/new-kudos" element={user && user.role === 'INSTRUCTOR' ? <NewKudosPage /> : <Navigate to="/login" />} />
                 <Route path = "/review" element={user && user.role === 'INSTRUCTOR' ? <ReviewPage /> : <Navigate to="/" />} />

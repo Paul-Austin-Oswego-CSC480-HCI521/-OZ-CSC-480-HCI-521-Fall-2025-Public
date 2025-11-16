@@ -9,6 +9,7 @@ function ProfReview({ initialData, onClose }) {
         sender_id: initialData?.sender || "",
         recipient_id: initialData?.recipient || "",
         title: initialData?.title || "",
+        className: initialData?.class_name || "",
         message: initialData?.message || initialData?.content || "",
         note: initialData?.note || "",
     });
@@ -65,38 +66,50 @@ function ProfReview({ initialData, onClose }) {
         <div className="button-row">
             <form onSubmit={handleSubmit}>
                 <div className="form-row">
-
                     <div className="form-row horizontal-row">
-
                         <div className="form-group">
-                                <label>Sender</label>
-                                <input
-                                    className="to-from-title"
-                                    name="sender_id"
-                                    value={formData.sender_id}
-                                    readOnly
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label>Recipient</label>
-                                <input
-                                    className="to-from-title"
-                                    name="recipient_id"
-                                    value={formData.recipient_id}
-                                    readOnly
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label>Title</label>
-                                <input
-                                    className="to-from-title"
-                                    name="title"
-                                    value={formData.title}
-                                    readOnly
-                                />
-                            </div>
+                            <label>Sender</label>
+                            <input
+                                className="to-from-title"
+                                name="sender_id"
+                                value={formData.sender_id}
+                                readOnly
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label>Recipient</label>
+                            <input
+                                className="to-from-title"
+                                name="recipient_id"
+                                value={formData.recipient_id}
+                                readOnly
+                            />
                         </div>
                     </div>
+                </div>
+
+                <div className="from-row">
+                    <div className="form-row horizontal-row" >
+                        <div className="form-group">
+                            <label>Title</label>
+                            <input
+                                className="to-from-title"
+                                name="title"
+                                value={formData.title}
+                                readOnly
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label>Class</label>
+                            <input
+                                className="to-from-title"
+                                name="class"
+                                value={formData.className}
+                                readOnly
+                            />
+                        </div>
+                    </div>
+                </div>
 
                     <div className="form-group">
                         <label>Message</label>

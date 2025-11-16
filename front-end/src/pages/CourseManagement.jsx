@@ -125,6 +125,7 @@ const handleClassUpdated = (updateInfo) => {
 
   return (
     <div className="app-container">
+      <title>Manage Courses</title>
       <Header showNav={true} onCreateNew={handleNewKudos} />
 
       <div

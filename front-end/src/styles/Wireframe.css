@@ -1000,7 +1000,8 @@
     padding: 20px 40px;
     border-radius: 8px;
     background-color: #fafdf2;
-    min-height: 325px;
+    min-height: 150px;
+    max-height: 500px;
 }
 
 .received-kudos h2,
@@ -1445,7 +1446,11 @@ td.reviewed-kudos-status {
     font-weight: normal;
 }
 
-.reviewed-kudos-status.approved {
+.reviewed-kudos-status.approved{
+    color: green;
+}
+
+.reviewed-kudos-status.received{
     color: green;
 }
 
@@ -1453,9 +1458,10 @@ td.reviewed-kudos-status {
     color: red;
 }
 
-.received-kudos-status.pending, .received-kudos-status.received {
+.received-kudos-status.pending {
   color: black;
 }
+
 /*end of table formatting */
 
 .role-selection {

@@ -198,6 +198,7 @@ function StudentView() {
 
     return (
         <div className="app-container">
+            <title>KudoSpace Home</title>
             <Header onCreateNew = {() => navigate('/studentView/new-kudos')} />
 
             <div className="main-content">

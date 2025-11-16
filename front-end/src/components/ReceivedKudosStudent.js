@@ -5,6 +5,7 @@ import { authFetch } from "./UserContext";
 function ReceivedKudosStudent({ received }) {
   const [selectedCard, setSelectedCard] = useState(null);
   const [showSort, setShowSort] = useState(false);
+  const [selectedRows, setSelectedRows] = useState([]);
   const [selectedSort, setSelectedSort] = useState("newest");
   const [localReceived, setLocalReceived] = useState(received);
 
@@ -124,7 +125,7 @@ function ReceivedKudosStudent({ received }) {
                 </td>
               </tr>
             ) : (
-              sortedKudos.map((k) => (
+              sortedKudos.map((k, i) => (
                 <tr
                   key={k.id}
                   role="button"
@@ -136,7 +137,8 @@ function ReceivedKudosStudent({ received }) {
                   onKeyDown={(e) => {
                     if (e.key === "Enter" || e.key === " ") handleCardClick(k);
                   }}
-                  className={k.status === "RECEIVED" ? "selected-row" : ""}
+                  className={`received-kudos-row ${
+                  selectedRows.includes(i) ? "selected-row" : ""}`}
                 >
                   <td className="default-kudos-table-data">
                     {k.status === "APPROVED" && <span className="unread-indicator" />}

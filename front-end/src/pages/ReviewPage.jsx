@@ -19,6 +19,7 @@ function ReviewPage() {
 
     return (
         <div className="app-container">
+            <title>Review Kudos Card</title>
             <Header/>
             <div className={"main-content"}>
                 <ProfReview

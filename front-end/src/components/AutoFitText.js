@@ -4,9 +4,11 @@ function AutoFitText({ text, maxFontSize = 36, minFontSize = 10 }) {
   const containerRef = useRef(null);
   const textRef = useRef(null);
   const [fontSize, setFontSize] = useState(maxFontSize);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     const adjustSize = () => {
+      setIsReady(false);
       const container = containerRef.current;
       const textEl = textRef.current;
       if (!container || !textEl) return;
@@ -23,8 +25,8 @@ function AutoFitText({ text, maxFontSize = 36, minFontSize = 10 }) {
         size -= 1;
         textEl.style.fontSize = `${size}px`;
       }
-
       setFontSize(size);
+      setIsReady(true);
     };
 
     adjustSize();
@@ -57,6 +59,8 @@ function AutoFitText({ text, maxFontSize = 36, minFontSize = 10 }) {
           color: "#333",
           wordBreak: "break-word",
           lineHeight: 1.1,
+          opacity: isReady ? 1 : 0,
+          transition: "opacity 0.2s ease-in",
         }}
       >
         {text}

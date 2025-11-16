@@ -15,6 +15,7 @@ function Header({ onCreateNew, showNav = true }) {
 
   const handleCourseAddition = () => setShowCourseModal(true);
   const handleCourseManagement = () => navigate('/course-management');
+  const handleMailPage = () => navigate("/studentView");
   const handleGoHome = () => navigate('/home');
   const handleNotif = () => setShowNotif((v) => !v);
 
@@ -61,7 +62,7 @@ function Header({ onCreateNew, showNav = true }) {
     if (path === '/home') {
       return (
         location.pathname === '/home' ||
-        location.pathname === '/studentView' ||
+        ((location.pathname === '/studentView') && (user.role === 'STUDENT')) ||
         location.pathname === '/professorView'
       );
     }
@@ -133,6 +134,29 @@ function Header({ onCreateNew, showNav = true }) {
             <span className="icon-label">Home</span>
           </button>
 
+          {user?.role === 'INSTRUCTOR' && (
+            <button onClick={handleMailPage} 
+            className={`icon-btn ${isSelected('/studentView') ? 'selected' : ''}`}
+            >
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width="24" 
+                height="24" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                stroke-width="2" 
+                stroke-linecap="round" 
+                stroke-linejoin="round" 
+                class="lucide lucide-mail-open-icon lucide-mail-open"
+              >
+                <path d="M21.2 8.4c.5.38.8.97.8 1.6v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V10a2 2 0 0 1 .8-1.6l8-6a2 2 0 0 1 2.4 0l8 6Z"/>
+                <path d="m22 10-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 10"/>
+              </svg>
+              <span className="icon-label">Mail</span>
+            </button>
+          )}
+
           <button
             onClick={onCreateNew}
             className={`icon-btn ${isSelected('/new-kudos') ? 'selected' : ''}`}
@@ -179,7 +203,10 @@ function Header({ onCreateNew, showNav = true }) {
           )}
 
           {user?.role === 'INSTRUCTOR' && (
-            <button onClick={handleCourseManagement} className="icon-btn">
+            <button 
+            onClick={handleCourseManagement} 
+            className={`icon-btn ${isSelected('/course-management') ? 'selected' : ''}`}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"

@@ -160,6 +160,7 @@ function ProfessorView() {
 
     return (
         <div className="app-container">
+            <title>KudoSpace Home</title>
             <Header onCreateNew={handleNewKudos} />
             <main>
                 <div className="main-content">

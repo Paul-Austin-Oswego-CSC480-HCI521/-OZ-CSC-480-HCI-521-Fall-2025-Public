@@ -191,6 +191,7 @@ function NewKudosPage({ onSubmit }) {
 
     return (
         <div className="app-container">
+            <title>Create Kudos Card</title>
             <Header onCreateNew={handleCreateNew} />
             <div className="main-content">
                 <form onSubmit={handleSubmit} className="kudos-form">

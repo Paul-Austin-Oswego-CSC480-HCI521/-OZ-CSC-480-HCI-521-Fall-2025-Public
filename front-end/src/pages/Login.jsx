@@ -117,6 +117,7 @@ function Login() {
 
   return (
       <div className="app-container">
+          <title>KudoSpace Login</title>
           <div className="login-container">
               <div className="login-left-column">
                   <div className = "kudos-home-page">

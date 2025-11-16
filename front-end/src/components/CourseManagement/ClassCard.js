@@ -84,6 +84,10 @@ useEffect(() => {
 
 
   const handleDeleteClass = async () => {
+    if (!window.confirm(`Are you sure you want to delete this class? (${classData.class_name}) `)) {
+      return;
+    }
+    
     try {
       const res = await authFetch(`${BASE_URL}/class/${classData.class_id}`, {
         method: "DELETE",
