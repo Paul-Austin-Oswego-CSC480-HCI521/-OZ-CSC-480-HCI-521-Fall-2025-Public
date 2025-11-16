@@ -85,7 +85,7 @@ function Header({ onCreateNew, showNav = true }) {
           onClick={handleGoHome}
           style={{ cursor: 'pointer' }}
         />
-        <div className="header-kudoSpace-text"><h2>KudoSpace</h2></div>
+        <div className="header-kudoSpace-text"><h2 onClick={handleGoHome}>KudoSpace</h2></div>
       </div>
 
       {showNav && (

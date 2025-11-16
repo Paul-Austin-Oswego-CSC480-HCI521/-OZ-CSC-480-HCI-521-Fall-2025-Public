@@ -103,7 +103,7 @@ function SubmittedKudosProf({ submitted, onSelect}) {
                             <td colSpan={5} className="emptyTable">No Kudos to Review.</td>
                         </tr>
                     ) : (
-                        sortedKudos.map((k) => (
+                        sortedKudos.map((k, i) => (
                                 <tr
                                     key={k.card_id}
                                     role="button"
@@ -121,7 +121,8 @@ function SubmittedKudosProf({ submitted, onSelect}) {
                                             onSelect(k);
                                         }
                                     }}
-                                    className={selectedRows.includes(k.card_id) ? "selected-row" : ""}
+                                    className={`received-kudos-row ${
+                                    selectedRows.includes(i) ? "selected-row" : ""}`}
                                 >
                                     <td className='default-kudos-table-data'>
                                         {k.sender}
