@@ -62,9 +62,7 @@ public class KudoService {
                      """
                      SELECT c.card_id
                      FROM KUDOS_CARDS c
-                     JOIN USERS u ON c.sender_id = u.user_id
-                     JOIN USER_CLASSES uc ON u.user_id = uc.user_id
-                     WHERE uc.class_id IN (
+                     WHERE c.class_id IN (
                          SELECT class_id FROM USER_CLASSES WHERE user_id = ?
                      )
                      AND c.status = 'PENDING';
@@ -87,9 +85,7 @@ public class KudoService {
                      """
                      SELECT c.card_id
                      FROM KUDOS_CARDS c
-                     JOIN USERS u ON c.sender_id = u.user_id
-                     JOIN USER_CLASSES uc ON u.user_id = uc.user_id
-                     WHERE uc.class_id IN (
+                     WHERE c.class_id IN (
                          SELECT class_id FROM USER_CLASSES WHERE user_id = ?
                      )
                      AND c.status != 'PENDING';
