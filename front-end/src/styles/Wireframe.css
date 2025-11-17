@@ -63,6 +63,10 @@
     gap: 0.5rem;
 }
 
+.success-modal .cancel-btn:hover {
+    background: #FAFDF2;
+}
+
 .success-modal .close-icon {
     display: flex;
     align-items: center;
@@ -1331,6 +1335,7 @@ tbody tr {
 
 tr:hover {
     background: #EBEBEB;
+    cursor: pointer;
 }
 
 table tr:first-child th:first-child {
@@ -1379,6 +1384,7 @@ tr {
 
 tr:hover {
     background: #ebebeb;
+    cursor: pointer;
 }
 
 td.default-kudos-table-data {
@@ -1415,7 +1421,7 @@ td.reviewed-kudos-table-data {
     border-radius: 50%;
     margin-right: 12px;
     vertical-align: middle;
-    font-style: bold;
+    font-weight: bold;
 }
 
 /* on click formatted */

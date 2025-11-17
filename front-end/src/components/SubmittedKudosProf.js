@@ -124,7 +124,10 @@ function SubmittedKudosProf({ submitted, onSelect}) {
                                     className={`received-kudos-row ${
                                     selectedRows.includes(i) ? "selected-row" : ""}`}
                                 >
-                                    <td className='default-kudos-table-data'>
+                                    <td className="default-kudos-table-data">
+                                        {k.status !== "RECEIVED" && (
+                                            <span className="unread-indicator"></span>
+                                        )}
                                         {k.sender}
                                     </td>
                                     <td className={`default-kudos-table-data`}>{k.recipient}</td>
