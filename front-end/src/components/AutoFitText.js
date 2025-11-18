@@ -9,34 +9,36 @@ function AutoFitText({ text, maxFontSize = 36, minFontSize = 10 }) {
   useEffect(() => {
     const adjustSize = () => {
       setIsReady(false);
+
       const container = containerRef.current;
       const textEl = textRef.current;
       if (!container || !textEl) return;
+      if (container.clientWidth === 0 || container.clientHeight === 0) return;
 
       let size = maxFontSize;
       textEl.style.fontSize = `${size}px`;
 
       // Gradually shrink until text fits both width and height
-      while (
-        (textEl.scrollHeight > container.clientHeight ||
-          textEl.scrollWidth > container.clientWidth) &&
-        size > minFontSize
-      ) {
+      while ((textEl.scrollHeight > container.clientHeight ||
+              textEl.scrollWidth > container.clientWidth) &&
+              size > minFontSize){
         size -= 1;
         textEl.style.fontSize = `${size}px`;
       }
+      
+      if (size === fontSize){
+        setIsReady(true);
+        return;}
+      textEl.style.fontSize = '';
       setFontSize(size);
-      setIsReady(true);
     };
 
     adjustSize();
-    window.addEventListener("resize", adjustSize);
-    const timeout = setTimeout(adjustSize, 150);
-    return () => {
-      window.removeEventListener("resize", adjustSize);
-      clearTimeout(timeout);
-    };
   }, [text, maxFontSize, minFontSize]);
+
+  useEffect(() => {
+    setIsReady(true);
+  }, [fontSize]); 
 
   return (
     <div
@@ -60,7 +62,7 @@ function AutoFitText({ text, maxFontSize = 36, minFontSize = 10 }) {
           wordBreak: "break-word",
           lineHeight: 1.1,
           opacity: isReady ? 1 : 0,
-          transition: "opacity 0.2s ease-in",
+          transition: "opacity 0.5s linear",
         }}
       >
         {text}
