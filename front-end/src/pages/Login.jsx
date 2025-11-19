@@ -36,7 +36,7 @@ function Login() {
       {
         theme: 'outline',
         size: 'large',
-        text: 'signin_with',
+        text: 'continue_with',
         width: 300,
       }
     );
