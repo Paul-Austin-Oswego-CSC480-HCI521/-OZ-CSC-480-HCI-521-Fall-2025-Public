@@ -9,7 +9,7 @@
 
 * **Acceptance Criteria for Viewing:**
 * The CM interface will allow instructors to view all classes they created and to see a roster of all users in each class.
-* The roster must show each user’s name, email, and role in the given class.
+* The roster must show each user’s display name.
 * Each course entry displays the Class Name, join code, and End Date.
 
 

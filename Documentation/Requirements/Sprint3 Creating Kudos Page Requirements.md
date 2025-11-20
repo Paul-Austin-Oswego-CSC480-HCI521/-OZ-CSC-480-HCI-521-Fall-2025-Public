@@ -24,7 +24,7 @@
 * The system provides the users with a text box for entering the message body, separate from the card preview.
 * Users are limited to 500 characters.
 * The system shall block users from typing once they reach 500 characters.
-* The text box will only accept ASCII characters, not including emojis.
+* The text box will only accept ASCII characters.
 * The text box will ignore the tab and enter keys when pressed.
 * The system shall require the message to be more than 10 characters long.
 * The text box allows the user to paste text from the clipboard. If the pasted text exceeds the character limit, the excess text will be ignored.
@@ -35,7 +35,8 @@
 * Users can choose from 3–4 card designs (more card designs may be available later), each design displayed as an image in the card design selection menu.
 
 
-#### 3. Recipient Input Field: The system shall provide a dropdown menu to select recipients from all users in the active class, including all instructors.
+#### 3. Recipient Input Field: The system shall provide a dropdown menu to select recipients from all users in each class they are a member of including all instructors.
+
 * **Acceptance Criteria:**
 * The dropdown lists all available users (first and last name)
 * Users can not select more than one recipient per card.
@@ -53,33 +54,21 @@
 * All non-required fields (card design, anonymity status) must have a default option pre-selected.
 * After a failed submission attempt, the user shall be informed about the error, including the possible cause and solution.
 
-#### 6. Confirmation Step: The system shall allow users to confirm, discard, or edit the Kudos after previewing the Kudos card through a confirmation menu.
+#### 6. Confirmation Step: The system shall allow users to submit or discard a new Kudos card after previewing it.
 * **Acceptance Criteria:**
-* The Confirmation Menu shall display a preview of the created card, featuring the user’s written message on the chosen card style.
+* The CC page shall display a preview of the created card, featuring the user’s written message on the chosen card style.
 * “Confirm” submits the Kudos card for approval by an instructor and then redirects the user to their homepage. The Kudos card will appear in the instructor’s “Submitted Kudos” list, and the Kudos card will appear in the student’s “Sent Kudos” list.
 * “Discard” discards the card entirely, then redirects the user to their homepage.
-* “Edit” returns the user to the card-creation page with their previously chosen card options entered into each selection field.
-* The confirmation menu shall provide users with text that clearly explains the function of each of the provided options (“Confirm”, “Discard”, “Edit” ).
-*  _When an Instructor creates a new Kudos and selects “Confirm,” the card will be added to the instructor’s sent list and the recipient’s received list automatically. Instructor-created cards do not require approval._
+*  When an Instructor creates a new Kudos and selects “Confirm,” the card will be added to the instructor’s sent list and the recipient’s received list automatically. Instructor-created cards do not require approval.
 
 
 #### 7. Card Usability Requirements:
 #### The templates shall be offered in a variety of visual styles and colors, and will have a standardized image size and font type.
 * **Acceptance Criteria:**
-* Each card image and card design template must have a resolution of 1141 pixels wide and 541 pixels tall.
 * Each card image must use the same font style for the message body.
-* The system will not automatically adjust the font sizes to fit more text.
 * Each template must have a unique title that is clearly visible and is embedded into the design.
 * The card images and templates will not display any information pertaining to the sender, recipient, or the date/time sent.
 
-#### Each template must have ruled lines on which the message body text is placed on. Ruled lines must be standardized across templates.
-* **Acceptance criteria:**
-* Ruled lines must have a consistent size and spacing across all templates.
-* Each line must have the same length and width, the lines must all be parallel to the base of the card, and they should be arranged in a rectangular shape.
-* Location of ruled lines may vary across templates.
-* When placed on the template, the message body text does not overflow off the ruled lines.
-* Templates must be able to fit the maximum message body length (a 500-character limit is subject to change and requires testing) on the ruled lines without leaving unused space.
-* Text should be wrapped across lines so that each word entirely fits onto one line.  
 
 #### 8.The system must allow users to edit the message of cards that were rejected.
 * **Acceptance Criteria:**

@@ -1,7 +1,7 @@
 # Requirements for Sprint 2:
 #### The header requirements apply to the entire system and will be worked on across multiple sprints. The Acceptance Criteria sections outline the goals for this current two-week sprint. Future Acceptance Criteria should be considered during the development, but are intended to be completed in future sprints. The requirements are listed in order, with the top requirement having the highest priority.
 
-#### 1. The user’s (instructors and students) home page shall display a clickable thumbnail preview for each card received by that user.
+#### 1. The user’s (instructors and students) home page shall display a clickable preview for each card received by that user.
    * **Acceptance Criteria:**
    * When a user has not received any cards, the system displays a message such as “No Cards Received" when checking the inbox.
    * When clicking on a preview, the page displays that entire card in a large view centered on the screen.
@@ -10,7 +10,7 @@
    When a user receives a new card, its preview is displayed on the home page without requiring a manual refresh.
 
 
-#### 2. The homepage for the Instructor shall display all pending card submissions for the active class.
+#### 2. The homepage for the Instructor shall display all pending card submissions for each class they manage.
    * **Acceptance Criteria:**
    * If no pending cards, display “No cards to review”
    * Pending cards are displayed with the student name, class, and card preview.
@@ -18,14 +18,14 @@
    * -The instructor can click a card to open the full view.
 
 
-#### 3. The user’s (instructors and students) home page shall display a clickable thumbnail preview for each card submitted by that user. Each preview item shall display the status of the attempted submission. Card requests must have one of the following states: Approved, Denied, Pending Approval, or Received. *States are not finalized.*
+#### 3. The user’s (instructors and students) home page shall display a clickable preview for each card submitted by that user. Each preview item shall display the status of the attempted submission. Card requests must have one of the following states: Approved, Denied, Pending, or Received.
    * **Acceptance Criteria:**
    * When a user has not sent any cards, the system displays a message such as “No Cards Sent”.
    * **Future Acceptance Criteria:**
    * The card requests are displayed in order, with the most recently sent card being first.
    * The system displays the card title, a preview of the text, and the status of each request.
    * When the status of any of the user’s card requests changes, the new status is shown without needing to refresh manually.
-   * When a user submits a new card request, it is displayed on the user’s home page with the status “Pending Approval”.
+   * When a user submits a new card request, it is displayed on the user’s home page with the status “Pending”.
    * _Cards that were rejected will display a rejection reason, with the full text being displayed in a clickable overlay_. 
 
 
@@ -38,16 +38,16 @@
 #### 5. The homepage shall provide users access to a notification tray, showing the count of unread notifications for that user.
    * **Acceptance Criteria:**
    * The system uses a button to provide access to an expanded notifications pop-up menu.  
-   * The notification menu will contain all notifications that the user has received within the last month *time interval not finalized*.
+   * The notification menu will contain all notifications that the user has received within the last month.
    * Notifications are displayed in order, with the most recently received notifications on top.
    * The notification menu will indicate which notifications have not been read.
 
 
-#### 6. The instructor(s) shall be provided access to approve or reject a pending card from their home page.
+#### 6. The instructors shall be provided access to approve or reject a pending card from their home page.
    * **Acceptance Criteria:**
-   *  _When “Reject” is selected, the rejection section becomes available. There will be a field for the Instructor to specify a Rejection Reason._ 
-   *  _The reason for rejection section shall include: A drop-down menu with predefined reasons + a comment text box (with a limit of 250 characters) for additional notes._ 
-   *  _If “Other” is selected from the dropdown, the comment text box becomes required before submission._ 
+   *  When “Reject” is selected, the rejection section becomes available. There will be a field for the Instructor to specify a Rejection Reason. 
+   *  The reason for rejection section shall include: A drop-down menu with predefined reasons + a comment text box (with a limit of 250 characters) for additional notes. 
+   *  If “Other” is selected from the dropdown, the comment text box becomes required before submission.
    
    * When the Instructor selects a Kudos Card, the options to “Approve” or “Reject” are listed.
    * There will be a field for the Instructor to specify a Rejection Reason.
@@ -88,7 +88,7 @@ This data should be stored in the database through some structure. This list is 
 * Name
 * Email
 * Role
-* Course Section (only needed to record if the student is in the active class, or an inactive class)
+* Course Section 
 
 **Cards:**
 * Title
@@ -96,9 +96,7 @@ This data should be stored in the database through some structure. This list is 
 * Sender
 * Recipant  
 * Time + Date Sent
-* Status log (with timestamps)
-* Instructor who approved (for stretch goal only)
-* Template Type
+* Instructor who approved
 
 **Related Requirements:**
 * The system must ensure users have successfully logged into their account before displaying that user’s home page.

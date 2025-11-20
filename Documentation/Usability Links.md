@@ -26,3 +26,9 @@ https://www.figma.com/design/KSMPTwZOT2BzSJqAVz3zhn/swd_home_wireframe_v11?node-
 
 ### Wireframe V13: ###
 https://www.figma.com/design/HxqMEnKAgxtc8DAM4swDNO/swd_home_wireframe_v13?node-id=20210-6932&t=T3KrDqEXSmAT5JCI-1
+
+### Wireframe V14: ###
+https://www.figma.com/design/Na1XZAfZiQehJasPrUa7re/swd_home_wireframe_v14?node-id=0-1&t=eqSYsQDXIzclF4mB-1
+
+### Wireframe V15: The Final Prototype  ###
+https://www.figma.com/design/ReJ1kNGRbcRAGUIHhMI3sL/swd_home_wireframe_v15?node-id=0-1&t=OmHZVAMOqJ0jTeMD-1
