@@ -29,10 +29,11 @@
    * _Cards that were rejected will display a rejection reason, with the full text being displayed in a clickable overlay_. 
 
 
-#### 4. The Navigation Menu shall be available at the top of all pages, and will allow the user to navigate to any page available to that user. (Home Page and Generate Kudos, Sign-in / Sign-out, Instructor Statistics Page). *Pages not finalized*
+#### 4. The Navigation Menu shall be available at the top of all pages, and will allow the user to navigate to any page available to that user. (Home Page, Create Kudos, Logout, Course Management (instructors only) , Mail (instructors only) Join Class (students only)).
    * **Acceptance Criteria:**
    * Each available page is accessible with a separate labeled button.
    * From the home page, the “Logout” button redirects the user to the login page, and the “Send Kudos Card” button redirects the user to the card generation page.
+   * The mail button redirects instructors to a page containing their received and sent inboxes.
 
 
 #### 5. The homepage shall provide users access to a notification tray, showing the count of unread notifications for that user.
