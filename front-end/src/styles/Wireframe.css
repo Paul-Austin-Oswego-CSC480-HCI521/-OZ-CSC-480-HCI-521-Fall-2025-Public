@@ -1110,7 +1110,7 @@
 .title-options-full {
     width: 100%;
     display: flex;
-    justify-content: center;
+    justify-content: left;
     gap: 20px;
     padding: 10px 0 20px;
     flex-wrap: wrap;
@@ -1808,7 +1808,7 @@ select:focus {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    max-width: 40%;
+    max-width: 45%;
 }
 
 .message-image-container .left-column .textBox {
@@ -1825,6 +1825,19 @@ select:focus {
     border-radius: 10px;
     background: linear-gradient(45deg, #a3ec79, #62d8cf);
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+    height: 85%;
+    width: 90%;
+}
+
+.message-image-container .right-column-div {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1rem;
+    border-radius: 10px;
     height: 90%;
     width: 90%;
 }
@@ -1837,6 +1850,7 @@ select:focus {
     object-fit: cover;
     background: white;
 }
+
 
 @media (max-width: 768px) {
     .message-image-container {
@@ -2021,11 +2035,14 @@ select:focus {
 } */
 
 .kudos-form {
-    /* display: flex; */
+    display: flex;
     gap: 2rem; /* adjust spacing between columns as needed */
     align-items: stretch; /* makes both columns equal height */
 }
 
+.main-content h2{
+    font-family: 'Merriweather', serif;
+}
 
 /* login page */
 

@@ -194,32 +194,40 @@ function NewKudosPage({ onSubmit }) {
             <title>Create Kudos Card</title>
             <Header onCreateNew={handleCreateNew} />
             <div className="main-content">
+
+                <div className="create-new-header">
+                    <button type='button' className='back-button' onClick={() => navigate(-1)}>←</button>
+                    <h2>{editCardId ? "Edit & Resend Kudo" : "Create a Kudos Card"}</h2>
+                </div>
+
                 <form onSubmit={handleSubmit} className="kudos-form">
-                    
-                        <div className="create-new-header">
-                            <button type='button' className='back-button' onClick={() => navigate(-1)}>←</button>
-                            <h2>{editCardId ? "Edit & Resend Kudo" : "Create a Kudo Card"}</h2>
-                        </div>
-                        <label htmlFor='title' className='title-label'>Choose a Title</label>
-                        <div className="title-options-full">
-                            {titleOptions.map((option, index) => (
-                                <button
-                                    key={index}
-                                    type="button"
-                                    className={`title-button-CC ${formData.title === option ? 'selected' : ''}`}
-                                    onClick={() => {
-                                        setFormData(prev => ({ ...prev, title: option }));
-                                        const img = imageMap[option];
-                                        if (img) setSelectedImage(img);
-                                    }}
-                                >
-                                    {option}
-                                </button>
-                            ))}
-                        </div>
                     <div className="message-image-container">
+
                         <div className="left-column">
+
+
                             <div className="form-group">
+
+                                <div className="from-group">
+                                    <label htmlFor="title">Choose a Title</label>
+                                    <div className="title-options-full">
+                                    {titleOptions.map((option, index) => (
+                                        <button
+                                            key={index}
+                                            type="button"
+                                            className={`title-button-CC ${formData.title === option ? 'selected' : ''}`}
+                                            onClick={() => {
+                                                setFormData(prev => ({ ...prev, title: option }));
+                                                const img = imageMap[option];
+                                                if (img) setSelectedImage(img);
+                                            }}
+                                        >
+                                            {option}
+                                        </button>
+                                    ))}
+                                    </div>
+                                </div>
+
                                 <div className="form-group" >
                                     <label htmlFor="class">Select a Class</label>
                                     <select
@@ -288,47 +296,52 @@ function NewKudosPage({ onSubmit }) {
                                     </div>
                                 </div>
                             </div>
+
                         </div>
 
-                        <div className="right-column">
-                            {selectedImage && (
-                                <div className="image-preview-container-img">
-                                    <img src={selectedImage} alt={formData.title} style={{ width: '100%' }} />
-                                    <div className="message-preview-container">
-                                        <AutoFitText
-                                            text={formData.message || "Your message will appear here..."}
-                                            maxFontSize={32}
-                                            minFontSize={10}
-                                        />
+                        <div className="right-column-div">
+
+                            <div className="right-column" >
+                                {selectedImage && (
+                                    <div className="image-preview-container-img">
+                                        <img src={selectedImage} alt={formData.title} style={{ width: '100%' }} />
+                                        <div className="message-preview-container">
+                                            <AutoFitText
+                                                text={formData.message || "Your message will appear here..."}
+                                                maxFontSize={32}
+                                                minFontSize={10}
+                                            />
+                                        </div>
                                     </div>
-                                </div>
-                            )}
-                        </div>
-                        </div>
-                            <div className="button-row">
-                                    <button type="submit" className="submit-discard-btn">
-                                        {editCardId ? "Resend Kudo" : "Send Kudo"}
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35"
-                                            viewBox="0 0 24 24" fill="none"
-                                            stroke="currentColor" strokeWidth="2"
-                                            strokeLinecap="round" strokeLinejoin="round"
-                                            className="lucide lucide-send">
-                                            <path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/>
-                                            <path d="m21.854 2.147-10.94 10.939"/>
-                                        </svg>
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="submit-discard-btn"
-                                        onClick={() => {
-                                            const sure = window.confirm("Discard this Kudo? Your message will be lost.");
-                                            if (sure) navigate(-1);
-                                        }}
-                                    >
-                                        Discard
-                                    </button>
-                                </div>
+                                )}
+                            </div>
 
+                            <div className="button-row">
+                                <button type="submit" className="submit-discard-btn">
+                                    {editCardId ? "Resend Kudo" : "Send Kudo"}
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35"
+                                        viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" strokeWidth="2"
+                                        strokeLinecap="round" strokeLinejoin="round"
+                                        className="lucide lucide-send">
+                                        <path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/>
+                                        <path d="m21.854 2.147-10.94 10.939"/>
+                                    </svg>
+                                </button>
+                                <button
+                                    type="button"
+                                    className="submit-discard-btn"
+                                    onClick={() => {
+                                        const sure = window.confirm("Discard this Kudo? Your message will be lost.");
+                                        if (sure) navigate(-1);
+                                    }}
+                                >
+                                    Discard
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
                 </form>
             </div>
             <Footer />
