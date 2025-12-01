@@ -6,62 +6,36 @@ import Footer from "../components/Footer";
 import ReceivedKudosStudent from "../components/ReceivedKudosStudent";
 import SentKudosStudent from "../components/SentKudosStudent";
 import { useUser, authFetch } from "../components/UserContext";
-import { v4 as uuidv4} from 'uuid';
+import CourseCodeModal from '../components/CourseCodeModal';
 
 function StudentView() {
-    const BASE_URL = process.env.REACT_APP_API_BASE_URL;
-    const navigate = useNavigate();
-    const [sentKudos, setSentKudos] = useState([]);
-    const [receivedKudos, setReceivedKudos] = useState([]);
+    const { user, courseSubmit, getClasses, getCard, getUserInfo} = useUser();
     const [receivedSortOrder, setReceivedSortOrder] = useState("desc");
+    const [showCourseModal, setShowCourseModal] = useState(false);
+    const [rejectionInfo, setRejectionInfo] = useState(null);
     const [sentSortOrder, setSentSortOrder] = useState("desc");
+    const [receivedKudos, setReceivedKudos] = useState([]);
+    const BASE_URL = process.env.REACT_APP_API_BASE_URL;
     const [sentFilter, setSentFilter] = useState("ALL");
+    const [hasClass, setHasClass] = useState(false);
+    const [sentKudos, setSentKudos] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const { user } = useUser();
-
-    const [rejectionInfo, setRejectionInfo] = useState(null);
-    const handleRejectedCardClick = (rejectionReason) => {
-        setRejectionInfo(rejectionReason);
-    };
-    const closeRejectionModal = () => {
-        setRejectionInfo(null);
-    };
-    const handleReceivedSort = () => {
-        setReceivedSortOrder((prev) => (prev === "desc" ? "asc" : "desc"));
-    }
-
-    const handleSentSort = () => {
-        setSentSortOrder((prev) => (prev === "desc" ? "asc" : "desc"));
-    }
-    const handleFilterChange = () => {
-        console.log("Filter button clicked");
-    }
-
-    // get cards details 
-    const getCard = async (cardId) => {
-        const response = await authFetch(`${BASE_URL}/kudo-card/${cardId}?user_id=${user.user_id}`);
-        if (!response.ok) {
-            throw new Error(`Failed to fetch card ${cardId}`);
-        }
-        return await response.json();
-    };
-
-    // get users info (name, email, role) from the id
-    const getUserInfo = async (userId) => {
-        try {
-            const response = await authFetch(`${BASE_URL}/users/${userId}`);
-            if (!response.ok) {
-                throw new Error(`Failed to fetch user ${userId}`);
-            }
-            const userData = await response.json();
-            return userData.name;
-        } catch (err) {
-            console.error(`Error fetching user ${userId}:`, err);
-            return "Unknown User";
-        }
-    };
+    const navigate = useNavigate();
     
+    const handleRejectedCardClick = (rejectionReason) => { setRejectionInfo(rejectionReason); };
+    const closeRejectionModal = () => { setRejectionInfo(null); };
+    const handleReceivedSort = () => { setReceivedSortOrder((prev) => (prev === "desc" ? "asc" : "desc"));}
+    const handleSentSort = () => { setSentSortOrder((prev) => (prev === "desc" ? "asc" : "desc"));}
+    const handleFilterChange = () => { console.log("Filter button clicked");}
+    const handleCourseManagement = () => navigate('/course-management');
+    const handleCourseAddition = () => setShowCourseModal(true);
+
+    const handleCourseSubmit = async (code) => {
+        const res = await courseSubmit(code);
+        return res;
+    }
+
     // get all kudos (sent and received) for this user
     const getKudos = useCallback(async () => {
         if (!user?.user_id) return;
@@ -105,24 +79,18 @@ function StudentView() {
                 })
             );
 
+            // get class list
+            const classList = await getClasses();
             const classNamesMap = {};
-                await Promise.all(
-                Array.from(new Set(cardDetails.map(k => k.class_id))).map(async (classId) => {
-                    try {
-                    const res = await authFetch(`${BASE_URL}/class/${classId}`);
-                    if (!res.ok) throw new Error(`Class fetch failed: ${res.status}`);
-                    const data = await res.json();
-                    classNamesMap[classId] = data.class[0]?.class_name || "Unknown Class";
-                    } catch (err) {
-                    console.error(err);
-                    classNamesMap[classId] = "Unknown Class";
-                    }
-                })
-            );
+            classList.forEach((c) => {
+                classNamesMap[c.classId] = c.name;
+            });
+            setHasClass(Object.keys(classNamesMap).length > 0 );
 
-            // format cards for display 
+            
             const formatKudo = (kudo) => {
-                // Format the created_at date
+
+                // format the created_at date
                 let formattedDate = "-";
                 if (kudo.created_at) {
                     try {
@@ -141,7 +109,9 @@ function StudentView() {
                     } catch (err) {
                         console.error('Error formatting date:', err);
                     }
-                } 
+                }
+
+                // format card data
                 return {
                     id: kudo.card_id,
                     class_id: kudo.class_id,
@@ -163,16 +133,14 @@ function StudentView() {
             const received = cardDetails
                 .filter(kudo => kudo.recipient_id === user.user_id && (kudo.status === "APPROVED" || kudo.status === "RECEIVED"))
                 .map(formatKudo);
-
             setSentKudos(sent);
             setReceivedKudos(received);
-
+            
         } catch (err) {
             console.error('Error fetching kudos:', err);
             setError('Failed to load kudos. Please try again.');
         } finally {
-            setLoading(false);
-        }
+            setLoading(false);}
     }, [user?.user_id, BASE_URL]);
 
     useEffect(() => {
@@ -195,7 +163,6 @@ function StudentView() {
         return sentSortOrder === "asc" ? dateA - dateB : dateB - dateA;
     });
 
-
     return (
         <div className="app-container">
             <title>KudoSpace Home</title>
@@ -205,11 +172,36 @@ function StudentView() {
                 {loading && <p>Loading kudos...</p>}
                 {error && <p style = {{ color: 'red' }}>{error}</p>}
 
-                {!loading && !error && (
+                {!loading && !error && hasClass && (
                     <>
                     <ReceivedKudosStudent received = {sortedReceived} />
                     <SentKudosStudent messages = {sortedSent} onRejectedCardClick={handleRejectedCardClick}/>
                     </>                 
+                )}
+
+                {!loading && !hasClass && !error && (user.role === 'INSTRUCTOR') && (
+                    <div style={{display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column"}}>
+                        <h2>You have not created any courses</h2>
+                        <button className="edit-btn" onClick={handleCourseManagement} style={{ width: "250px" }}>Create a Course</button>
+                    </div>
+                )}
+                {!loading && !hasClass && !error && (user.role === 'STUDENT') && (
+                    <div style={{display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column"}}>
+                        <h2>You are not registered to any courses</h2>
+                        <button className="edit-btn" onClick={handleCourseAddition} style={{ width: "300px" }}>Register for a course</button>
+                    </div>
+                )}
+
+                {showCourseModal && (
+                    <div className="modal-overlay-rev">
+                        <div className="code-modal">
+                            <CourseCodeModal
+                            open={showCourseModal}
+                            onClose={() => setShowCourseModal(false)}
+                            onSubmit={handleCourseSubmit}
+                            />
+                        </div>
+                    </div>
                 )}
 
             </div>

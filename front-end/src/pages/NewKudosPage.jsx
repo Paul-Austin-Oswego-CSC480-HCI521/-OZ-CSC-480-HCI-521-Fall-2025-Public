@@ -6,19 +6,17 @@ import { v4 as uuidv4 } from 'uuid';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import AutoFitText from '../components/AutoFitText';
+import CourseCodeModal from '../components/CourseCodeModal';
 
 function NewKudosPage({ onSubmit }) {
+    const [showCourseModal, setShowCourseModal] = useState(false);
+    const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+    const [loading, setLoading] = useState(true);
+    const [rosters, setRosters] = useState([]);
+    const [classes, setClasses] = useState([]);
+    const { user, courseSubmit, getClasses } = useUser();
     const navigate = useNavigate();
     const location = useLocation();
-    const { user } = useUser();
-    const BASE_URL = process.env.REACT_APP_API_BASE_URL;
-
-    const queryParams = new URLSearchParams(location.search);
-    const editCardId = queryParams.get('edit');
-
-    const [rosters, setRosters] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [classes, setClasses] = useState([]);
 
     const titleOptions = ['Well Done!', 'Nice Job!', 'Great Work!'];
     const imageMap = {
@@ -35,16 +33,15 @@ function NewKudosPage({ onSubmit }) {
         message: '',
     });
 
+    const queryParams = new URLSearchParams(location.search);
+    const editCardId = queryParams.get('edit');
+
+    const handleCourseManagement = () => navigate('/course-management');
+    const handleCourseAddition = () => setShowCourseModal(true);
+
     useEffect(() => {
-        authFetch(`${BASE_URL}/users/${user.user_id}/classes`)
-            .then(res => res.json())
-            .then(async (data) => {
-                const classProm = data.class_id.map(async (classId) => {
-                    const res = await authFetch(`${BASE_URL}/class/${classId}`);
-                    const data = await res.json();
-                    return { id: classId, name: data.class[0].class_name };
-                });
-                const classList = await Promise.all(classProm);
+        getClasses()
+            .then(async (classList) => {
                 setClasses(classList);
 
                 if (classList.length === 1) {
@@ -61,6 +58,7 @@ function NewKudosPage({ onSubmit }) {
                 setRosters(rosters);
                 setLoading(false);
             })
+            
             .catch(err => {
                 console.error("Failed to load class and roster data:", err);
                 setLoading(false);
@@ -172,17 +170,43 @@ function NewKudosPage({ onSubmit }) {
             .catch(err => console.error("Submission failed:", err));
     };
 
+    const handleCourseSubmit = async (code) => {
+        const res = await courseSubmit(code);
+        return res;
+    }
+
     if (loading) return <div className="app-container">Loading...</div>;
 
     if (!loading && classes.length === 0) {
         return (
             <div className="app-container">
                 <Header onCreateNew={handleCreateNew} />
-                <div className="main-content no-classes-container">
-                    <h2>You haven’t joined any classes yet!</h2>
-                    <p>
-                        Click the 'Add Course' button and type in your instructor-provided join code to join a class and start sending Kudos.
-                    </p>
+                <div className="main-content">
+
+                    {user.role === 'INSTRUCTOR' && (
+                        <div style={{display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column"}}>
+                            <h2>You have not created any courses</h2>
+                            <button className="edit-btn" onClick={handleCourseManagement} style={{ width: "250px" }}>Create a Course</button>
+                        </div>
+                    )}
+                    {user.role === 'STUDENT' && (
+                        <div style={{display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column"}}>
+                            <h2>You are not registered to any courses</h2>
+                            <button className="edit-btn" onClick={handleCourseAddition} style={{ width: "300px" }}>Register for a course</button>
+                        </div>
+                    )}
+
+                    {showCourseModal && (
+                        <div className="modal-overlay-rev">
+                            <div className="code-modal">
+                                <CourseCodeModal
+                                open={showCourseModal}
+                                onClose={() => setShowCourseModal(false)}
+                                onSubmit={handleCourseSubmit}
+                                />
+                            </div>
+                        </div>
+                    )}
                 </div>
                 <Footer />
             </div>

@@ -127,94 +127,97 @@ const handleClassUpdated = (updateInfo) => {
     <div className="app-container">
       <title>Manage Courses</title>
       <Header showNav={true} onCreateNew={handleNewKudos} />
-
-      <div
-        className="course-header-row"
-        style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
-      >
-        <div className="create-new-header">
-          <button className="back-button" onClick={() => navigate(-1)}>
-            ←
-          </button>
-          <h2>Course Management</h2>
-        </div>
-
-        <button
-          className="title-button"
-          onClick={() => setShowCreateModal(true)}
-          style={{ padding: "5px 5px" }}
+      <div className="main-content">
+        
+        <div
+          className="course-header-row"
+          style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
         >
-          Create New Course +
-        </button>
-      </div>
+          <div className="create-new-header">
+            <button className="back-button" onClick={() => navigate(-1)}>
+              ←
+            </button>
+            <h2>Course Management</h2>
+          </div>
 
-      <div className="course-management-container">
-        <div className="course-sidebar">
-          <h3>Active Classes</h3>
-          <ul className="course-list">
-            {classes.length > 0 ? (
-              classes.map((cls) => (
-                <li
-                  key={cls.class_id}
-                  className={cls.class_id === selectedClassId ? "selected" : ""}
-                  onClick={() => setSelectedClassId(cls.class_id)}
-                >
-                  {cls.class_name}
-                </li>
-              ))
-            ) : (
-              <p>No active classes.</p>
-            )}
-          </ul>
-
-          <h3>Archived Classes</h3>
-          <ul className="course-list">
-            {archivedClasses.length > 0 ? (
-              archivedClasses.map((cls) => (
-                <li
-                  key={cls.class_id}
-                  className={cls.class_id === selectedClassId ? "selected" : ""}
-                  onClick={() => setSelectedClassId(cls.class_id)}
-                >
-                  {cls.class_name}
-                </li>
-              ))
-            ) : (
-              <p>No archived classes.</p>
-            )}
-          </ul>
+          <button
+            className="title-button"
+            onClick={() => setShowCreateModal(true)}
+            style={{ padding: "5px 5px" }}
+          >
+            Create New Course +
+          </button>
         </div>
 
-        <div className="course-details-section">
-          {selectedClass ? (
-            <>
-              {console.log("Rendering ClassCard with selected class:", selectedClass)}
-              <ClassCard
-                classData={selectedClass}
-                isActive={new Date(selectedClass.end_date) >= new Date()}
-                professorId={userId}
-                onClassUpdated={handleClassUpdated}
-              />
-            </>
-          ) : (
-            <p>Select a course to manage.</p>
-          )}
-        </div>
-      </div>
+        <div className="course-management-container">
+          <div className="course-sidebar">
+            <h3>Active Classes</h3>
+            <ul className="course-list">
+              {classes.length > 0 ? (
+                classes.map((cls) => (
+                  <li
+                    key={cls.class_id}
+                    className={cls.class_id === selectedClassId ? "selected" : ""}
+                    onClick={() => setSelectedClassId(cls.class_id)}
+                  >
+                    {cls.class_name}
+                  </li>
+                ))
+              ) : (
+                <p>No active classes.</p>
+              )}
+            </ul>
 
-      {toast && (
-        <ToastMessage
-          message={toast.message}
-          type={toast.type}
-          onClose={() => setToast(null)}
+            <h3>Archived Classes</h3>
+            <ul className="course-list">
+              {archivedClasses.length > 0 ? (
+                archivedClasses.map((cls) => (
+                  <li
+                    key={cls.class_id}
+                    className={cls.class_id === selectedClassId ? "selected" : ""}
+                    onClick={() => setSelectedClassId(cls.class_id)}
+                  >
+                    {cls.class_name}
+                  </li>
+                ))
+              ) : (
+                <p>No archived classes.</p>
+              )}
+            </ul>
+          </div>
+
+          <div className="course-details-section">
+            {selectedClass ? (
+              <>
+                {console.log("Rendering ClassCard with selected class:", selectedClass)}
+                <ClassCard
+                  classData={selectedClass}
+                  isActive={new Date(selectedClass.end_date) >= new Date()}
+                  professorId={userId}
+                  onClassUpdated={handleClassUpdated}
+                />
+              </>
+            ) : (
+              <p>Select a course to manage.</p>
+            )}
+          </div>
+        </div>
+
+        {toast && (
+          <ToastMessage
+            message={toast.message}
+            type={toast.type}
+            onClose={() => setToast(null)}
+          />
+        )}
+
+        <CreateCourseModal
+          open={showCreateModal}
+          onClose={() => setShowCreateModal(false)}
+          onClassCreated={fetchClasses}
         />
-      )}
 
-      <CreateCourseModal
-        open={showCreateModal}
-        onClose={() => setShowCreateModal(false)}
-        onClassCreated={fetchClasses}
-      />
+      </div>
       <Footer/>
     </div>
   );

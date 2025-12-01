@@ -3,61 +3,132 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
+    const BASE_URL = process.env.REACT_APP_API_BASE_URL;
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [user, setUser] = useState(null);
 
-    const BASE_URL = process.env.REACT_APP_API_BASE_URL;
-    // const exampleUserId = "12345678-1234-1234-1234-123456789abc";
-
-  useEffect(() => {
-    const savedUser = localStorage.getItem('user');
-    if (!savedUser) {
-        setLoading(false);
-        return;
-    }
-
-    const parsedUser = JSON.parse(savedUser);
-    setUser(parsedUser);
-
-    const fetchUser = async () => {
-        try {
-            const res = await fetch(`${BASE_URL}/users/${user.user_id}`);
-            if (!res.ok) throw new Error("Failed to fetch user");
-            
-            const data = await res.json();
-            
-            setUser({
-                user_id: data.user_id,
-                email: data.email,
-                name: data.name,
-                role: data.role,
-                classes: data.classes || []
-            });
-        } catch (error) {
-            console.error("Error loading user:", error);
-            setError("Failed to load user");
-            setUser(null);
-            localStorage.removeItem('user');
-        } finally {
+    useEffect(() => {
+        const savedUser = localStorage.getItem('user');
+        if (!savedUser) {
             setLoading(false);
+            return;}
+
+        const parsedUser = JSON.parse(savedUser);
+        setUser(parsedUser);
+        const fetchUser = async () => {
+            try {
+                const res = await fetch(`${BASE_URL}/users/${user.user_id}`);
+                if (!res.ok) throw new Error("Failed to fetch user");
+                
+                const data = await res.json();
+                
+                setUser({
+                    user_id: data.user_id,
+                    email: data.email,
+                    name: data.name,
+                    role: data.role,
+                    classes: data.classes || []
+                });
+            } catch (error) {
+                console.error("Error loading user:", error);
+                setError("Failed to load user");
+                setUser(null);
+                localStorage.removeItem('user');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (!user?.user_id) return;
+        fetchUser();
+    }, []);
+
+    const saveUser = (userData) => {
+        setUser(userData);
+        if (userData) {
+            localStorage.setItem('user', JSON.stringify(userData));
+        } else {
+            localStorage.removeItem('user');
         }
     };
-    if (!user?.user_id) return;
-    fetchUser();
-  }, []);
 
-  const saveUser = (userData) => {
-    setUser(userData);
-    if (userData) {
-        localStorage.setItem('user', JSON.stringify(userData));
-    } else {
-        localStorage.removeItem('user');
+    // send request to join a new class
+    const courseSubmit = async (code) => {
+        console.log("Submitting join code:", code);
+        try {
+            const res = await authFetch(
+            `${BASE_URL}/class/enrollment/request?join_code=${code}&user_id=${user.user_id}`,
+            {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+            }
+            );
+
+            const data = await res.json();
+
+            if (res.status === 201) {
+            return { success: true, message: data.message || "Enrollment request submitted successfully!" };
+            } 
+            if (res.status === 404) {
+            return { success: false, message: data.error || "Invalid or expired join code." };
+            }
+            if (res.status === 409) {
+            return { success: false, message: data.error || "You're already registered for this course." };
+            }
+
+            return { success: false, message: data.error || "Failed to join class. Please try again." };
+        } catch (err) {
+            console.error("Error submitting join code:", err);
+            return { success: false, message: "Something went wrong. Please try again later." };
+        }
+    };
+
+    // get the list of classes the user is in
+    const getClasses = async () => {
+        return authFetch(`${BASE_URL}/users/${user.user_id}/classes`)
+            .then(res => res.json())
+            .then(async (data) => {
+                const classProm = data.class_id.map(async (classId) => {
+                    const res = await authFetch(`${BASE_URL}/class/${classId}`);
+                    const data = await res.json();
+                    return { id: classId, name: data.class[0].class_name };
+                });
+                const classList = await Promise.all(classProm);
+                return classList;
+            })
+            .catch(err => {
+                console.error("Failed to load classes", err);
+                return [];
+            });
     }
-  };
 
-  return (<UserContext.Provider value={{ user, setUser, loading, error }}>
-    {children}
+    // get cards details 
+    const getCard = async (cardId) => {
+        const response = await authFetch(`${BASE_URL}/kudo-card/${cardId}?user_id=${user.user_id}`);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch card ${cardId}`);
+        }
+        return await response.json();
+    };
+
+    // get a users info (name, email, role) from the id
+    const getUserInfo = async (userId) => {
+        try {
+            const response = await authFetch(`${BASE_URL}/users/${userId}`);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch user ${userId}`);
+            }
+            const userData = await response.json();
+            return userData.name;
+        } catch (err) {
+            console.error(`Error fetching user ${userId}:`, err);
+            return "Unknown User";
+        }
+    };
+
+    return (<UserContext.Provider value={{ user, setUser, loading, error, courseSubmit, getClasses, getCard, getUserInfo}}>
+        {children}
     </UserContext.Provider>);
 };
 

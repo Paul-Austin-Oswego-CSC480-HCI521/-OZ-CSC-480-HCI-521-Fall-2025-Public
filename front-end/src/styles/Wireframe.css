@@ -1031,7 +1031,7 @@
     background-color: white;
     color: white;
     font-family: 'Merriweather', serif;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 4px 8px #ccddbe;
     position: relative;
 }
 
@@ -1208,10 +1208,8 @@
   transform: scale(1.1);
 }
 
-
 /* footer layout */
 .footer {
-    margin-top: auto;
     background-color: white;
     color: black;
     text-align: center;
@@ -2101,4 +2099,5 @@ select:focus {
     border-radius: 8px;
     margin-bottom: 25px;
 }
+
 

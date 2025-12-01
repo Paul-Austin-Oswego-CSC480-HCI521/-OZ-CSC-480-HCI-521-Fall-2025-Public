@@ -312,7 +312,7 @@ function ReviewedKudosProf( {reviewedKudos = [], onSelect} ) {
                       <th>Sender</th>
                       <th>Recipient</th>
                       <th>Title</th>
-                      <th>Kudos Status (Approved, Rejected, etc.)</th>
+                      <th>Kudos Status (Approved, Rejected)</th>
                       <th>Date</th>
                     </tr>
                   </thead>

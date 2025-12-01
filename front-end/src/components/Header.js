@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Notification from './Notification';
 import '../styles/Wireframe.css';
-import { authFetch, useUser } from './UserContext';
+import {useUser} from './UserContext';
 import CourseCodeModal from './CourseCodeModal';
 
 function Header({ onCreateNew, showNav = true }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [showNotif, setShowNotif] = useState(false);
-  const { user, setUser } = useUser();
+  const { user, setUser, courseSubmit } = useUser();
   const [showCourseModal, setShowCourseModal] = useState(false);
   const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -28,35 +28,9 @@ function Header({ onCreateNew, showNav = true }) {
   };
 
   const handleCourseSubmit = async (code) => {
-  console.log("Submitting join code:", code);
-  try {
-    const res = await authFetch(
-      `${BASE_URL}/class/enrollment/request?join_code=${code}&user_id=${user.user_id}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-      }
-    );
-
-    const data = await res.json();
-
-    if (res.status === 201) {
-      return { success: true, message: data.message || "Enrollment request submitted successfully!" };
-    } 
-    if (res.status === 404) {
-      return { success: false, message: data.error || "Invalid or expired join code." };
-    }
-    if (res.status === 409) {
-      return { success: false, message: data.error || "You're already registered for this course." };
-    }
-
-    return { success: false, message: data.error || "Failed to join class. Please try again." };
-  } catch (err) {
-    console.error("Error submitting join code:", err);
-    return { success: false, message: "Something went wrong. Please try again later." };
+    const res = await courseSubmit(code);
+    return res;
   }
-};
-
 
   const isSelected = (path) => {
     if (path === '/home') {
@@ -273,3 +247,4 @@ function Header({ onCreateNew, showNav = true }) {
 }
 
 export default Header;
+

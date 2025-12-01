@@ -9,43 +9,28 @@ import SubmittedKudosProf from "../components/SubmittedKudosProf";
 import ProfReview from "../components/ProfReview";
 
 function ProfessorView() {
-    const BASE_URL = process.env.REACT_APP_API_BASE_URL;
-    const { user } = useUser();
-    const navigate = useNavigate();
-    const [reviewedKudos, setReviewedKudos] = useState([]);
+    const { user, getClasses, getCard, getUserInfo } = useUser();
     const [submittedKudos, setSubmittedKudos] = useState([]);
     const [selectedKudo, setSelectedKudo] = useState(null);
+    const [reviewedKudos, setReviewedKudos] = useState([]);
+    const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+    const [hasClass, setHasClass] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
-    const getCard = async (cardId) => {
-        const response = await authFetch(`${BASE_URL}/kudo-card/${cardId}?user_id=${user.user_id}`);
-        if (!response.ok) {
-            throw new Error(`Failed to authFetch card ${cardId}`);
-        }
-        return await response.json();
-    };
+    const handleNewKudos = () => {navigate('/professorView/new-kudos');};
+    const handleCourseManagement = () => navigate('/course-management');
+    const handleSelectKudos = (kudos) => {setSelectedKudo(kudos)};
 
-    const getUserInfo = async (userId) => {
-        try {
-            const response = await authFetch(`${BASE_URL}/users/${userId}`);
-            if (!response.ok) {
-                throw new Error(`Failed to authFetch user ${userId}`);
-            }
-            const userData = await response.json();
-            return userData.name;
-        } catch (err) {
-            console.error(`Error fetching user ${userId}:`, err);
-            return "Unknown User";
-        }
-    };
-
+    // get all the cards for this user 
     const getKudos = useCallback(async () => {
         if (!user?.user_id) return;
         setLoading(true);
         setError(null);
         try {
 
+            // get cards from db
             const subRes = await authFetch(`${BASE_URL}/kudo-card/list/submitted?professor_id=${user.user_id}`);
             const subList = await subRes.json();
             const revRes = await authFetch(`${BASE_URL}/kudo-card/list/reviewed?professor_id=${user.user_id}`);
@@ -54,18 +39,21 @@ function ProfessorView() {
                 throw new Error('Failed to authFetch card lists');
             }
 
+            // gets card info
             const subCardIds = subList.card_id || [];
             const revCardIds = revList.card_id || [];
             const allCardsIds = [...new Set([...subCardIds, ...revCardIds])];
             const cardDetails = await Promise.all(allCardsIds.map(cardId => 
                 getCard(cardId)));
 
+            // sort by date
             cardDetails.sort((a, b) => {
                 const dateA = new Date(a.created_at?.replace(/\[UTC\]$/, '') || 0);
                 const dateB = new Date(b.created_at?.replace(/\[UTC\]$/, '') || 0);
                 return dateB - dateA;
             });
 
+            // get the name of each user
             const userIds = new Set();
             cardDetails.forEach(kudo => {
                 userIds.add(kudo.sender_id);
@@ -77,22 +65,18 @@ function ProfessorView() {
                     userNamesMap[userId] = await getUserInfo(userId);
                 })
             );
+
+            // get class list
+            const classList = await getClasses();
             const classNamesMap = {};
-            await Promise.all(
-            Array.from(new Set(cardDetails.map(k => k.class_id))).map(async (classId) => {
-                try {
-                const res = await authFetch(`${BASE_URL}/class/${classId}`);
-                if (!res.ok) throw new Error(`Class fetch failed: ${res.status}`);
-                const data = await res.json();
-                classNamesMap[classId] = data.class[0]?.class_name || "Unknown Class";
-                } catch (err) {
-                console.error(err);
-                classNamesMap[classId] = "Unknown Class";
-                }
-            })
-            );
+            classList.forEach((c) => {
+                classNamesMap[c.id] = c.name;
+            });
+            setHasClass(Object.keys(classNamesMap).length > 0 );
 
             const formatKudo = (kudo) => {
+
+                // format the created_at date
                 let formattedDate = "-";
                 if (kudo.created_at) {
                     try {
@@ -112,6 +96,8 @@ function ProfessorView() {
                         console.error('Error formatting date:', err);
                     }
                 } 
+
+                // format card data for display 
                 return {
                     id: kudo.card_id,
                     class_id: kudo.class_id,
@@ -135,51 +121,51 @@ function ProfessorView() {
                 .map(formatKudo);
             setReviewedKudos(rev);
             setSubmittedKudos(sub);
-
+            
         } catch (err) {
             console.error('Error fetching kudos:', err);
             setError('Failed to load kudos. Please try again.');
         } finally {
-            setLoading(false);
-        }
+            setLoading(false);}
     }, [user?.user_id, BASE_URL]);
 
     useEffect(() => {
         if (!user?.user_id) return;
-
         Promise.all([getKudos()])
     }, [getKudos, user?.user_id]);
-
-    const handleNewKudos = () => {
-        navigate('/professorView/new-kudos');
-    };
-
-    const handleSelectKudos = (kudos) => {
-        setSelectedKudo(kudos)
-    };
 
     return (
         <div className="app-container">
             <title>KudoSpace Home</title>
             <Header onCreateNew={handleNewKudos} />
-            <main>
-                <div className="main-content">
-                <>
-                    <SubmittedKudosProf submitted={submittedKudos} onSelect={handleSelectKudos} />
-                    <ReviewedKudosProf reviewedKudos={reviewedKudos} onSelect={handleSelectKudos} />
-                </>
-                {/* )} */}
-            </div></main>
+   
+            <div className="main-content">
+                {loading && <p>Loading kudos...</p>}
+                {!loading && hasClass && (
+                    <>
+                        <SubmittedKudosProf submitted={submittedKudos} onSelect={handleSelectKudos} />
+                        <ReviewedKudosProf reviewedKudos={reviewedKudos} onSelect={handleSelectKudos} />
+                    </>
+                )}
 
-            {selectedKudo && (
-                <div className="modal-overlay-rev">
-                    <div className="review-modal">
-                        <ProfReview initialData={selectedKudo} onClose={() => {
-                            setSelectedKudo(null);
-                            getKudos();}} />
+                {!loading && !hasClass && (
+                    <div style={{display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column"}}>
+                        <h2>You have not created any courses</h2>
+                        <button className="edit-btn" onClick={handleCourseManagement} style={{ width: "250px" }}>Create a Course</button>
                     </div>
-                </div>
-            )}
+                )}
+
+                {!loading && selectedKudo && (
+                    <div className="modal-overlay-rev">
+                        <div className="review-modal">
+                            <ProfReview initialData={selectedKudo} onClose={() => {
+                                setSelectedKudo(null);
+                                getKudos();}} />
+                        </div>
+                    </div>
+                )}
+
+            </div>
 
             <Footer />
         </div>
