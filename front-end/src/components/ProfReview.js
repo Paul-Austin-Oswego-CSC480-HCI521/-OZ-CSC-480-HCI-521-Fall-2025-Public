@@ -177,13 +177,13 @@ function ProfReview({ initialData, onClose }) {
                             />
                             </div>
 
-                            <div style={{ fontSize: "0.85rem", opacity: 0.7 }}>
+                            <div style={{ fontSize: "0.85rem", opacity: 0.7, padding: "10px" }}>
                                 {formData.note.length}/500
                             </div>
                         </div>   
                     )}
 
-                    <button type="submit" className="submit-btn">
+                    <button type="submit" className="approve-reject" style={{width: "100%"}}>
                         Submit
                     </button>   
                 </form>

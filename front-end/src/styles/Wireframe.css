@@ -144,6 +144,7 @@
     gap: 0.5rem;
 }
 
+.sb2,
 .create-class-modal .submit-btn {
     background-color: #CCDDBE;
     border: none;
@@ -163,6 +164,7 @@
     gap: 0.5rem;
 }
 
+.sb2:hover,
 .create-class-modal .submit-btn:hover {
     background-color: #093B3B;
     color: white;
@@ -559,8 +561,8 @@
 }
 
 .icon-btn:hover {
-    background: white;
-    color: #B1D2D3;
+    background: transparent;
+    opacity: 0.5;
 }
 
 .icon-btn.selected {
@@ -998,19 +1000,21 @@
 .received-kudos,
 .sent-kudos {
     overflow-y: auto;
-    flex: 1;
     gap: 20px;
     border: 2px solid #fafdf2;
-    padding: 20px 40px;
+    padding: 0px 20px;
     border-radius: 8px;
     background-color: #fafdf2;
-    min-height: 150px;
+    min-height: 75px;
     max-height: 500px;
 }
+
 
 .received-kudos h2,
 .sent-kudos h2 {
     font-family: 'Merriweather', serif;
+    display: flex;
+    flex-direction: row;
 }
 
 .wireframe-box {
@@ -1143,15 +1147,18 @@
 }
 
 .title-button-CC {
+    display: flex;
+    flex: 1;
     padding: 14px 28px;
     font-size: 18px;
     font-family: 'Poppins', sans-serif;
     font-weight: bold;
     border-radius: 6px;
-    border: 2px solid #093B3B;
-    background-color: white;
+    border: 2px solid #ebebeb;
+    background-color: #ebebeb;
     color: black;
     cursor: pointer;
+    justify-content: center;
     transition: background-color 0.3s ease, color 0.3s ease;
     user-select: none;
     box-shadow: none;
@@ -1915,7 +1922,6 @@ select:focus {
 .review-page form {
     display: flex;
     flex-direction: column;
-    gap: 20px;
     width: 100%;
 }
 

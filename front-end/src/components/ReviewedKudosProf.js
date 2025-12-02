@@ -3,27 +3,26 @@ import { useUser, authFetch } from "./UserContext";
 
 function ReviewedKudosProf( {reviewedKudos = [], onSelect} ) {
     const [selectedRows, setSelectedRows] = useState([]);
-
-    const [showFilter, setShowFilter] = useState(false);
-    
     const [selectedClass, setSelectedClass] = useState("");
-    const [selectedRecipient, setSelectedRecipient] = useState("");
     const [selectedStatus, setSelectedStatus] = useState("");
+    const [selectedRecipient, setSelectedRecipient] = useState("");
     const [selectedTimePeriod, setSelectedTimePeriod] = useState("");
 
     const [showSort, setShowSort] = useState(false);
+    const [showFilter, setShowFilter] = useState(false);
     const [selectedSort, setSelectedSort] = useState("newest");
 
-    const { user } = useUser();
     const [availableRecipients, setAvailableRecipients] = useState([]);
     const [availableClasses, setAvailableClasses] = useState([]);
+
+    const { user } = useUser();
+    const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+    const [isCollapsed, setIsCollapsed] = useState(false);
 
     useEffect(() => {
       const fetchClasses = async () => {
         if (!user?.user_id) return;
         try {
-          const BASE_URL = process.env.REACT_APP_API_BASE_URL;
-
           const [activeRes, archivedRes] = await Promise.all([
             authFetch(`${BASE_URL}/users/${user.user_id}/classes?is_archived=false`),
             authFetch(`${BASE_URL}/users/${user.user_id}/classes?is_archived=true`),
@@ -68,25 +67,25 @@ function ReviewedKudosProf( {reviewedKudos = [], onSelect} ) {
       fetchClasses();
     }, [user]);
 
-  useEffect(() => {
-    if (!selectedClass) {
-      setAvailableRecipients([]);
-      return;
-    }
+    useEffect(() => {
+      if (!selectedClass) {
+        setAvailableRecipients([]);
+        return;
+      }
 
-    const cls = availableClasses.find(c => c.class_id === selectedClass);
-    if (!cls || !cls.students) { // <-- added guard
-      setAvailableRecipients([]);
-      return;
-    }
+      const cls = availableClasses.find(c => c.class_id === selectedClass);
+      if (!cls || !cls.students) { // <-- added guard
+        setAvailableRecipients([]);
+        return;
+      }
 
-    const students = cls.students
-      .filter(s => s.role?.toLowerCase() === "student")
-      .map(s => s.name);
+      const students = cls.students
+        .filter(s => s.role?.toLowerCase() === "student")
+        .map(s => s.name);
 
-    setAvailableRecipients(students);
-    setSelectedRecipient("");
-  }, [selectedClass, availableClasses]);
+      setAvailableRecipients(students);
+      setSelectedRecipient("");
+    }, [selectedClass, availableClasses]);
 
     const filteredKudos = reviewedKudos.filter(k => {
       if (selectedClass && String(k.class_id) !== selectedClass) return false;
@@ -109,7 +108,6 @@ function ReviewedKudosProf( {reviewedKudos = [], onSelect} ) {
       return true;
     });
 
-
     const sortedKudos = [...filteredKudos].sort((a, b) => {
         if (selectedSort === "newest") {
             return new Date(b.date) - new Date(a.date);
@@ -128,7 +126,28 @@ function ReviewedKudosProf( {reviewedKudos = [], onSelect} ) {
     return (
         <section className="sent-kudos">
             <div className="section-header">
-            <h2>Reviewed Kudos - {filteredKudos.length}</h2>
+            <h2 style={{justifyContent: "center", alignItems: "center", margin: "10px"}} > Reviewed Kudos - {filteredKudos.length}
+              <button style={{height: "50px"}}
+                onClick={() => setIsCollapsed(prev => !prev)}
+                className="icon-btn"
+                aria-label={isCollapsed ? "Expand table" : "Collapse table"}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={{ transform: isCollapsed ? 'rotate(0deg)' : 'rotate(180deg)' }}
+                >
+                  <polyline points="18 15 12 9 6 15" />
+                </svg>
+              </button>
+            </h2>
             <div className="filter-sort-controls">
             <div className = "filter-dropdown-container">
                 <button onClick={() => setShowFilter((prev) => !prev)} 
@@ -304,78 +323,81 @@ function ReviewedKudosProf( {reviewedKudos = [], onSelect} ) {
             </div>
             </div>
             </div>
-            <div className = "table-container">
-                <table>
-                  <thead>
-                    <tr>
-                      {/* <th>Class</th> */}
-                      <th>Sender</th>
-                      <th>Recipient</th>
-                      <th>Title</th>
-                      <th>Kudos Status (Approved, Rejected)</th>
-                      <th>Date</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredKudos.length === 0 ? (
+            {!isCollapsed && (
+              <div className = "table-container">
+                  <table>
+                    <thead>
                       <tr>
-                        <td colSpan={6} className="emptyTable">
-                          No Reviewed Kudos yet.
-                        </td>
+                        {/* <th>Class</th> */}
+                        <th>Sender</th>
+                        <th>Recipient</th>
+                        <th>Title</th>
+                        <th>Kudos Status (Approved, Rejected)</th>
+                        <th>Date</th>
                       </tr>
-                    ) : (
-                      sortedKudos.map((k, i) => {
-                        const cls = availableClasses.find(c => c.class_id === k.class_id);
-                        // console.log("k:", k);
-                        const className = cls?.class_name;
-                        // console.log("className: ", className);
+                    </thead>
+                    <tbody>
+                      {filteredKudos.length === 0 ? (
+                        <tr>
+                          <td colSpan={6} className="emptyTable">
+                            No Reviewed Kudos yet.
+                          </td>
+                        </tr>
+                      ) : (
+                        sortedKudos.map((k, i) => {
+                          const cls = availableClasses.find(c => c.class_id === k.class_id);
+                          // console.log("k:", k);
+                          const className = cls?.class_name;
+                          // console.log("className: ", className);
 
-                        return (
-                          <tr
-                            className={`received-kudos-row ${selectedRows.includes(i) ? "selected-row" : ""}`}
-                            key={k.card_id}
-                            role="button"
-                            tabIndex={0}
-                            onClick={() => {
-                              setSelectedRows(prev => prev.includes(i) ? prev.filter(idx => idx !== i) : [...prev, i]);
-                              if(onSelect) onSelect(k);
-                            }}
-                            onKeyDown={e => {
-                              if(e.key === "Enter" || e.key === " ") {
+                          return (
+                            <tr
+                              className={`received-kudos-row ${selectedRows.includes(i) ? "selected-row" : ""}`}
+                              key={k.card_id}
+                              role="button"
+                              tabIndex={0}
+                              onClick={() => {
                                 setSelectedRows(prev => prev.includes(i) ? prev.filter(idx => idx !== i) : [...prev, i]);
                                 if(onSelect) onSelect(k);
-                              }
-                            }}
-                          >
-                            {/* <td className="reviewed-kudos-table-data">{k.class_name}</td> */}
-                            <td className="reviewed-kudos-table-data">{k.sender}</td>
-                            <td className="reviewed-kudos-table-data">{k.recipient}</td>
-                            <td className="reviewed-kudos-table-data">{k.title}</td>
-
-                            <td
-                              className={`reviewed-kudos-status ${
-                                k.status === "APPROVED" || k.status === "RECEIVED" ? "approved"
-                                : "denied"
-                              } ${selectedRows.includes(i) ? "row-read" : ""}`}
+                              }}
+                              onKeyDown={e => {
+                                if(e.key === "Enter" || e.key === " ") {
+                                  setSelectedRows(prev => prev.includes(i) ? prev.filter(idx => idx !== i) : [...prev, i]);
+                                  if(onSelect) onSelect(k);
+                                }
+                              }}
                             >
-                              {k.status === "APPROVED" || k.status === "RECEIVED" ? (
-                                <span>Approved</span>
-                              ) : (
-                                <>
-                                  <span>Rejected:</span>{" "}
-                                  {k.professor_note || "No reason provided"}
-                                </>
-                              )}
-                            </td>
+                              {/* <td className="reviewed-kudos-table-data">{k.class_name}</td> */}
+                              <td className="reviewed-kudos-table-data">{k.sender}</td>
+                              <td className="reviewed-kudos-table-data">{k.recipient}</td>
+                              <td className="reviewed-kudos-table-data">{k.title}</td>
 
-                            <td className="reviewed-kudos-table-data">{k.date}</td>
-                          </tr>
-                        );
-                      })
-                    )}
-                  </tbody>
-                </table>
-            </div>
+                              <td
+                                className={`reviewed-kudos-status ${
+                                  k.status === "APPROVED" || k.status === "RECEIVED" ? "approved"
+                                  : "denied"
+                                } ${selectedRows.includes(i) ? "row-read" : ""}`}
+                              >
+                                {k.status === "APPROVED" || k.status === "RECEIVED" ? (
+                                  <span>Approved</span>
+                                ) : (
+                                  <>
+                                    <span>Rejected:</span>{" "}
+                                    {k.professor_note || "No reason provided"}
+                                  </>
+                                )}
+                              </td>
+
+                              <td className="reviewed-kudos-table-data">{k.date}</td>
+                            </tr>
+                          );
+                        })
+                      )}
+                    </tbody>
+                  </table>
+              </div>
+            )}
+
         </section>
     );
 }

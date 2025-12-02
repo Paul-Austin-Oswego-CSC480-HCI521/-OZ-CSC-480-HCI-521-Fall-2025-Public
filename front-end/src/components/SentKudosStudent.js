@@ -3,19 +3,21 @@ import { useUser, authFetch } from "./UserContext";
 import AutoFitText from '../components/AutoFitText';
 
 function SentKudosStudent( {messages = []} ) {
+
+    const [availableRecipients, setAvailableRecipients] = useState([]);
+    const [selectedTimePeriod, setSelectedTimePeriod] = useState("");
+    const [selectedRecipient, setSelectedRecipient] = useState("");
+    const [rejectionReason, setRejectionReason] = useState(null);
+    const [availableClasses, setAvailableClasses] = useState([]);
+    const [selectedSort, setSelectedSort] = useState("newest");
+    const [selectedStatus, setSelectedStatus] = useState("");
+    const [selectedClass, setSelectedClass] = useState("");
     const [selectedCard, setSelectedCard] = useState(null);
+    const [isCollapsed, setIsCollapsed] = useState(false);
     const [selectedRows, setSelectedRows] = useState([]);
     const [showFilter, setShowFilter] = useState(false);
-    const [selectedClass, setSelectedClass] = useState("");
-    const [selectedRecipient, setSelectedRecipient] = useState("");
-    const [selectedStatus, setSelectedStatus] = useState("");
-    const [selectedTimePeriod, setSelectedTimePeriod] = useState("");
     const [showSort, setShowSort] = useState(false);
-    const [selectedSort, setSelectedSort] = useState("newest");
     const { user } = useUser();
-    const [rejectionReason, setRejectionReason] = useState(null);
-    const [availableRecipients, setAvailableRecipients] = useState([]);
-    const [availableClasses, setAvailableClasses] = useState([]);
 
     const imageMap = {
       'Well Done!': '/images/wellDoneNew.png',
@@ -141,7 +143,28 @@ function SentKudosStudent( {messages = []} ) {
     return (
     <section className="sent-kudos">
       <div className="section-header">
-        <h2>Sent Kudos - {filteredKudos.length}</h2>
+        <h2 style={{justifyContent: "center", alignItems: "center", margin: "10px"}}> Sent Kudos - {filteredKudos.length}
+            <button style={{height: "50px"}}
+              onClick={() => setIsCollapsed(prev => !prev)}
+              className="icon-btn"
+              aria-label={isCollapsed ? "Expand table" : "Collapse table"}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                style={{ transform: isCollapsed ? 'rotate(0deg)' : 'rotate(180deg)' }}
+              >
+                <polyline points="18 15 12 9 6 15" />
+              </svg>
+            </button>
+        </h2>
         <div className="filter-sort-controls">
             <div className = "filter-dropdown-container">
                 <button onClick={() => setShowFilter((prev) => !prev)} 
@@ -311,74 +334,75 @@ function SentKudosStudent( {messages = []} ) {
       </div>
     </div>
 
-    <div className = "table-container">
-      <table>
-        <thead>
-          <tr>
-            {/* <th>Class</th> */}
-            <th>Recipient</th>
-            <th>Title</th>
-            <th>Kudos Status (Approved, Rejected, Received, Pending)</th>
-            <th>Date</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredKudos.length === 0 ? (
+    {!isCollapsed && (
+      <div className = "table-container">
+        <table>
+          <thead>
             <tr>
-              <td colSpan={4} className="emptyTable">
-                No sent Kudos yet.
-              </td>
+              {/* <th>Class</th> */}
+              <th>Recipient</th>
+              <th>Title</th>
+              <th>Kudos Status (Approved, Rejected, Received, Pending)</th>
+              <th>Date</th>
             </tr>
-          ) : (
-            sortedKudos.map((k, i) => (
-              <tr
-                className={`received-kudos-row ${
-                  selectedRows.includes(i) ? "selected-row" : ""}`}
-                key={k.id}
-                role="button"
-                tabIndex={0}
-                onClick={() => handleCardClick(k, i)}
-                  onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                          handleCardClick(k, i);
-                      }
-                }}
-              >
-                {/* <td className="reviewed-kudos-table-data">{k.class_name}</td> */}
-                <td className="reviewed-kudos-table-data">{k.recipient}</td>
-                <td className="reviewed-kudos-table-data">{k.title}</td>
-                <td
-                  className={`reviewed-kudos-status ${
-                    k.status === "APPROVED"
-                      ? "approved"
-                      : k.status === "DENIED"
-                      ? "denied"
-                      : k.status === "RECEIVED" 
-                      ? "received" 
-                      : "pending"
-                  } ${selectedRows.includes(i) ? "row-read" : ""}`}
-                >
-                  {k.status === "APPROVED" ? (
-                    <span>Approved</span>
-                  ) : k.status === "DENIED" ? (
-                    <>
-                      <span>Rejected:</span>{" "}
-                      {k.professor_note || "No reason provided"}
-                    </>
-                  ) : k.status === "RECEIVED" ? (
-                    <span>Received</span>
-                  ) : (
-                    <span>Pending</span>
-                  )}
+          </thead>
+          <tbody>
+            {filteredKudos.length === 0 ? (
+              <tr>
+                <td colSpan={4} className="emptyTable">
+                  No sent Kudos yet.
                 </td>
-                <td className="reviewed-kudos-table-data">{k.date}</td>
               </tr>
-            ))
-          )}
-        </tbody>
-      </table>
-    </div>
-
+            ) : (
+              sortedKudos.map((k, i) => (
+                <tr
+                  className={`received-kudos-row ${
+                    selectedRows.includes(i) ? "selected-row" : ""}`}
+                  key={k.id}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => handleCardClick(k, i)}
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                            handleCardClick(k, i);
+                        }
+                  }}
+                >
+                  {/* <td className="reviewed-kudos-table-data">{k.class_name}</td> */}
+                  <td className="reviewed-kudos-table-data">{k.recipient}</td>
+                  <td className="reviewed-kudos-table-data">{k.title}</td>
+                  <td
+                    className={`reviewed-kudos-status ${
+                      k.status === "APPROVED"
+                        ? "approved"
+                        : k.status === "DENIED"
+                        ? "denied"
+                        : k.status === "RECEIVED" 
+                        ? "received" 
+                        : "pending"
+                    } ${selectedRows.includes(i) ? "row-read" : ""}`}
+                  >
+                    {k.status === "APPROVED" ? (
+                      <span>Approved</span>
+                    ) : k.status === "DENIED" ? (
+                      <>
+                        <span>Rejected:</span>{" "}
+                        {k.professor_note || "No reason provided"}
+                      </>
+                    ) : k.status === "RECEIVED" ? (
+                      <span>Received</span>
+                    ) : (
+                      <span>Pending</span>
+                    )}
+                  </td>
+                  <td className="reviewed-kudos-table-data">{k.date}</td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+    )}
 
     {selectedCard && (
             <div className="modal-overlay-rev" onClick={closeModal}>

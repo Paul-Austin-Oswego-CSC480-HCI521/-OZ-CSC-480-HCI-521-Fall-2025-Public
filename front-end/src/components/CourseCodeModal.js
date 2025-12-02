@@ -28,30 +28,24 @@ function CourseCodeModal({ open, onClose, onSubmit }) {
   return (
     <div className="review-page">
       <div className="review-page">
+
         <div className="header-row">
-          <button onClick={onClose} className="icon-btn">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="m12 19-7-7 7-7" />
-              <path d="M19 12H5" />
-            </svg>
-          </button>
-          <h2>Enter Course Code</h2>
+          <div className="form-group">
+              <button
+                  className="close-btn"
+                  style={{backgroundColor: "white"}}
+                  onClick={onClose}
+                  aria-label="Close kudos modal">
+                  ✖
+              </button>
+          </div>
         </div>
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label>Course Code</label>
-            <input
+            <label>Class Code</label>
+            <div className="button-row" style={{margin: "0px"}}>
+              <input
               type="text"
               className="textBox"
               value={courseCode}
@@ -59,8 +53,9 @@ function CourseCodeModal({ open, onClose, onSubmit }) {
               placeholder="Enter course code"
               required
             />
+            <button className="sb2">Submit</button>
+            </div>
           </div>
-
           {statusMessage && (
             <div
               className={`status-message ${
@@ -70,13 +65,6 @@ function CourseCodeModal({ open, onClose, onSubmit }) {
               {statusMessage}
             </div>
           )}
-
-          <div className="button-row">
-            <button type="submit" className="submit-btn">Submit</button>
-            <button type="button" className="submit-btn" onClick={onClose}>
-              Cancel
-            </button>
-          </div>
         </form>
       </div>
     </div>
