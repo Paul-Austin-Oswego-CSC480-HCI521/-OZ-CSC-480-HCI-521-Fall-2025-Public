@@ -4,10 +4,12 @@ import com.kudo.model.User;
 
 import java.util.UUID;
 
+import java.security.Principal;
+
 /**
  * Authenticated user context injected by AuthenticationFilter
  */
-public class UserContext {
+public class UserContext implements Principal {
     private final UUID user_id;
     private final String email;
     private final String name;
@@ -22,6 +24,11 @@ public class UserContext {
         this.role = role;
     }
 
+    @Override
+    public String getName() {
+        return this.name;
+    }
+
     public UUID getUser_id() {
         return user_id;
     }
@@ -30,7 +37,7 @@ public class UserContext {
         return email;
     }
 
-    public String getName() {
+    public String getUserName() {
         return name;
     }
 

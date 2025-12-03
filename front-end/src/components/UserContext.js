@@ -9,20 +9,18 @@ export const UserProvider = ({ children }) => {
     const [user, setUser] = useState(null);
 
     useEffect(() => {
-        const savedUser = localStorage.getItem('user');
+        const savedUser = localStorage.getItem('jwt_token');
         if (!savedUser) {
             setLoading(false);
             return;}
 
-        const parsedUser = JSON.parse(savedUser);
-        setUser(parsedUser);
         const fetchUser = async () => {
             try {
-                const res = await fetch(`${BASE_URL}/users/${user.user_id}`);
+                console.log(savedUser);
+                const res = await authFetch(`${BASE_URL}/auth/me`);
                 if (!res.ok) throw new Error("Failed to fetch user");
-                
+    
                 const data = await res.json();
-                
                 setUser({
                     user_id: data.user_id,
                     email: data.email,
@@ -30,28 +28,20 @@ export const UserProvider = ({ children }) => {
                     role: data.role,
                     classes: data.classes || []
                 });
+
             } catch (error) {
                 console.error("Error loading user:", error);
                 setError("Failed to load user");
                 setUser(null);
-                localStorage.removeItem('user');
+                localStorage.removeItem('jwt_token');
             } finally {
                 setLoading(false);
             }
         };
 
-        if (!user?.user_id) return;
         fetchUser();
-    }, []);
+    }, [BASE_URL]);
 
-    const saveUser = (userData) => {
-        setUser(userData);
-        if (userData) {
-            localStorage.setItem('user', JSON.stringify(userData));
-        } else {
-            localStorage.removeItem('user');
-        }
-    };
 
     // send request to join a new class
     const courseSubmit = async (code) => {
@@ -132,6 +122,7 @@ export const UserProvider = ({ children }) => {
     </UserContext.Provider>);
 };
 
+// make a fetch request with the jwt token in the header
 export const authFetch = async (url, options = {}) => {
 
     // get token from localstroage 

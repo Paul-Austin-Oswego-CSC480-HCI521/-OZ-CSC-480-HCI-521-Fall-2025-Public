@@ -12,8 +12,10 @@ import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.Provider;
-
+import jakarta.ws.rs.core.SecurityContext;
+import java.security.Principal;
 import java.util.UUID;
+
 
 /**
  * Validates JWT tokens on all requests except /api/auth/**
@@ -32,20 +34,17 @@ public class AuthenticationFilter implements ContainerRequestFilter {
     @Override
     public void filter(ContainerRequestContext requestContext) {
         String path = requestContext.getUriInfo().getPath();
-
-        if (path.startsWith("/auth") || path.equals("/auth")) {
+        if (path.equals("/auth/google") || path.equals("/auth/health")){
             return;
         }
 
         String authHeader = requestContext.getHeaderString(AUTHORIZATION_HEADER);
-
         if (authHeader == null || !authHeader.startsWith(BEARER_PREFIX)) {
             abortWithUnauthorized(requestContext, "Missing or invalid Authorization header");
             return;
         }
 
         String token = authHeader.substring(BEARER_PREFIX.length()).trim();
-
         if (token.isEmpty()) {
             abortWithUnauthorized(requestContext, "Empty token");
             return;
@@ -60,12 +59,36 @@ public class AuthenticationFilter implements ContainerRequestFilter {
             String google_id = jwtUtil.getGoogleId(decodedJWT);
             User.Role role = User.Role.valueOf(jwtUtil.getRole(decodedJWT));
 
-            UserContext userContext = new UserContext(user_id, email, name, google_id, role);
+            final UserContext userContext = new UserContext(user_id, email, name, google_id, role);
             requestContext.setProperty(USER_CONTEXT_PROPERTY, userContext);
 
+            requestContext.setSecurityContext(new SecurityContext() {
+                @Override
+                public Principal getUserPrincipal() {
+                    return userContext;
+                }
+
+                @Override
+                public boolean isUserInRole(String roleString) {
+                    return userContext.getRole().name().equals(roleString);
+                }
+
+                @Override
+                public boolean isSecure() {
+                    return requestContext.getUriInfo().getRequestUri().getScheme().equals("https");
+                }
+
+                @Override
+                public String getAuthenticationScheme() {
+                    return "Bearer";
+                }
+            });
+
         } catch (JWTVerificationException e) {
+            System.out.println("JWT verification failed: " + e.getMessage());
             abortWithUnauthorized(requestContext, "Invalid or expired token: " + e.getMessage());
         } catch (Exception e) {
+            System.out.println("Token validation error: " + e.getMessage());
             abortWithUnauthorized(requestContext, "Token validation error: " + e.getMessage());
         }
     }

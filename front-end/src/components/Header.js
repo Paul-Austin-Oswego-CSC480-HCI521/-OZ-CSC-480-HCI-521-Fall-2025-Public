@@ -21,7 +21,7 @@ function Header({ onCreateNew, showNav = true }) {
 
   const handleLogOut = () => {
     setUser(null);
-    localStorage.removeItem('user');
+    localStorage.removeItem('jwt_token');
     setTimeout(() => {
       navigate('/home');
     }, 0);

@@ -11,10 +11,10 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
-import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -76,20 +76,19 @@ public class AuthResource {
     @GET
     @Path("me")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getCurrentUser(@Context ContainerRequestContext requestContext) {
+    public Response getCurrentUser(@Context SecurityContext securityContext) {
         try {
-            UserContext userContext = AuthenticationFilter.getUserContext(requestContext);
-
+            UserContext userContext = (UserContext) securityContext.getUserPrincipal();
             if (userContext == null) {
                 return Response.status(Response.Status.UNAUTHORIZED)
                         .entity("{\"error\": \"No user context found\"}")
                         .build();
             }
-
+            
             AuthDTO.UserInfo userInfo = new AuthDTO.UserInfo(
                     userContext.getUser_id(),
                     userContext.getEmail(),
-                    userContext.getName(),
+                    userContext.getUserName(),
                     userContext.getGoogle_id(),
                     userContext.getRole()
             );
@@ -97,6 +96,7 @@ public class AuthResource {
             return Response.ok(userInfo).build();
 
         } catch (Exception e) {
+            System.out.println(e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                     .entity("{\"error\": \"Failed to retrieve user info: " + e.getMessage() + "\"}")
                     .build();

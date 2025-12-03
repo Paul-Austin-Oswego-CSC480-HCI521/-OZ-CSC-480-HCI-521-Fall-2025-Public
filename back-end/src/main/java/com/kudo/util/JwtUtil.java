@@ -58,6 +58,7 @@ public class JwtUtil {
         this.algorithm = Algorithm.HMAC256(SECRET);
         this.verifier = JWT.require(algorithm)
                 .withIssuer(ISSUER)
+                .acceptExpiresAt(0)
                 .build();
     }
 
@@ -67,6 +68,7 @@ public class JwtUtil {
     public String generateToken(User user) {
         Date now = new Date();
         Date expiresAt = new Date(now.getTime() + (EXPIRATION_HOURS * 60 * 60 * 1000));
+        //Date expiresAt = new Date(now.getTime() + (60 * 1000));
 
         return JWT.create()
                 .withIssuer(ISSUER)
