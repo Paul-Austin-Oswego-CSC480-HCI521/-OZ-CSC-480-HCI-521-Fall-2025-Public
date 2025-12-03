@@ -67,8 +67,10 @@ public class JwtUtil {
      */
     public String generateToken(User user) {
         Date now = new Date();
-        Date expiresAt = new Date(now.getTime() + (EXPIRATION_HOURS * 60 * 60 * 1000));
-        //Date expiresAt = new Date(now.getTime() + (60 * 1000));
+        //Date expiresAt = new Date(now.getTime() + (EXPIRATION_HOURS * 60 * 60 * 1000));
+        // tokens expire after 1 hour 
+        Date expiresAt = new Date(now.getTime() + (60 * 60 * 1000));
+        
 
         return JWT.create()
                 .withIssuer(ISSUER)
