@@ -11,7 +11,8 @@ function ProfReview({ initialData, onClose }) {
         title: initialData?.title || "",
         className: initialData?.class_name || "",
         message: initialData?.message || initialData?.content || "",
-        note: initialData?.note || "",
+        note: initialData?.professor_note || "",
+        status: initialData.status
     });
 
     const [selectedStatus, setSelectedStatus] = useState("APPROVED");
@@ -122,26 +123,28 @@ function ProfReview({ initialData, onClose }) {
                         />
                     </div>
 
-                    <div className="button-row">
-                        <button
-                            type="button"
-                            className={`approve-reject ${
-                                selectedStatus === "APPROVED" ? "selected" : ""
-                            }`}
-                            onClick={() => handleStatusChange("APPROVED")}
-                        >
-                            Approve
-                        </button>
-                        <button
-                            type="button"
-                            className={`approve-reject ${
-                                selectedStatus === "DENIED" ? "selected" : ""
-                            }`}
-                            onClick={() => handleStatusChange("DENIED")}
-                        >
-                            Reject
-                        </button>
-                    </div>
+                    {(formData.status === "PENDING") && (
+                        <div className="button-row">
+                            <button
+                                type="button"
+                                className={`approve-reject ${
+                                    selectedStatus === "APPROVED" ? "selected" : ""
+                                }`}
+                                onClick={() => handleStatusChange("APPROVED")}
+                            >
+                                Approve
+                            </button>
+                            <button
+                                type="button"
+                                className={`approve-reject ${
+                                    selectedStatus === "DENIED" ? "selected" : ""
+                                }`}
+                                onClick={() => handleStatusChange("DENIED")}
+                            >
+                                Reject
+                            </button>
+                        </div>
+                    )}
 
                     {selectedStatus === "DENIED" && (
                         <div>
@@ -183,9 +186,26 @@ function ProfReview({ initialData, onClose }) {
                         </div>   
                     )}
 
-                    <button type="submit" className="approve-reject" style={{width: "100%"}}>
-                        Submit
-                    </button>   
+                    {(formData.status === "PENDING") && (
+                        <button type="submit" className="approve-reject" style={{width: "100%"}}>
+                            Submit
+                        </button> 
+                    )}
+
+                    {(formData.status === "DENIED") && (
+                        <div>
+                        <label>Note to Student:</label>
+                            <textarea
+                                className="textBox"
+                                name="note"
+                                value={rejectReason + formData.note.trim()}
+                                rows={4}
+                                maxLength={500}
+                                readOnly
+                            />
+                        </div>
+                    )}
+                    
                 </form>
             </div>
     </div>
