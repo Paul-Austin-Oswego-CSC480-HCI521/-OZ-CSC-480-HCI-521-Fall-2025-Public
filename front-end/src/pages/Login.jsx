@@ -95,7 +95,7 @@ function Login() {
       }
 
       const data = await res.json();
-      localStorage.setItem('jwt_token', data.token);
+      sessionStorage.setItem('jwt_token', data.token);
       setUser(data.user);
       const targetRoute = data.user.role === 'INSTRUCTOR' ? '/professorView' : '/studentView';
       navigate(targetRoute);

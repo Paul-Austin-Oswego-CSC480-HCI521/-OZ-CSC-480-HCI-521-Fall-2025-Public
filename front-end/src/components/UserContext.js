@@ -9,7 +9,7 @@ export const UserProvider = ({ children }) => {
     const [user, setUser] = useState(null);
 
     useEffect(() => {
-        const savedUser = localStorage.getItem('jwt_token');
+        const savedUser = sessionStorage.getItem('jwt_token');
         if (!savedUser) {
             setLoading(false);
             return;}
@@ -33,7 +33,7 @@ export const UserProvider = ({ children }) => {
                 console.error("Error loading user:", error);
                 setError("Failed to load user");
                 setUser(null);
-                localStorage.removeItem('jwt_token');
+                sessionStorage.removeItem('jwt_token');
             } finally {
                 setLoading(false);
             }
@@ -125,8 +125,8 @@ export const UserProvider = ({ children }) => {
 // make a fetch request with the jwt token in the header
 export const authFetch = async (url, options = {}) => {
 
-    // get token from localstroage 
-    const token = localStorage.getItem('jwt_token');
+    // get token from sessionStorage 
+    const token = sessionStorage.getItem('jwt_token');
     if (!token) {
     throw new Error('No authentication token found');
     }
@@ -142,7 +142,7 @@ export const authFetch = async (url, options = {}) => {
 
     // reomve bad tokens 
     if (response.status === 401) {
-    localStorage.removeItem('jwt_token');
+    sessionStorage.removeItem('jwt_token');
     window.location.href = '/login';
     throw new Error('Session expired. Please login again.');}
     return response;
