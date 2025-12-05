@@ -41,15 +41,15 @@ function Login() {
       }
     );
 
-    window.google.accounts.id.renderButton(
-      document.getElementById('googleSignUpButton'),
-      {
-        theme: 'outline',
-        size: 'large',
-        text: 'signup_with',
-        width: 300,
-      }
-    );
+    // window.google.accounts.id.renderButton(
+    //   document.getElementById('googleSignUpButton'),
+    //   {
+    //     theme: 'outline',
+    //     size: 'large',
+    //     text: 'signup_with',
+    //     width: 300,
+    //   }
+    // );
   };
 
   return () => {
@@ -95,7 +95,7 @@ function Login() {
       }
 
       const data = await res.json();
-      sessionStorage.setItem('jwt_token', data.token);
+      localStorage.setItem('jwt_token', data.token);
       setUser(data.user);
       const targetRoute = data.user.role === 'INSTRUCTOR' ? '/professorView' : '/studentView';
       navigate(targetRoute);
@@ -135,7 +135,7 @@ function Login() {
                     <>
                       <h2>Login</h2>
                       <div id="googleSignInButton" className="button-row"></div>
-                      <div id="googleSignUpButton" className="button-row"></div>
+                      {/* <div id="googleSignUpButton" className="button-row"></div> */}
                     </>
                   )}
                   {mode === "SU" && (

@@ -160,7 +160,7 @@ const handleClassUpdated = (updateInfo) => {
 
         <div className="course-management-container">
           <div className="course-sidebar">
-            <h3>Active Classes</h3>
+            <h3>Current Courses</h3>
             <ul className="course-list">
               {classes.length > 0 ? (
                 classes.map((cls) => (
@@ -177,7 +177,7 @@ const handleClassUpdated = (updateInfo) => {
               )}
             </ul>
 
-            <h3>Archived Classes</h3>
+            <h3>Archived Courses</h3>
             <ul className="course-list">
               {archivedClasses.length > 0 ? (
                 archivedClasses.map((cls) => (
