@@ -112,6 +112,18 @@ const handleClassUpdated = (updateInfo) => {
     return;
   }
 
+  // Handle archiving - move from active to archived
+  if (updateInfo.archived) {
+    setClasses(prev => {
+      const archivedClass = prev.find(c => c.class_id === updateInfo.class_id);
+      if (archivedClass) {
+        setArchivedClasses(archived => [...archived, { ...archivedClass, is_archived: true }]);
+      }
+      return prev.filter(c => c.class_id !== updateInfo.class_id);
+    });
+    return;
+  }
+
   setClasses(prev =>
   prev.map(c => c.class_id === updateInfo.class_id
     ? { ...c, ...updateInfo }
@@ -201,7 +213,7 @@ const handleClassUpdated = (updateInfo) => {
                 {console.log("Rendering ClassCard with selected class:", selectedClass)}
                 <ClassCard
                   classData={selectedClass}
-                  isActive={new Date(selectedClass.end_date) >= new Date()}
+                  isActive={!selectedClass.is_archived}
                   professorId={userId}
                   onClassUpdated={handleClassUpdated}
                 />
