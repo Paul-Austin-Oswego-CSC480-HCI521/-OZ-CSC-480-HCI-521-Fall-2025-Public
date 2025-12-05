@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Header from "../components/Header";
 import ClassCard from "../components/CourseManagement/ClassCard";
 import ToastMessage from "../components/Shared/ToastMessage";
@@ -14,6 +14,7 @@ function CourseManagement() {
   const [selectedClassId, setSelectedClassId] = useState(null);
   const [toast, setToast] = useState(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useUser();
   const navigate = useNavigate();
 
@@ -93,6 +94,14 @@ function CourseManagement() {
   useEffect(() => {
     fetchClasses();
   }, [fetchClasses]);
+
+  useEffect(() => {
+    if (searchParams.get('create') === 'true') {
+      setShowCreateModal(true);
+      searchParams.delete('create');
+      setSearchParams(searchParams, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
 
 const handleClassUpdated = (updateInfo) => {
 

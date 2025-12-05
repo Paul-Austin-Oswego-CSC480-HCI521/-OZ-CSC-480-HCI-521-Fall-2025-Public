@@ -28,7 +28,7 @@ function StudentView() {
     const handleReceivedSort = () => { setReceivedSortOrder((prev) => (prev === "desc" ? "asc" : "desc"));}
     const handleSentSort = () => { setSentSortOrder((prev) => (prev === "desc" ? "asc" : "desc"));}
     const handleFilterChange = () => { console.log("Filter button clicked");}
-    const handleCourseManagement = () => navigate('/course-management');
+    const handleCourseManagement = () => navigate('/course-management?create=true');
     const handleCourseAddition = () => setShowCourseModal(true);
 
     const handleCourseSubmit = async (code) => {

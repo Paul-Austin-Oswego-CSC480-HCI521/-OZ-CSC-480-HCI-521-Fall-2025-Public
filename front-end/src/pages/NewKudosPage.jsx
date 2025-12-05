@@ -36,7 +36,7 @@ function NewKudosPage({ onSubmit }) {
     const queryParams = new URLSearchParams(location.search);
     const editCardId = queryParams.get('edit');
 
-    const handleCourseManagement = () => navigate('/course-management');
+    const handleCourseManagement = () => navigate('/course-management?create=true');
     const handleCourseAddition = () => setShowCourseModal(true);
 
     useEffect(() => {

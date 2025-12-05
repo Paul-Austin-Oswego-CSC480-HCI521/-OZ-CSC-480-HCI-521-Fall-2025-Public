@@ -20,7 +20,7 @@ function ProfessorView() {
     const navigate = useNavigate();
 
     const handleNewKudos = () => {navigate('/professorView/new-kudos');};
-    const handleCourseManagement = () => navigate('/course-management');
+    const handleCourseManagement = () => navigate('/course-management?create=true');
     const handleSelectKudos = (kudos) => {setSelectedKudo(kudos)};
 
     // get all the cards for this user 
