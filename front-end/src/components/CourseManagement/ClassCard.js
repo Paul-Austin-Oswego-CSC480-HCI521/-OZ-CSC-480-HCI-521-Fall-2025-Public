@@ -111,14 +111,10 @@ useEffect(() => {
     setShowArchiveModal(false);
 
     try {
-      // Set end_date to current timestamp to archive the class
-      const currentDate = new Date().toISOString();
       const res = await authFetch(`${BASE_URL}/class/${classData.class_id}`, {
         method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ end_date: currentDate }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ archive: true }),
       });
       if (!res.ok) throw new Error("Failed to archive class");
       onClassUpdated({ archived: true, class_id: classData.class_id });

@@ -170,7 +170,11 @@ public class ClassesResource {
 
         // --- Validate the new end_date (if provided) before updating ---
         Timestamp newEndDate = update.getEndDateAsTimestamp();
-        if (newEndDate != null) {
+
+        // If archive flag is set, use current timestamp and skip validation
+        if (Boolean.TRUE.equals(update.getArchive())) {
+            newEndDate = new Timestamp(System.currentTimeMillis());
+        } else if (newEndDate != null) {
             Timestamp now = new Timestamp(System.currentTimeMillis());
             if (newEndDate.before(now)) {
                 return Response.status(Response.Status.BAD_REQUEST)

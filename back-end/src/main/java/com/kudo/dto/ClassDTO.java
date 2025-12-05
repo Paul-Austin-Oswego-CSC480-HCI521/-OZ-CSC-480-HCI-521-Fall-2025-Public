@@ -100,6 +100,7 @@ public class ClassDTO {
     private String class_name;  // optional
     @JsonbDateFormat("yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime end_date;  // optional
+    private Boolean archive;  // optional flag to bypass future-date validation
 
     public ClassUpdate() {}
 
@@ -108,6 +109,9 @@ public class ClassDTO {
 
     public LocalDateTime getEnd_date() { return end_date; }
     public void setEnd_date(LocalDateTime end_date) { this.end_date = end_date; }
+
+    public Boolean getArchive() { return archive; }
+    public void setArchive(Boolean archive) { this.archive = archive; }
 
     public Timestamp getEndDateAsTimestamp() {
         if (end_date == null) return null;
