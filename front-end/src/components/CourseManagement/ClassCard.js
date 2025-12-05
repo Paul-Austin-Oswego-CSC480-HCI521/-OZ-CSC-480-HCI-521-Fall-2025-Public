@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import StudentList from "./StudentList";
 import PendingRequests from "./PendingRequests";
 import ToastMessage from "../Shared/ToastMessage";
+import ArchiveConfirmationModal from "./ArchiveConfirmationModal";
 import { authFetch } from "../UserContext";
 
 function ClassCard({ classData, isActive, onClassUpdated, professorId }) {
@@ -10,6 +11,7 @@ function ClassCard({ classData, isActive, onClassUpdated, professorId }) {
   const [className, setClassName] = useState(classData.class_name);
   const [endDate, setEndDate] = useState(classData.end_date || "");
   const [toast, setToast] = useState(null);
+  const [showArchiveModal, setShowArchiveModal] = useState(false);
 
   const parseServerDateToDate = (dateStr) => {
     if (!dateStr) return null;
@@ -87,7 +89,7 @@ useEffect(() => {
     if (!window.confirm(`Are you sure you want to delete this class? (${classData.class_name}) `)) {
       return;
     }
-    
+
     try {
       const res = await authFetch(`${BASE_URL}/class/${classData.class_id}`, {
         method: "DELETE",
@@ -98,6 +100,32 @@ useEffect(() => {
     } catch (err) {
       console.error(err);
       setToast({ message: "Failed to delete class.", type: "error" });
+    }
+  };
+
+  const handleArchiveClass = () => {
+    setShowArchiveModal(true);
+  };
+
+  const confirmArchiveClass = async () => {
+    setShowArchiveModal(false);
+
+    try {
+      // Set end_date to current timestamp to archive the class
+      const currentDate = new Date().toISOString();
+      const res = await authFetch(`${BASE_URL}/class/${classData.class_id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ end_date: currentDate }),
+      });
+      if (!res.ok) throw new Error("Failed to archive class");
+      onClassUpdated({ archived: true, class_id: classData.class_id });
+      setToast({ message: "Class archived successfully!", type: "success" });
+    } catch (err) {
+      console.error(err);
+      setToast({ message: "Failed to archive class.", type: "error" });
     }
   };
 
@@ -264,9 +292,14 @@ useEffect(() => {
       </div>
       {isActive && (
         <div className="delete-btn-container">
-          <button className="edit-btn" onClick={handleDeleteClass}>
-            Delete Course
-          </button>
+          <div className="button-row">
+            <button className="edit-btn archive-btn" onClick={handleArchiveClass}>
+              Archive Course
+            </button>
+            <button className="edit-btn" onClick={handleDeleteClass}>
+              Delete Course
+            </button>
+          </div>
         </div>
       )}
 
@@ -277,6 +310,13 @@ useEffect(() => {
           onClose={() => setToast(null)}
         />
       )}
+
+      <ArchiveConfirmationModal
+        isOpen={showArchiveModal}
+        onClose={() => setShowArchiveModal(false)}
+        onConfirm={confirmArchiveClass}
+        courseName={classData.class_name}
+      />
     </div>
   );
 }

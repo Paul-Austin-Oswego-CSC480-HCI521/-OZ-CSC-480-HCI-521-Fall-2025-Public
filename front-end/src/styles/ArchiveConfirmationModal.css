@@ -1,0 +1,81 @@
+.archive-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.archive-modal-content {
+  background: white;
+  border-radius: 12px;
+  padding: 2.5rem 3rem;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.archive-modal-content h2 {
+  color: #2C3E50;
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+.archive-modal-warning {
+  color: #666;
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+.archive-modal-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.archive-modal-cancel,
+.archive-modal-accept {
+  padding: 0.75rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  transition: all 0.2s ease;
+  min-width: 120px;
+}
+
+.archive-modal-cancel {
+  background-color: #2C5F5F;
+  color: white;
+}
+
+.archive-modal-cancel:hover {
+  background-color: #1E4747;
+  transform: translateY(-1px);
+}
+
+.archive-modal-accept {
+  background-color: #2C5F5F;
+  color: white;
+}
+
+.archive-modal-accept:hover {
+  background-color: #1E4747;
+  transform: translateY(-1px);
+}
+
+.archive-modal-cancel:active,
+.archive-modal-accept:active {
+  transform: translateY(0);
+}
