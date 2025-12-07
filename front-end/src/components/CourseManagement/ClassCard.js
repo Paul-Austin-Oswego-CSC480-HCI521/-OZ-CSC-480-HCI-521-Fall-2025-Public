@@ -72,6 +72,7 @@ useEffect(() => {
       }
 
       const updatedClass = await res.json();
+      console.log(updatedClass);
       onClassUpdated(updatedClass);
 
       setToast({
@@ -159,7 +160,7 @@ useEffect(() => {
             />
           ) : (
             <>
-              {className} <button onClick={() => setEditingName(true)} className="pencil-btn" aria-label="Edit name">
+              {className} {isActive && (<button onClick={() => setEditingName(true)} className="pencil-btn" aria-label="Edit name">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="20"
@@ -174,7 +175,7 @@ useEffect(() => {
                 >
                   <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
                 </svg>
-              </button>
+              </button>)} 
             </>
           )}
         </h2>
@@ -200,8 +201,7 @@ useEffect(() => {
             />
           ) : (
             <>
-                {endDate || "N/A"}
-              <button
+                {endDate || "N/A"} {isActive && (<button
                 onClick={() => setEditingEndDate(true)}
                 className="pencil-btn"
                 aria-label="Edit end date"
@@ -220,7 +220,7 @@ useEffect(() => {
                 >
                   <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
                 </svg>
-              </button>
+              </button>)}
             </>
           )}{" "}
           | Course Code:
@@ -286,18 +286,19 @@ useEffect(() => {
           />
         </div>
       </div>
-      {isActive && (
-        <div className="delete-btn-container">
+
+      <div className="delete-btn-container">
           <div className="button-row">
-            <button className="edit-btn archive-btn" onClick={handleArchiveClass}>
-              Archive Course
-            </button>
+            {isActive && (
+              <button className="edit-btn archive-btn" onClick={handleArchiveClass}>
+                Archive Course
+              </button>
+            )}
             <button className="edit-btn" onClick={handleDeleteClass}>
               Delete Course
             </button>
           </div>
-        </div>
-      )}
+      </div>
 
       {toast && (
         <ToastMessage

@@ -29,14 +29,14 @@ public class Classes {
     public Classes(UUID class_id, String name,  Integer join_code, Timestamp created_date, UUID created_by) {
         this.created_date = created_date;
         this.join_code = join_code;
-        this.class_name = class_name;
+        this.class_name = name;
         this.class_id = class_id;
         this.created_by = created_by;
     }
 
     public Classes(UUID class_id, String name, Integer join_code, Timestamp created_date, UUID created_by, Timestamp end_date) {
         this.class_id = class_id;
-        this.class_name = class_name;
+        this.class_name = name;
         this.join_code = join_code;
         this.created_date = created_date;
         this.end_date = end_date;
@@ -55,8 +55,16 @@ public class Classes {
         return class_name;
     }
 
+    public String getClass_name(){
+        return class_name;
+    }
+
     public void setName(String name) {
-        this.class_name = class_name;
+        this.class_name = name;
+    }
+
+    public void setClass_name(String name){
+        this.class_name = name;
     }
 
     public Integer getJoin_code() {

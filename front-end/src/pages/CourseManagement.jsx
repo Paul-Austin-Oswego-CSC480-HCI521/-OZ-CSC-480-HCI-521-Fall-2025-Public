@@ -117,13 +117,19 @@ const handleClassUpdated = (updateInfo) => {
     setClasses(prev => {
       const archivedClass = prev.find(c => c.class_id === updateInfo.class_id);
       if (archivedClass) {
-        setArchivedClasses(archived => [...archived, { ...archivedClass, is_archived: true }]);
+        setArchivedClasses(archived => {
+          if (!archived.some(c => c.class_id === updateInfo.class_id)) {
+            return [...archived, { ...archivedClass, is_archived: true }];
+          }
+          return archived;
+        });
       }
       return prev.filter(c => c.class_id !== updateInfo.class_id);
     });
     return;
-  }
+  } 
 
+  console.log(updateInfo);
   setClasses(prev =>
   prev.map(c => c.class_id === updateInfo.class_id
     ? { ...c, ...updateInfo }
